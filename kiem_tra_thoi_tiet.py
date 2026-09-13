@@ -3,14 +3,14 @@ import io
 import os
 import sqlite3
 import sys
-import webbrowser
 import requests
 from config import API_KEY
 
+# Lấy thư mục gốc hiện tại của file script
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Cấu hình Webhook Slack của bạn
-SLACK_WEBHOOK_URL = (
-    ""
-)
+SLACK_WEBHOOK_URL = ""
 
 
 def gui_thong_bao_slack(noi_dung):
@@ -25,8 +25,10 @@ def gui_thong_bao_slack(noi_dung):
     print(f"Không thể kết nối tới Slack: {e}")
 
 
-# Cấu hình đường dẫn module log trên ổ E
-sys.path.append(r"E:\QUAN_LY_DU_AN")
+# Cấu hình đường dẫn module log (chỉ load nếu chạy trên máy có ổ E)
+log_path = r"E:\QUAN_LY_DU_AN"
+if os.path.exists(log_path):
+  sys.path.append(log_path)
 try:
   from nhat_ky_trung_tam import tu_dong_ghi_log
 except ImportError:
@@ -35,9 +37,14 @@ except ImportError:
     return func
 
 
-# Cấu hình encoding để hiển thị tiếng Việt
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
-DB_PATH = r"THOITIET.db"
+# An toàn encoding cho console
+if sys.stdout is not None:
+  try:
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+  except Exception:
+    pass
+
+DB_PATH = os.path.join(BASE_DIR, "THOITIET.db")
 
 
 def init_database():
@@ -53,9 +60,11 @@ def init_database():
 
   if "rain_hours" not in columns:
     try:
-      cur.execute("ALTER TABLE THOITIET_DINH_DUONG ADD COLUMN rain_hours TEXT")
+      cur.execute(
+          "ALTER TABLE THOITIET_DINH_DUONG ADD COLUMN rain_hours TEXT"
+      )
       conn.commit()
-      print("Đã thêm thành công cột 'rain_hours' vào cơ sở dữ liệu trên ổ E!")
+      print("Đã thêm thành công cột 'rain_hours' vào cơ sở dữ liệu!")
     except Exception as e:
       print(f"Lỗi khi thêm cột vào DB: {e}")
 
@@ -72,7 +81,7 @@ def get_week_forecast():
     for item in r["list"]:
       dt_parts = item["dt_txt"].split(" ")
       date = dt_parts[0]
-      time_str = dt_parts[1][:5]  # Lấy định dạng HH:MM
+      time_str = dt_parts[1][:5]
 
       daily_map[date]["min"] = min(
           daily_map[date]["min"], item["main"]["temp_min"]
@@ -113,7 +122,6 @@ def get_historical_data_for_date(target_md):
 
 
 def save_forecast_to_db(web_data):
-  """Lưu thông tin dự báo kèm giờ mưa vào database trên ổ E"""
   if not os.path.exists(DB_PATH):
     return
 
@@ -174,7 +182,7 @@ def main():
   print("-" * 120)
 
   noi_dung_bao_cao += (
-      "NGÀY         | DỰ BÁO     | MƯA    | LỊCH SỬ TỪ 2007 (TRUNG BÌNH)\n"
+      "NGÀY          | DỰ BÁO      | MƯA    | LỊCH SỬ TỪ 2007 (TRUNG BÌNH)\n"
       + "-" * 80
       + "\n"
   )
@@ -199,8 +207,14 @@ def main():
     )
     goi_y = lay_goi_y_mua_sam(w["max"], w["rain"])
 
-    print(f"{date:<12} | {w['max']:.1f}/{w['min']:.1f}°C | {rain_str:<6} | {hist_str}")
-    noi_dung_bao_cao += f"{date:<12} | {w['max']:.1f}/{w['min']:.1f}°C | {rain_str:<6} | {hist_str}\n"
+    print(
+        f"{date:<12} | {w['max']:.1f}/{w['min']:.1f}°C | {rain_str:<6} |"
+        f" {hist_str}"
+    )
+    noi_dung_bao_cao += (
+        f"{date:<12} | {w['max']:.1f}/{w['min']:.1f}°C | {rain_str:<6} |"
+        f" {hist_str}\n"
+    )
     print(f"--> [WEB] Khung giờ mưa: {gio_mua_txt}")
     noi_dung_bao_cao += f"--> [WEB] Khung giờ mưa: {gio_mua_txt}\n"
     print(f"--> {goi_y}")
@@ -208,7 +222,6 @@ def main():
     print("-" * 120)
     noi_dung_bao_cao += "-" * 80 + "\n"
 
-    # Gom dữ liệu để đổ vào bảng HTML
     html_rows += f"""
         <tr>
             <td><b>{date}</b></td>
@@ -220,17 +233,6 @@ def main():
         </tr>
         """
 
-  # Lưu kết quả ra tệp .txt trên Desktop
-  desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
-  txt_path = os.path.join(desktop_path, "ket_qua_moi_nhat.txt")
-  try:
-    with open(txt_path, "w", encoding="utf-8") as f:
-      f.write(noi_dung_bao_cao)
-    print(f"Đã lưu kết quả ra tệp txt tại: {txt_path}")
-  except Exception as e:
-    print(f"Lỗi khi lưu tệp txt: {e}")
-
-  # Tạo trang web thuc_don_nguoi_linh.html tích hợp menu chuẩn xác
   html_content = f"""<!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -253,35 +255,26 @@ def main():
 
     <h1>🛡️ TRANG THÔNG TIN THỜI TIẾT & THỰC ĐƠN NGƯỜI LÍNH</h1>
     
-    <!-- Thanh Menu Điều Hướng Chuẩn Xác -->
     <div style="background: #ffffff; padding: 12px 15px; margin-bottom: 20px; border: 1px solid #dcdcdc; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-        
-        <!-- Nút về trang chủ -->
-        <a href="file:///E:/HTML/github_data/index.html" style="background: #2c3e50; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 13px;">🏠 Trang Chủ</a>
-        
-        <!-- Các nút truy cập nhanh quan trọng -->
-        <a href="file:///E:/HTML/github_data/025-thuc-on-i-linh.html" style="background: #e9ecef; color: #333; padding: 6px 10px; text-decoration: none; border-radius: 4px; font-size: 13px; border: 1px solid #ccc;">Đi lính</a>
-        <a href="file:///E:/HTML/github_data/286-an-benh-tri.html" style="background: #e9ecef; color: #333; padding: 6px 10px; text-decoration: none; border-radius: 4px; font-size: 13px; border: 1px solid #ccc;">Bệnh trĩ</a>
-
+        <a href="index.html" style="background: #2c3e50; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 13px;">🏠 Trang Chủ</a>
+        <a href="025-thuc-on-i-linh.html" style="background: #e9ecef; color: #333; padding: 6px 10px; text-decoration: none; border-radius: 4px; font-size: 13px; border: 1px solid #ccc;">Đi lính</a>
+        <a href="286-an-benh-tri.html" style="background: #e9ecef; color: #333; padding: 6px 10px; text-decoration: none; border-radius: 4px; font-size: 13px; border: 1px solid #ccc;">Bệnh trĩ</a>
         <span style="color: #ccc;">|</span>
-        
-        <!-- Menu thả xuống chứa toàn bộ các file chuyên đề khác -->
         <select onchange="if(this.value) window.location.href=this.value;" style="padding: 6px 10px; border-radius: 4px; border: 1px solid #ccc; font-size: 13px; background: #f8f9fa; cursor: pointer;">
             <option value="">📁 Kho Thực Đơn & Chuyên Đề Khác...</option>
-            <option value="file:///E:/HTML/github_data/029-thuc-on-cho-oi-truong.html">Thực đơn Đại đội trưởng</option>
-            <option value="file:///E:/HTML/github_data/030-thuc-on-cho-phi-cong.html">Thực đơn Phi công</option>
-            <option value="file:///E:/HTML/github_data/031-thuc-on-xe-may.html">Thực đơn Xe máy</option>
-            <option value="file:///E:/HTML/github_data/032-thuc-on-lai-tau-cano.html">Thực đơn Lái tàu - Cano</option>
-            <option value="file:///E:/HTML/github_data/033-thuc-on-cho-lai-xe-o-to.html">Thực đơn Lái xe ô tô</option>
-            <option value="file:///E:/HTML/github_data/034-thuc-on-xem-chieu.html">Thực đơn Xem chiều</option>
-            <option value="file:///E:/HTML/github_data/291-chay-cho-an-uong.html">Chạy chợ ăn uống</option>
-            <option value="file:///E:/HTML/github_data/293-24-tiet-khi.html">24 Tiết khí</option>
-            <option value="file:///E:/HTML/github_data/297-tiet-khi-mon-an.html">Tiết khí & Món ăn</option>
-            <option value="file:///E:/HTML/github_data/288-an-uong-am-lich.html">Ăn uống Âm lịch</option>
+            <option value="029-thuc-on-cho-oi-truong.html">Thực đơn Đại đội trưởng</option>
+            <option value="030-thuc-on-cho-phi-cong.html">Thực đơn Phi công</option>
+            <option value="031-thuc-on-xe-may.html">Thực đơn Xe máy</option>
+            <option value="032-thuc-on-lai-tau-cano.html">Thực đơn Lái tàu - Cano</option>
+            <option value="033-thuc-on-cho-lai-xe-o-to.html">Thực đơn Lái xe ô tô</option>
+            <option value="034-thuc-on-xem-chieu.html">Thực đơn Xem chiều</option>
+            <option value="291-chay-cho-an-uong.html">Chạy chợ ăn uống</option>
+            <option value="293-24-tiet-khi.html">24 Tiết khí</option>
+            <option value="297-tiet-khi-mon-an.html">Tiết khí & Món ăn</option>
+            <option value="288-an-uong-am-lich.html">Ăn uống Âm lịch</option>
         </select>
     </div>
 
-    <!-- Mục xử lý khẩn cấp khi bị cảm lạnh / vừa đi ngoài trời về mệt mỏi -->
     <div class="emergency">
         <h3>🚨 GÓC CẤP CỨU NHANH: KHI BỊ CẢM LẠNH, MỆT MỎI, VỪA ĐI NGOÀI TRỜI VỀ</h3>
         <p><b>Triệu chứng:</b> Người mệt lả không muốn dậy, muốn đi nằm ngay lập tức sau khi vừa đi ngoài trời về.</p>
@@ -295,7 +288,6 @@ def main():
         </ul>
     </div>
 
-    <!-- Bảng dự báo thời tiết và gợi ý tự động -->
     <div class="card">
         <h2>📊 Bảng Dự Báo Thời Tiết & Gợi Ý Dinh Dưỡng Tuần Này</h2>
         <table>
@@ -319,18 +311,14 @@ def main():
 </html>
 """
 
-  html_path = os.path.join(desktop_path, "thuc_don_nguoi_linh.html")
+  html_path = os.path.join(BASE_DIR, "thuc_don_nguoi_linh.html")
   try:
     with open(html_path, "w", encoding="utf-8") as f:
       f.write(html_content)
     print(f"Đã tạo trang web thành công tại: {html_path}")
-    
-    # Tự động mở file HTML trực tiếp trên trình duyệt web mặc định
-    webbrowser.open(f"file:///{html_path}")
   except Exception as e:
-    print(f"Lỗi khi tạo hoặc mở file HTML: {e}")
+    print(f"Lỗi khi tạo file HTML: {e}")
 
-  # Gửi lên Slack
   gui_thong_bao_slack(noi_dung_bao_cao)
 
 
