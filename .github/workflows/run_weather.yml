@@ -25,7 +25,7 @@ jobs:
 
       - name: Chay file Python
         run: |
-          python ten_file_cua_ban.py
+          python kiem_tr_thoi_tiet.py
 
       - name: Tu dong cap nhat lai file THOITIET.db len GitHub
         run: |
