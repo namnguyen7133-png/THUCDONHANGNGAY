@@ -37,7 +37,7 @@ except ImportError:
 
 # Cấu hình encoding để hiển thị tiếng Việt
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
-DB_PATH = r"E:\NHACVIEC_PYTHON\THOITIET.db"
+DB_PATH = r"THOITIET.db"
 
 
 def init_database():
