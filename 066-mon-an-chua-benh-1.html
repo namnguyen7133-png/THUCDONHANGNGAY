@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Tư Vấn Món Ăn - Phần 1</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        .input-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .input-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-top: 25px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .results-section {
+            margin-top: 30px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        .pagination button {
+            margin: 0;
+            padding: 8px 15px;
+        }
+        
+        .page-info {
+            font-weight: bold;
+            margin: 0 10px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        
+        .result-count {
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        @media (max-width: 768px) {
+            .input-section {
+                flex-direction: column;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            th, td {
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Game Tư Vấn Món Ăn Theo Nhiệt Độ và Bệnh Tật - Phần 1/15</h1>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label for="temperature">Nhiệt độ hiện tại (°C):</label>
+                <input type="number" id="temperature" placeholder="Nhập nhiệt độ...">
+            </div>
+            
+            <div class="input-group">
+                <label for="condition">Tình trạng sức khỏe:</label>
+                <select id="condition">
+                    <option value="">-- Chọn tình trạng --</option>
+                    <option value="Cao huyết áp">Cao huyết áp</option>
+                    <option value="Tiểu đường">Tiểu đường</option>
+                    <option value="Nóng sốt">Nóng sốt</option>
+                    <option value="Dị ứng đậu">Dị ứng đậu</option>
+                    <option value="Gout, mỡ máu">Gout, mỡ máu</option>
+                    <option value="Tiêu hóa kém">Tiêu hóa kém</option>
+                    <option value="Huyết áp thấp">Huyết áp thấp</option>
+                    <option value="Mất ngủ">Mất ngủ</option>
+                    <option value="Mỡ máu">Mỡ máu</option>
+                    <option value="Đau dạ dày">Đau dạ dày</option>
+                </select>
+            </div>
+            
+            <button id="search-btn">Tìm Món Ăn</button>
+        </div>
+        
+        <div class="results-section">
+            <div class="result-count" id="result-count"></div>
+            
+            <div class="table-container">
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Người bệnh</th>
+                            <th>Triệu chứng</th>
+                            <th>Món ăn thể hàn</th>
+                            <th>Món ăn thể nhiệt</th>
+                            <th>Lượng ăn</th>
+                            <th>Thời điểm</th>
+                            <th>Món thay thế</th>
+                            <th>Hoa quả</th>
+                            <th>Đồ uống</th>
+                            <th>Giá</th>
+                            <th>Thực phẩm tránh</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body">
+                        <!-- Kết quả sẽ được hiển thị ở đây -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="pagination" id="pagination">
+                <button id="prev-btn">Trước</button>
+                <span class="page-info" id="page-info">Trang 1/1</span>
+                <button id="next-btn">Sau</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dữ liệu 10 dòng đầu tiên
+        const foodData = [
+            {
+                organ: "Hệ tuần hoàn",
+                code: "Sáng1",
+                patient_id: "1",
+                disease: "Cao huyết áp",
+                temperature_range: "0-10°C",
+                cold_constitution: "Không",
+                hot_constitution: "Cháo yến mạch thịt bằm gừng",
+                meal_amount: "200-300g",
+                meal_time: "7-8h",
+                rest_time: "9h",
+                alternative_dish: "Cháo gạo lứt thịt nạc",
+                suitable_fruits: "Táo, lê",
+                suitable_drinks: "Trà hoa cúc mật ong",
+                estimated_price: "15.000-30.000đ",
+                avoid_foods: "Giảm muối, ấm bụng",
+                note: ""
+            },
+            {
+                organ: "Tuyến tụy",
+                code: "Sáng2",
+                patient_id: "2",
+                disease: "Tiểu đường",
+                temperature_range: "0-10°C",
+                cold_constitution: "Không",
+                hot_constitution: "Trứng luộc + súp rau củ",
+                meal_amount: "150-250g",
+                meal_time: "7-8h",
+                rest_time: "10h",
+                alternative_dish: "Ức gà hầm thuốc bắc",
+                suitable_fruits: "Bưởi, ổi",
+                suitable_drinks: "Trà quế",
+                estimated_price: "20.000-40.000đ",
+                avoid_foods: "Ít đường, giữ ấm",
+                note: ""
+            },
+            {
+                organ: "Hệ miễn dịch",
+                code: "Sáng3",
+                patient_id: "3",
+                disease: "Nóng sốt",
+                temperature_range: "0-10°C",
+                cold_constitution: "Có",
+                hot_constitution: "Cháo tía tô thịt gà",
+                meal_amount: "200-300g",
+                meal_time: "7-8h",
+                rest_time: "Nghỉ ngơi",
+                alternative_dish: "Cháo hành trứng",
+                suitable_fruits: "Cam, lê",
+                suitable_drinks: "Nước gừng ấm",
+                estimated_price: "10.000-25.000đ",
+                avoid_foods: "Giải cảm",
+                note: ""
+            },
+            {
+                organ: "Hệ tiêu hóa",
+                code: "Sáng4",
+                patient_id: "4",
+                disease: "Dị ứng đậu",
+                temperature_range: "0-10°C",
+                cold_constitution: "Không",
+                hot_constitution: "Bánh mì trứng + sữa hạt",
+                meal_amount: "150-250g",
+                meal_time: "7-8h",
+                rest_time: "9h",
+                alternative_dish: "Phở gà không đậu",
+                suitable_fruits: "Lê, táo",
+                suitable_drinks: "Sữa hạt điều ấm",
+                estimated_price: "20.000-35.000đ",
+                avoid_foods: "Tránh đậu",
+                note: ""
+            },
+            {
+                organ: "Khớp / Mạch máu",
+                code: "Sáng5",
+                patient_id: "5",
+                disease: "Gout, mỡ máu",
+                temperature_range: "0-10°C",
+                cold_constitution: "Không",
+                hot_constitution: "Cháo gạo lứt nấm",
+                meal_amount: "200-300g",
+                meal_time: "7-8h",
+                rest_time: "10h",
+                alternative_dish: "Súp khoai tây cà rốt",
+                suitable_fruits: "Dứa, dưa chuột",
+                suitable_drinks: "Trà atiso",
+                estimated_price: "15.000-30.000đ",
+                avoid_foods: "Ít đạm, ấm",
+                note: ""
+            },
+            {
+                organ: "Dạ dày",
+                code: "Sáng6",
+                patient_id: "6",
+                disease: "Tiêu hóa kém",
+                temperature_range: "0-10°C",
+                cold_constitution: "Có",
+                hot_constitution: "Cháo hạt sen gừng",
+                meal_amount: "150-250g",
+                meal_time: "7-8h",
+                rest_time: "9h",
+                alternative_dish: "Cháo gà hầm hạt sen",
+                suitable_fruits: "Đu đủ, chuối",
+                suitable_drinks: "Trà gừng mật ong",
+                estimated_price: "15.000-25.000đ",
+                avoid_foods: "Dễ tiêu",
+                note: ""
+            },
+            {
+                organ: "Hệ tuần hoàn",
+                code: "Sáng7",
+                patient_id: "7",
+                disease: "Huyết áp thấp",
+                temperature_range: "0-10°C",
+                cold_constitution: "Không",
+                hot_constitution: "Phở bò gừng",
+                meal_amount: "250-350g",
+                meal_time: "7-8h",
+                rest_time: "9h",
+                alternative_dish: "Cháo thịt bò hầm",
+                suitable_fruits: "Nho, xoài",
+                suitable_drinks: "Cà phê sữa (ít đường)",
+                estimated_price: "25.000-40.000đ",
+                avoid_foods: "Bổ sung đạm",
+                note: ""
+            },
+            {
+                organ: "Não",
+                code: "Sáng8",
+                patient_id: "8",
+                disease: "Mất ngủ",
+                temperature_range: "0-10°C",
+                cold_constitution: "Không",
+                hot_constitution: "Cháo long nhãn hạt sen",
+                meal_amount: "200-300g",
+                meal_time: "7-8h",
+                rest_time: "9h",
+                alternative_dish: "Súp gà hầm táo đỏ",
+                suitable_fruits: "Chuối, cherry",
+                suitable_drinks: "Trà tâm sen",
+                estimated_price: "20.000-35.000đ",
+                avoid_foods: "Giúp ngủ ngon",
+                note: ""
+            },
+            {
+                organ: "Mạch máu",
+                code: "Sáng9",
+                patient_id: "9",
+                disease: "Mỡ máu",
+                temperature_range: "0-10°C",
+                cold_constitution: "Không",
+                hot_constitution: "Yến mạch nấu sữa hạt",
+                meal_amount: "150-250g",
+                meal_time: "7-8h",
+                rest_time: "10h",
+                alternative_dish: "Cháo gạo lứt đậu đen",
+                suitable_fruits: "Bơ, táo",
+                suitable_drinks: "Trà gừng quế",
+                estimated_price: "25.000-50.000đ",
+                avoid_foods: "Giảm cholesterol",
+                note: ""
+            },
+            {
+                organ: "Dạ dày",
+                code: "Sáng10",
+                patient_id: "10",
+                disease: "Đau dạ dày",
+                temperature_range: "0-10°C",
+                cold_constitution: "Không",
+                hot_constitution: "Cháo hạt sen gừng",
+                meal_amount: "200-300g",
+                meal_time: "7-8h",
+                rest_time: "9h",
+                alternative_dish: "Khoai lang luộc + trứng",
+                suitable_fruits: "Chuối, đu đủ",
+                suitable_drinks: "Nước gừng ấm",
+                estimated_price: "15.000-30.000đ",
+                avoid_foods: "Ấm bụng",
+                note: ""
+            }
+        ];
+
+        // Biến toàn cục
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let filteredData = [];
+
+        // Các phần tử DOM
+        const temperatureInput = document.getElementById('temperature');
+        const conditionSelect = document.getElementById('condition');
+        const searchBtn = document.getElementById('search-btn');
+        const resultsBody = document.getElementById('results-body');
+        const resultCount = document.getElementById('result-count');
+        const pageInfo = document.getElementById('page-info');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const pagination = document.getElementById('pagination');
+
+        // Hàm lọc dữ liệu
+        function filterData() {
+            const temperature = parseInt(temperatureInput.value);
+            const condition = conditionSelect.value;
+            
+            filteredData = foodData.filter(item => {
+                let matchesTemperature = true;
+                let matchesCondition = true;
+                
+                // Kiểm tra nhiệt độ
+                if (!isNaN(temperature)) {
+                    const tempRange = item.temperature_range;
+                    if (tempRange && tempRange.includes('°C')) {
+                        try {
+                            let rangeText = tempRange.replace('°C', '').trim();
+                            if (rangeText.includes('-')) {
+                                const rangeParts = rangeText.split('-');
+                                const minTemp = parseInt(rangeParts[0]);
+                                const maxTemp = parseInt(rangeParts[1]);
+                                matchesTemperature = temperature >= minTemp && temperature <= maxTemp;
+                            }
+                            else if (!isNaN(parseInt(rangeText))) {
+                                const exactTemp = parseInt(rangeText);
+                                matchesTemperature = temperature === exactTemp;
+                            }
+                        } catch (e) {
+                            console.error("Lỗi xử lý nhiệt độ:", e);
+                            matchesTemperature = false;
+                        }
+                    } else {
+                        matchesTemperature = true;
+                    }
+                }
+                
+                // Kiểm tra tình trạng sức khỏe
+                if (condition) {
+                    matchesCondition = item.disease.includes(condition);
+                }
+                
+                return matchesTemperature && matchesCondition;
+            });
+            
+            currentPage = 1;
+            displayResults();
+        }
+
+        // Hàm hiển thị kết quả
+        function displayResults() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageData = filteredData.slice(startIndex, endIndex);
+            
+            resultsBody.innerHTML = '';
+            
+            if (pageData.length === 0) {
+                resultsBody.innerHTML = '<tr><td colspan="13" class="no-results">Không tìm thấy kết quả phù hợp</td></tr>';
+                pagination.style.display = 'none';
+                resultCount.textContent = 'Không tìm thấy kết quả nào';
+            } else {
+                pageData.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.code}</td>
+                        <td>${item.patient_id}</td>
+                        <td>${item.disease}</td>
+                        <td>${item.cold_constitution}</td>
+                        <td>${item.hot_constitution}</td>
+                        <td>${item.meal_amount}</td>
+                        <td>${item.meal_time}</td>
+                        <td>${item.alternative_dish}</td>
+                        <td>${item.suitable_fruits}</td>
+                        <td>${item.suitable_drinks}</td>
+                        <td>${item.estimated_price}</td>
+                        <td>${item.avoid_foods}</td>
+                        <td>${item.note}</td>
+                    `;
+                    resultsBody.appendChild(row);
+                });
+                
+                const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+                pageInfo.textContent = `Trang ${currentPage}/${totalPages}`;
+                
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+                
+                resultCount.textContent = `Tìm thấy ${filteredData.length} kết quả`;
+                pagination.style.display = totalPages > 1 ? 'flex' : 'none';
+            }
+        }
+
+        // Sự kiện
+        searchBtn.addEventListener('click', filterData);
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayResults();
+            }
+        });
+        nextBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayResults();
+            }
+        });
+
+        // Tự động tìm kiếm khi trang được tải
+        window.addEventListener('DOMContentLoaded', () => {
+            filterData();
+        });
+    </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Mô phỏng Thí nghiệm Rượu Độc - Đầy đủ 2 Phần</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f2f5; text-align: center; padding: 20px; }
+        .card { background: white; max-width: 1050px; margin: 0 auto; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        /* Menu chuyển trang */
+        .tab-menu { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { padding: 10px 20px; font-size: 15px; font-weight: bold; cursor: pointer; border: none; border-radius: 5px; background: #dfe4ea; color: #2f3640; transition: 0.2s; }
+        .tab-btn.active { background: #0984e3; color: white; }
+        
+        .tab-content { display: none; text-align: left; }
+        .tab-content.active { display: block; }
+
+        .config-section { margin: 15px 0; background: #dfe4ea; padding: 15px; border-radius: 6px; display: flex; justify-content: center; gap: 15px; align-items: center; flex-wrap: wrap; }
+        .input-group { display: flex; flex-direction: column; align-items: flex-start; }
+        select, input[type="number"] { padding: 8px; font-size: 14px; width: 180px; text-align: center; }
+        button { padding: 8px 15px; font-size: 15px; background: #0984e3; color: white; border: none; border-radius: 4px; cursor: pointer; height: 38px; align-self: flex-end;}
+        button:hover { background: #74b9ff; }
+        
+        .board-container { display: flex; justify-content: center; gap: 4px; margin: 15px 0; flex-wrap: wrap; max-height: 200px; overflow-y: auto; padding: 10px; background: #fff; border: 1px solid #ddd; border-radius: 6px;}
+        .guest-box { width: 45px; height: 42px; border: 1px solid #b2bec3; background: #f8f9fa; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; border-radius: 4px; cursor: pointer; }
+        .guest-box.target { background: #ff4757; color: white; border-color: #ff4757; transform: scale(1.1); font-weight: bold; }
+        .box-num { font-weight: bold; font-size: 11px; }
+        .box-code { font-size: 9px; color: #0984e3; margin-top: 2px; }
+        .guest-box.target .box-code { color: #ffeaa7; }
+
+        .explanation-box { background: #e8f4fd; border-left: 5px solid #0984e3; padding: 12px; margin-bottom: 15px; border-radius: 6px; font-size: 13px; color: #2d3436; line-height: 1.5; }
+        
+        .mouse-schedule { margin-top: 15px; background: #f1f2f6; padding: 15px; border-radius: 6px; max-height: 320px; overflow-y: auto; }
+        .mouse-item { background: white; padding: 10px 12px; margin-bottom: 10px; border-radius: 4px; border-left: 4px solid #e17055; font-size: 13px; }
+
+        .visual-steps-container { margin-top: 15px; max-height: 350px; overflow-y: auto; }
+        .step-card { background: #f8f9fa; border: 1px solid #dfe6e9; border-left: 5px solid #0984e3; padding: 10px 12px; border-radius: 6px; margin-bottom: 10px; }
+        .step-card-title { font-weight: bold; color: #2d3436; font-size: 13px; margin-bottom: 6px; }
+        .groups-row { display: flex; gap: 5px; flex-wrap: wrap; }
+        .group-box { flex: 1; min-width: 80px; background: #fff; border: 2px dashed #b2bec3; padding: 5px; border-radius: 4px; text-align: center; font-size: 9px; }
+        .group-box.selected { border: 2px solid #00b894; background: #e6fff2; font-weight: bold; }
+        .group-box.eliminated { opacity: 0.3; background: #f1f2f6; border-style: solid; }
+        .group-tag { display: inline-block; padding: 2px 4px; border-radius: 3px; color: white; font-weight: bold; margin-bottom: 2px; font-size: 8px; background: #636e72; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Hệ thống Mô phỏng Thí nghiệm Rượu Độc</h2>
+    
+    <!-- Menu chuyển trang -->
+    <div class="tab-menu">
+        <button class="tab-btn active" onclick="switchTab(1)">Trang 1: Lập lịch uống (Khi chưa biết độc)</button>
+        <button class="tab-btn" onclick="switchTab(2)">Trang 2: Truy vết tìm khoảng (Khi đã có kết quả)</button>
+    </div>
+
+    <!-- TRANG 1: LẬP LỊCH UỐNG -->
+    <div id="tab1" class="tab-content active">
+        <div class="config-section">
+            <div class="input-group">
+                <label><strong>Tổng số chai (S):</strong></label>
+                <input type="number" id="t1_total" min="2" max="1000" value="100">
+            </div>
+            <div class="input-group">
+                <label><strong>Hệ cơ số (k):</strong></label>
+                <select id="t1_base">
+                    <option value="2">Cơ số 2 (Nhị phân)</option>
+                    <option value="3">Cơ số 3</option>
+                    <option value="4">Cơ số 4</option>
+                    <option value="5">Cơ số 5</option>
+                    <option value="8">Cơ số 8</option>
+                    <option value="10" selected>Cơ số 10</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label><strong>Hành động:</strong></label>
+                <button onclick="runTab1()">Tạo lịch uống</button>
+            </div>
+        </div>
+
+        <div class="explanation-box">
+            💡 <strong>Trang 1 - Dành cho lúc chưa biết chai nào có độc:</strong> Hệ thống tự động gán mã hệ cơ số cho từng chai và phân công lịch uống chi tiết cho từng con chuột. Bạn cứ phát rượu cho chuột uống theo đúng danh sách này!
+        </div>
+
+        <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">Mã định danh của từng chai:</div>
+        <div class="board-container" id="t1_board"></div>
+
+        <div class="mouse-schedule">
+            <div style="font-weight: bold; margin-bottom: 8px; color: #2d3436; font-size: 14px;">📋 BẢNG PHÂN CÔNG LỊCH UỐNG CHO TỪNG CON CHUỘT:</div>
+            <div id="t1_mouseContent"></div>
+        </div>
+    </div>
+
+    <!-- TRANG 2: TRUY VẾT TÌM KHOẢNG -->
+    <div id="tab2" class="tab-content">
+        <div class="config-section">
+            <div class="input-group">
+                <label><strong>Tổng số mục tiêu (S):</strong></label>
+                <input type="number" id="t2_total" min="2" max="10000" value="1000">
+            </div>
+            <div class="input-group">
+                <label><strong>Hệ cơ số (k):</strong></label>
+                <select id="t2_base">
+                    <option value="2">Cơ số 2 (Nhị phân)</option>
+                    <option value="3">Cơ số 3</option>
+                    <option value="4">Cơ số 4</option>
+                    <option value="5">Cơ số 5</option>
+                    <option value="8">Cơ số 8</option>
+                    <option value="10" selected>Cơ số 10</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label><strong>Chai mục tiêu:</strong></label>
+                <div style="display: flex; gap: 5px;">
+                    <input type="number" id="t2_target" min="1" value="789">
+                    <button onclick="runTab2()">Truy vết</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="explanation-box">
+            🔍 <strong>Trang 2 - Dành cho lúc đã có kết quả chuột chết:</strong> Mô phỏng quá trình từng bước loại trừ khoảng cách và ghép mã để chỉ ra chính xác chai chứa độc nằm ở đâu.
+        </div>
+
+        <div class="board-container" id="t2_board"></div>
+
+        <div style="font-size: 14px; font-weight: bold; color: #2ed573; margin-top: 10px; background: #1e272e; padding: 10px; border-radius: 6px;">
+            Số bước quét: <span id="t2_infoSteps" style="color:#ffa502">0</span> | Mã bản đồ: <span id="t2_infoCode" style="color:#ffa502">0</span> | 🎯 Kết quả: <span id="t2_infoResult" style="color:#ff4757">0</span>
+        </div>
+
+        <div class="visual-steps-container">
+            <div style="font-weight: bold; margin-bottom: 8px; color: #2d3436;">🗺️ Sơ đồ phân rã các lượt quét:</div>
+            <div id="t2_stepsGraphic"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchTab(tabNum) {
+        document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+            btn.classList.toggle('active', idx + 1 === tabNum);
+        });
+        document.querySelectorAll('.tab-content').forEach((content, idx) => {
+            content.classList.toggle('active', idx + 1 === tabNum);
+        });
+    }
+
+    function toBaseArray(num, b, length) {
+        let n = num - 1;
+        let res = [];
+        for (let i = 0; i < length; i++) {
+            res.unshift(n % b);
+            n = Math.floor(n / b);
+        }
+        return res;
+    }
+
+    // --- LOGIC TRANG 1 ---
+    function runTab1() {
+        let total = parseInt(document.getElementById("t1_total").value, 10);
+        let base = parseInt(document.getElementById("t1_base").value, 10);
+        if (isNaN(total) || total < 2) { alert("Tổng số phải >= 2"); return; }
+        let scans = Math.ceil(Math.log(total) / Math.log(base));
+
+        const boardEl = document.getElementById("t1_board");
+        boardEl.innerHTML = "";
+        let limit = Math.min(total, 300);
+
+        for (let i = 1; i <= limit; i++) {
+            let digits = toBaseArray(i, base, scans);
+            let div = document.createElement("div");
+            div.className = "guest-box";
+            div.innerHTML = `<span class="box-num">${i}</span><span class="box-code">${digits.join("")}</span>`;
+            boardEl.appendChild(div);
+        }
+        if (total > 300) {
+            let note = document.createElement("div");
+            note.style.cssText = "width:100%; font-size:11px; color:#666; text-align:center; padding:5px;";
+            note.innerText = "(Hiển thị 300 chai đầu tiên, áp dụng cho toàn bộ " + total + " chai)";
+            boardEl.appendChild(note);
+        }
+
+        let container = document.getElementById("t1_mouseContent");
+        let html = "";
+        for (let s = 0; s < scans; s++) {
+            html += `<div class="mouse-item">🐭 <strong>Chuột số ${s + 1} (Phụ trách chữ số thứ ${s + 1}):</strong><br>`;
+            let groupDetails = [];
+            for (let val = 0; val < base; val++) {
+                let bottles = [];
+                for (let i = 1; i <= total; i++) {
+                    let digits = toBaseArray(i, base, scans);
+                    if (digits[s] === val) bottles.push(i);
+                }
+                groupDetails.push(`&nbsp;&nbsp;&nbsp;&nbsp;• Nếu ở vị trí này mang số <strong>${val}</strong>: Uống các chai [${bottles.join(", ")}]`);
+            }
+            html += groupDetails.join("<br>") + `</div>`;
+        }
+        container.innerHTML = html;
+    }
+
+    // --- LOGIC TRANG 2 ---
+    function runTab2() {
+        let total = parseInt(document.getElementById("t2_total").value, 10);
+        let base = parseInt(document.getElementById("t2_base").value, 10);
+        let target = parseInt(document.getElementById("t2_target").value, 10);
+        if (isNaN(total) || total < 2) { alert("Tổng số phải >= 2"); return; }
+        if (isNaN(target) || target < 1 || target > total) { alert("Mục tiêu không hợp lệ"); return; }
+
+        let scans = Math.ceil(Math.log(total) / Math.log(base));
+        let digits = toBaseArray(target, base, scans);
+
+        const boardEl = document.getElementById("t2_board");
+        boardEl.innerHTML = "";
+        let limit = Math.min(total, 300);
+
+        for (let i = 1; i <= limit; i++) {
+            let div = document.createElement("div");
+            div.className = "guest-box " + (i === target ? "target" : "");
+            div.innerText = i;
+            boardEl.appendChild(div);
+        }
+        if (total > 300) {
+            let note = document.createElement("div");
+            note.style.cssText = "width:100%; font-size:11px; color:#666; text-align:center; padding:5px;";
+            note.innerText = "(Hiển thị tối ưu 300 chai trên giao diện)";
+            boardEl.appendChild(note);
+        }
+
+        document.getElementById("t2_infoSteps").innerText = scans + " bước";
+        document.getElementById("t2_infoCode").innerText = digits.join("") + " (Cơ số " + base + ")";
+        document.getElementById("t2_infoResult").innerText = "Chai số " + target;
+
+        let container = document.getElementById("t2_stepsGraphic");
+        let html = "";
+        let currentMin = 1, currentMax = total;
+
+        digits.forEach((chosenGroup, index) => {
+            let rangeSize = (currentMax - currentMin + 1);
+            let partSize = rangeSize / base;
+            let groupHtml = "";
+            let currentStart = currentMin;
+            let nextMin = 1, nextMax = 1;
+
+            for (let g = 0; g < base; g++) {
+                let gStart = currentStart;
+                let gEnd = (g === base - 1) ? currentMax : (currentStart + partSize - 1);
+                let isSelected = (g === chosenGroup);
+
+                groupHtml += `
+                    <div class="group-box ${isSelected ? 'selected' : 'eliminated'}">
+                        <div class="group-tag">Nhóm ${g}</div>
+                        <div>${Math.round(gStart)} - ${Math.round(gEnd)}</div>
+                        ${isSelected ? '✅ <b>Trúng</b>' : '❌'}
+                    </div>
+                `;
+                if (isSelected) {
+                    nextMin = Math.round(gStart);
+                    nextMax = Math.round(gEnd);
+                }
+                currentStart = gEnd + 1;
+            }
+
+            html += `
+                <div class="step-card">
+                    <div class="step-card-title">Lượt quét số ${index + 1}: Chia khoảng [${Math.round(currentMin)} - ${Math.round(currentMax)}] thành ${base} phần (Thuộc Nhóm ${chosenGroup})</div>
+                    <div class="groups-row">${groupHtml}</div>
+                </div>
+            `;
+            currentMin = nextMin;
+            currentMax = nextMax;
+        });
+        container.innerHTML = html;
+    }
+
+    runTab1();
+    runTab2();
+</script>
+
+</body>
+</html>

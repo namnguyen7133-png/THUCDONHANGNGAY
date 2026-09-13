@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Xem Tuổi Nghề Nghiệp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .input-section {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: white;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #6a11cb;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            width: 100%;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
+        }
+        
+        .result-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            display: none;
+        }
+        
+        .result-title {
+            color: #6a11cb;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        
+        .result-career {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2575fc;
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #f0f5ff;
+            border-radius: 8px;
+        }
+        
+        .result-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+            text-align: justify;
+        }
+        
+        .career-list {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .career-list h2 {
+            color: #6a11cb;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        
+        .career-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .career-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #6a11cb;
+        }
+        
+        .career-name {
+            font-weight: 700;
+            color: #2575fc;
+            margin-bottom: 5px;
+        }
+        
+        .career-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .note {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #fff8e1;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            font-size: 0.9rem;
+            color: #856404;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #777;
+            font-size: 0.9rem;
+            padding: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .career-items {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Game Xem Tuổi Nghề Nghiệp</h1>
+            <p class="subtitle">Tra cứu nghề nghiệp phù hợp dựa trên thiên can và tháng sinh âm lịch</p>
+        </header>
+        
+        <div class="content">
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="thienCan">Thiên can năm sinh</label>
+                    <select id="thienCan">
+                        <option value="">-- Chọn thiên can --</option>
+                        <option value="GIAP">GIÁP</option>
+                        <option value="AT">ẤT</option>
+                        <option value="BINH">BÍNH</option>
+                        <option value="DINH">ĐINH</option>
+                        <option value="MAU">MẬU</option>
+                        <option value="KY">KỶ</option>
+                        <option value="CANH">CANH</option>
+                        <option value="TAN">TÂN</option>
+                        <option value="NHAM">NHÂM</option>
+                        <option value="QUY">QUÝ</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="thangSinh">Tháng sinh âm lịch</label>
+                    <select id="thangSinh">
+                        <option value="">-- Chọn tháng --</option>
+                        <option value="1">Tháng 1</option>
+                        <option value="2">Tháng 2</option>
+                        <option value="3">Tháng 3</option>
+                        <option value="4">Tháng 4</option>
+                        <option value="5">Tháng 5</option>
+                        <option value="6">Tháng 6</option>
+                        <option value="7">Tháng 7</option>
+                        <option value="8">Tháng 8</option>
+                        <option value="9">Tháng 9</option>
+                        <option value="10">Tháng 10</option>
+                        <option value="11">Tháng 11</option>
+                        <option value="12">Tháng 12</option>
+                    </select>
+                </div>
+                
+                <button id="traCuuBtn">Tra Cứu Nghề Nghiệp</button>
+            </div>
+            
+            <div class="result-section" id="resultSection">
+                <h2 class="result-title">Nghề nghiệp phù hợp với bạn:</h2>
+                <div class="result-career" id="resultCareer"></div>
+                <div class="result-description" id="resultDescription"></div>
+            </div>
+            
+            <div class="career-list">
+                <h2>Ý Nghĩa Các Nghề Nghiệp</h2>
+                <div class="career-items">
+                    <div class="career-item">
+                        <div class="career-name">QUAN NHÂN</div>
+                        <div class="career-desc">Số mạnh về kinh doanh, ăn làm ăn khắp bốn phương. Thích hợp với công việc kinh doanh hoặc văn chương.</div>
+                    </div>
+                    <div class="career-item">
+                        <div class="career-name">TRUNG TẾ</div>
+                        <div class="career-desc">Thích hợp với nghề kỹ nghệ (kỹ sư cơ khí, sửa chữa) hoặc các nghề kỹ thuật như làm mộc, làm đồ kỹ thuật.</div>
+                    </div>
+                    <div class="career-item">
+                        <div class="career-name">TÚ TÀI</div>
+                        <div class="career-desc">Có số người văn chương, được nhờ cậy. Rất thịnh vượng với các công việc công chức liên quan đến pháp luật.</div>
+                    </div>
+                    <div class="career-item">
+                        <div class="career-name">ĐA THẬT</div>
+                        <div class="career-desc">Thích hợp làm các nghề liên quan đến kim loại, cơ khí, đúc khuôn, sản xuất.</div>
+                    </div>
+                    <div class="career-item">
+                        <div class="career-name">SƯ THUẬT</div>
+                        <div class="career-desc">Số có phước, có tài. Có thể làm thầy (thầy bói, thầy phong thủy) hoặc làm quan trong triều đình.</div>
+                    </div>
+                    <div class="career-item">
+                        <div class="career-name">SỨ QUÂN</div>
+                        <div class="career-desc">Khéo tay, có nhiều mưu kế. Thích hợp buôn bán đồ gỗ, đồ mộc, quần áo, hoặc các sản phẩm thuộc da.</div>
+                    </div>
+                    <div class="career-item">
+                        <div class="career-name">ÂM NHẠC</div>
+                        <div class="career-desc">Số có năng khiếu đàn hát. Thích hợp với các nghề liên quan đến nghệ thuật, MC, ca nhạc.</div>
+                    </div>
+                    <div class="career-item">
+                        <div class="career-name">TIỆM DƯỢC</div>
+                        <div class="career-desc">Số nên làm thầy thuốc, tiệm thuốc hoặc làm thầy bói.</div>
+                    </div>
+                    <div class="career-item">
+                        <div class="career-name">TẶNG ĐAO</div>
+                        <div class="career-desc">Số có thiên hướng tu hành (tại gia hoặc đi tu). Khó giàu, nhưng nếu tu đắc đạo sẽ nổi danh.</div>
+                    </div>
+                    <div class="career-item">
+                        <div class="career-name">TÀI PHUNG</div>
+                        <div class="career-desc">Thích hợp làm thợ may, công nhân may, hoặc các nghề liên quan đến kim chỉ, tay kéo.</div>
+                    </div>
+                    <div class="career-item">
+                        <div class="career-name">HOÀNG QUÝ</div>
+                        <div class="career-desc">Làm ăn sinh sống cùng hàng xóm, nên theo công môn hoặc làm nhà văn chương gần quê nhà.</div>
+                    </div>
+                    <div class="career-item">
+                        <div class="career-name">THỦ TẮC</div>
+                        <div class="career-desc">Thích hợp với nghề nha khoa (trồng răng, nhổ răng) hoặc bác sĩ đa khoa.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="note">
+                <strong>Lưu ý:</strong> Đây là kiến thức trích dẫn từ sách cổ, chỉ mang tính chất tham khảo tương đối (đúng khoảng 70-80%). Để luận đoán chính xác cần phải dựa vào lá số tử vi đầy đủ (gồm ngày, giờ, tháng, năm sinh).
+            </div>
+        </div>
+        
+        <footer>
+            <p>Game Xem Tuổi Nghề Nghiệp - Tham khảo từ kênh Tiến Thịnh Tử Vi</p>
+        </footer>
+    </div>
+
+    <script>
+        // Dữ liệu tra cứu nghề nghiệp
+        const careerData = [
+            { career: "QUAN NHÂN", can: "GIAP", month: 1 },
+            { career: "TRUNG TẾ", can: "GIAP", month: 2 },
+            { career: "TÚ TÀI", can: "GIAP", month: 3 },
+            { career: "ĐA THẬT", can: "GIAP", month: 4 },
+            { career: "SƯ THUẬT", can: "GIAP", month: 5 },
+            { career: "SỨ QUÂN", can: "GIAP", month: 6 },
+            { career: "ÂM NHẠC", can: "GIAP", month: 7 },
+            { career: "TIỆM DƯỢC", can: "GIAP", month: 8 },
+            { career: "TẶNG ĐAO", can: "GIAP", month: 9 },
+            { career: "TÀI PHUNG", can: "GIAP", month: 10 },
+            { career: "HOÀNG QUÝ", can: "GIAP", month: 11 },
+            { career: "THỦ TẮC", can: "GIAP", month: 12 },
+            { career: "QUAN NHÂN", can: "AT", month: 2 },
+            { career: "TRUNG TẾ", can: "AT", month: 3 },
+            { career: "TÚ TÀI", can: "AT", month: 4 },
+            { career: "ĐA THẬT", can: "AT", month: 5 },
+            { career: "SƯ THUẬT", can: "AT", month: 6 },
+            { career: "SỨ QUÂN", can: "AT", month: 7 },
+            { career: "ÂM NHẠC", can: "AT", month: 8 },
+            { career: "TIỆM DƯỢC", can: "AT", month: 9 },
+            { career: "TẶNG ĐAO", can: "AT", month: 10 },
+            { career: "TÀI PHUNG", can: "AT", month: 11 },
+            { career: "HOÀNG QUÝ", can: "AT", month: 12 },
+            { career: "THỦ TẮC", can: "AT", month: 1 },
+            { career: "QUAN NHÂN", can: "BINH", month: 3 },
+            { career: "TRUNG TẾ", can: "BINH", month: 4 },
+            { career: "TÚ TÀI", can: "BINH", month: 5 },
+            { career: "ĐA THẬT", can: "BINH", month: 6 },
+            { career: "SƯ THUẬT", can: "BINH", month: 7 },
+            { career: "SỨ QUÂN", can: "BINH", month: 8 },
+            { career: "ÂM NHẠC", can: "BINH", month: 9 },
+            { career: "TIỆM DƯỢC", can: "BINH", month: 10 },
+            { career: "TẶNG ĐAO", can: "BINH", month: 11 },
+            { career: "TÀI PHUNG", can: "BINH", month: 12 },
+            { career: "HOÀNG QUÝ", can: "BINH", month: 1 },
+            { career: "THỦ TẮC", can: "BINH", month: 2 },
+            { career: "QUAN NHÂN", can: "DINH", month: 4 },
+            { career: "TRUNG TẾ", can: "DINH", month: 5 },
+            { career: "TÚ TÀI", can: "DINH", month: 6 },
+            { career: "ĐA THẬT", can: "DINH", month: 7 },
+            { career: "SƯ THUẬT", can: "DINH", month: 8 },
+            { career: "SỨ QUÂN", can: "DINH", month: 9 },
+            { career: "ÂM NHẠC", can: "DINH", month: 10 },
+            { career: "TIỆM DƯỢC", can: "DINH", month: 11 },
+            { career: "TẶNG ĐAO", can: "DINH", month: 12 },
+            { career: "TÀI PHUNG", can: "DINH", month: 1 },
+            { career: "HOÀNG QUÝ", can: "DINH", month: 2 },
+            { career: "THỦ TẮC", can: "DINH", month: 3 },
+            { career: "QUAN NHÂN", can: "MAU", month: 5 },
+            { career: "TRUNG TẾ", can: "MAU", month: 6 },
+            { career: "TÚ TÀI", can: "MAU", month: 7 },
+            { career: "ĐA THẬT", can: "MAU", month: 8 },
+            { career: "SƯ THUẬT", can: "MAU", month: 9 },
+            { career: "SỨ QUÂN", can: "MAU", month: 10 },
+            { career: "ÂM NHẠC", can: "MAU", month: 11 },
+            { career: "TIỆM DƯỢC", can: "MAU", month: 12 },
+            { career: "TẶNG ĐAO", can: "MAU", month: 1 },
+            { career: "TÀI PHUNG", can: "MAU", month: 2 },
+            { career: "HOÀNG QUÝ", can: "MAU", month: 3 },
+            { career: "THỦ TẮC", can: "MAU", month: 4 },
+            { career: "QUAN NHÂN", can: "KY", month: 6 },
+            { career: "TRUNG TẾ", can: "KY", month: 7 },
+            { career: "TÚ TÀI", can: "KY", month: 8 },
+            { career: "ĐA THẬT", can: "KY", month: 9 },
+            { career: "SƯ THUẬT", can: "KY", month: 10 },
+            { career: "SỨ QUÂN", can: "KY", month: 11 },
+            { career: "ÂM NHẠC", can: "KY", month: 12 },
+            { career: "TIỆM DƯỢC", can: "KY", month: 1 },
+            { career: "TẶNG ĐAO", can: "KY", month: 2 },
+            { career: "TÀI PHUNG", can: "KY", month: 3 },
+            { career: "HOÀNG QUÝ", can: "KY", month: 4 },
+            { career: "THỦ TẮC", can: "KY", month: 5 },
+            { career: "QUAN NHÂN", can: "CANH", month: 7 },
+            { career: "TRUNG TẾ", can: "CANH", month: 8 },
+            { career: "TÚ TÀI", can: "CANH", month: 9 },
+            { career: "ĐA THẬT", can: "CANH", month: 10 },
+            { career: "SƯ THUẬT", can: "CANH", month: 11 },
+            { career: "SỨ QUÂN", can: "CANH", month: 12 },
+            { career: "ÂM NHẠC", can: "CANH", month: 1 },
+            { career: "TIỆM DƯỢC", can: "CANH", month: 2 },
+            { career: "TẶNG ĐAO", can: "CANH", month: 3 },
+            { career: "TÀI PHUNG", can: "CANH", month: 4 },
+            { career: "HOÀNG QUÝ", can: "CANH", month: 5 },
+            { career: "THỦ TẮC", can: "CANH", month: 6 },
+            { career: "QUAN NHÂN", can: "TAN", month: 8 },
+            { career: "TRUNG TẾ", can: "TAN", month: 9 },
+            { career: "TÚ TÀI", can: "TAN", month: 10 },
+            { career: "ĐA THẬT", can: "TAN", month: 11 },
+            { career: "SƯ THUẬT", can: "TAN", month: 12 },
+            { career: "SỨ QUÂN", can: "TAN", month: 1 },
+            { career: "ÂM NHẠC", can: "TAN", month: 2 },
+            { career: "TIỆM DƯỢC", can: "TAN", month: 3 },
+            { career: "TẶNG ĐAO", can: "TAN", month: 4 },
+            { career: "TÀI PHUNG", can: "TAN", month: 5 },
+            { career: "HOÀNG QUÝ", can: "TAN", month: 6 },
+            { career: "THỦ TẮC", can: "TAN", month: 7 },
+            { career: "QUAN NHÂN", can: "NHAM", month: 9 },
+            { career: "TRUNG TẾ", can: "NHAM", month: 10 },
+            { career: "TÚ TÀI", can: "NHAM", month: 11 },
+            { career: "ĐA THẬT", can: "NHAM", month: 12 },
+            { career: "SƯ THUẬT", can: "NHAM", month: 1 },
+            { career: "SỨ QUÂN", can: "NHAM", month: 2 },
+            { career: "ÂM NHẠC", can: "NHAM", month: 3 },
+            { career: "TIỆM DƯỢC", can: "NHAM", month: 4 },
+            { career: "TẶNG ĐAO", can: "NHAM", month: 5 },
+            { career: "TÀI PHUNG", can: "NHAM", month: 6 },
+            { career: "HOÀNG QUÝ", can: "NHAM", month: 7 },
+            { career: "THỦ TẮC", can: "NHAM", month: 8 },
+            { career: "QUAN NHÂN", can: "QUY", month: 10 },
+            { career: "TRUNG TẾ", can: "QUY", month: 11 },
+            { career: "TÚ TÀI", can: "QUY", month: 12 },
+            { career: "ĐA THẬT", can: "QUY", month: 1 },
+            { career: "SƯ THUẬT", can: "QUY", month: 2 },
+            { career: "SỨ QUÂN", can: "QUY", month: 3 },
+            { career: "ÂM NHẠC", can: "QUY", month: 4 },
+            { career: "TIỆM DƯỢC", can: "QUY", month: 5 },
+            { career: "TẶNG ĐAO", can: "QUY", month: 6 },
+            { career: "TÀI PHUNG", can: "QUY", month: 7 },
+            { career: "HOÀNG QUÝ", can: "QUY", month: 8 },
+            { career: "THỦ TẮC", can: "QUY", month: 9 }
+        ];
+
+        // Mô tả nghề nghiệp
+        const careerDescriptions = {
+            "QUAN NHÂN": "Số mạnh về kinh doanh, ăn làm ăn khắp bốn phương. Thích hợp với công việc kinh doanh hoặc văn chương (công chức nhà nước, văn phòng).",
+            "TRUNG TẾ": "Thích hợp với nghề kỹ nghệ (kỹ sư cơ khí, sửa chữa ô tô, nhôm kính, điều hòa) hoặc các nghề kỹ thuật như làm mộc, làm đồ kỹ thuật.",
+            "TÚ TÀI": "Có số người văn chương, được nhờ cậy. Rất thịnh vượng với các công việc công chức liên quan đến pháp luật (công an, tòa án).",
+            "ĐA THẬT": "Thích hợp làm các nghề liên quan đến kim loại, cơ khí, đúc khuôn, sản xuất.",
+            "SƯ THUẬT": "Số có phước, có tài. Có thể làm thầy (thầy bói, thầy phong thủy) hoặc làm quan trong triều đình, giữ vị trí chủ tịch tỉnh/huyện, tiếp xúc với người sang trọng.",
+            "SỨ QUÂN": "Khéo tay, có nhiều mưu kế. Thích hợp buôn bán đồ gỗ, đồ mộc, quần áo, hoặc các vật liệu, sản phẩm thuộc da.",
+            "ÂM NHẠC": "Số có năng khiếu đàn hát. Thích hợp với các nghề liên quan đến nghệ thuật, MC, ca nhạc, dễ nổi tiếng.",
+            "TIỆM DƯỢC": "Số nên làm thầy thuốc, tiệm thuốc hoặc làm thầy bói.",
+            "TẶNG ĐAO": "Số có thiên hướng tu hành (tại gia hoặc đi tu). Khó giàu, nhưng nếu tu đắc đạo sẽ nổi danh.",
+            "TÀI PHUNG": "Thích hợp làm thợ may, công nhân may, hoặc các nghề liên quan đến kim chỉ, tay kéo.",
+            "HOÀNG QUÝ": "Làm ăn sinh sống cùng hàng xóm, nên theo công môn (chủ tịch xã, văn thư trong xã) hoặc làm nhà văn chương gần quê nhà.",
+            "THỦ TẮC": "Thích hợp với nghề nha khoa (trồng răng, nhổ răng) hoặc bác sĩ đa khoa."
+        };
+
+        // Hàm tra cứu nghề nghiệp
+        function lookupCareer(can, month) {
+            const result = careerData.find(item => item.can === can && item.month == month);
+            return result ? result.career : null;
+        }
+
+        // Xử lý sự kiện khi nhấn nút tra cứu
+        document.getElementById('traCuuBtn').addEventListener('click', function() {
+            const can = document.getElementById('thienCan').value;
+            const month = document.getElementById('thangSinh').value;
+            
+            if (!can || !month) {
+                alert('Vui lòng chọn đầy đủ thiên can và tháng sinh!');
+                return;
+            }
+            
+            const career = lookupCareer(can, month);
+            
+            if (career) {
+                document.getElementById('resultCareer').textContent = career;
+                document.getElementById('resultDescription').textContent = careerDescriptions[career];
+                document.getElementById('resultSection').style.display = 'block';
+            } else {
+                alert('Không tìm thấy kết quả phù hợp. Vui lòng kiểm tra lại thông tin!');
+            }
+        });
+    </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

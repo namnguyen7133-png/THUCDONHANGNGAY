@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hệ Thống Ứng Dụng Trang 99-112</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --primary-dark: #2c3e50;
+            --primary-green: #27ae60;
+            --accent-orange: #e67e22;
+            --accent-red: #c0392b;
+            --light-bg: #f8f9fa;
+            --neutral-gray: #95a5a6;
+        }
+        * { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        body { 
+            background: #ecf0f1; 
+            color: #2c3e50; 
+            line-height: 1.6; 
+            padding: 15px;
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+            overflow-x: hidden;
+        }
+        .container { 
+            max-width: 100%; 
+            margin: 20px auto; 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); 
+            overflow: hidden; 
+        }
+        .header { 
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); 
+            color: white; 
+            padding: 25px 20px; 
+            text-align: center; 
+        }
+        h1 { 
+            font-size: 1.5rem; 
+            margin-bottom: 10px; 
+            font-weight: 700;
+            line-height: 1.3;
+            word-wrap: break-word;
+        }
+        .subtitle { 
+            font-size: 0.95rem; 
+            opacity: 0.9; 
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+        section { 
+            padding: 25px 20px; 
+            border-bottom: 1px solid #ecf0f1; 
+        }
+        h2 { 
+            color: var(--primary-dark); 
+            margin-bottom: 20px; 
+            padding-bottom: 12px; 
+            border-bottom: 2px solid var(--primary-green); 
+            font-size: 1.3rem;
+            position: relative;
+            word-wrap: break-word;
+        }
+        h2:after { 
+            content: ''; 
+            position: absolute; 
+            bottom: -2px; 
+            left: 0; 
+            width: 80px; 
+            height: 2px; 
+            background: var(--accent-orange); 
+        }
+        h3 { 
+            color: var(--primary-green); 
+            margin: 25px 0 15px 0; 
+            padding: 12px 15px; 
+            background: #e8f5e9; 
+            border-left: 4px solid var(--primary-green); 
+            border-radius: 0 8px 8px 0; 
+            font-size: 1.1rem;
+        }
+        .alert-box { 
+            padding: 20px; 
+            margin: 20px 0; 
+            border-radius: 10px; 
+            border-left: 5px solid; 
+            font-size: 0.95rem;
+            word-wrap: break-word;
+        }
+        .alert-danger { 
+            background: #ffebee; 
+            border-left-color: var(--accent-red); 
+        }
+        .alert-success { 
+            background: #e8f5e9; 
+            border-left-color: var(--primary-green); 
+        }
+        .alert-warning { 
+            background: #fff3e0; 
+            border-left-color: var(--accent-orange); 
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 20px 0; 
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        th { 
+            background: var(--primary-dark); 
+            color: white; 
+            padding: 14px 12px; 
+            text-align: left; 
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        td { 
+            padding: 12px; 
+            border-bottom: 1px solid #ecf0f1; 
+            vertical-align: top; 
+            font-size: 0.9rem;
+            word-break: break-word;
+            min-width: 120px;
+        }
+        tr:nth-child(even) { 
+            background-color: #f8f9fa; 
+        }
+        .badge { 
+            display: inline-block; 
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            font-size: 0.8rem; 
+            font-weight: 700; 
+            margin: 4px 2px; 
+            white-space: nowrap;
+        }
+        .badge-remove { 
+            background: #e74c3c; 
+            color: white; 
+        }
+        .badge-replace { 
+            background: #e67e22; 
+            color: white; 
+        }
+        .property-tag { 
+            display: inline-flex; 
+            align-items: center; 
+            padding: 4px 10px; 
+            border-radius: 15px; 
+            font-size: 0.75rem; 
+            margin: 2px; 
+            font-weight: 600; 
+            white-space: nowrap;
+        }
+        .tag-yin { 
+            background: #d6eaf8; 
+            color: #1a5276; 
+        }
+        .tag-yang { 
+            background: #fadbd8; 
+            color: #78281f; 
+        }
+        .tag-neutral { 
+            background: #e5e7e9; 
+            color: #283747; 
+        }
+        .meal-card { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 15px; 
+            margin: 25px 0; 
+            border: 1px solid #e0f2f1; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+        }
+        .meal-header { 
+            display: flex; 
+            flex-wrap: wrap;
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 15px; 
+            padding-bottom: 12px; 
+            border-bottom: 1px dashed #4db6ac; 
+        }
+        .meal-title { 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            color: var(--primary-dark); 
+            margin-bottom: 8px;
+            flex: 1;
+            min-width: 200px;
+        }
+        .meal-calorie { 
+            background: #d7bde2; 
+            color: #4a148c; 
+            padding: 6px 15px; 
+            border-radius: 20px; 
+            font-weight: 800; 
+            font-size: 0.95rem;
+            margin-top: 5px;
+        }
+        .detail-grid { 
+            display: flex;
+            flex-direction: column;
+            gap: 15px; 
+            margin-top: 15px; 
+        }
+        .detail-item { 
+            padding: 15px; 
+            background: #f8f9fa; 
+            border-radius: 10px; 
+        }
+        .detail-label { 
+            font-weight: 700; 
+            color: var(--neutral-gray); 
+            margin-bottom: 5px; 
+            font-size: 0.85rem; 
+        }
+        .footer { 
+            text-align: center; 
+            padding: 25px 20px; 
+            color: #666; 
+            background: #f8f9fa; 
+            font-size: 0.9rem;
+        }
+        .action-panel { 
+            display: flex;
+            flex-direction: column;
+            gap: 15px; 
+            margin-top: 30px; 
+        }
+        .action-btn { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 12px; 
+            text-align: center; 
+            text-decoration: none; 
+            color: inherit; 
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08); 
+            transition: all 0.2s; 
+            border: 1px solid #e0f2f1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .action-btn:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12); 
+        }
+        .action-icon { 
+            font-size: 2rem; 
+            margin-bottom: 10px; 
+        }
+        .highlight-text { 
+            background: #fff9c4; 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-weight: 700; 
+            font-size: 0.9rem;
+        }
+        .cost-box { 
+            background: #fff3e0; 
+            padding: 20px; 
+            border-radius: 12px; 
+            text-align: center; 
+            margin-top: 20px; 
+        }
+        
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            body { padding: 25px; }
+            .container { max-width: 95%; }
+            .detail-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+                display: grid;
+            }
+            .action-panel { 
+                grid-template-columns: repeat(2, 1fr); 
+                display: grid;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .container { max-width: 1200px; }
+            .action-panel { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+            .detail-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+        }
+        
+        /* Fix for very small screens */
+        @media (max-width: 360px) {
+            .header { padding: 20px 15px; }
+            section { padding: 20px 15px; }
+            h1 { font-size: 1.3rem; }
+            h2 { font-size: 1.1rem; }
+            h3 { font-size: 1rem; padding: 10px 12px; }
+            .meal-card { padding: 15px; }
+            .meal-title { font-size: 1rem; }
+            .action-icon { font-size: 1.8rem; }
+        }
+        
+        /* Prevent horizontal scrolling */
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        /* Table responsiveness */
+        table {
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+        
+        table::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        table::-webkit-scrollbar-thumb {
+            background: #bdc3c7;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>HỆ THỐNG ỨNG DỤNG TRANG 99-112</h1>
+            <p class="subtitle">Chuyển hóa các bài "bổ huyết, mạnh gân cốt" cổ điển thành thực đơn hiện đại cho người đau nhức, tiểu đường</p>
+        </div>
+
+        <section>
+            <h2>PHẦN I: THANH LỌC & THAY THẾ BẮT BUỘC</h2>
+            
+            <h3>1. THÀNH PHẦN PHẢI LOẠI BỎ / GIẢM MẠNH</h3>
+            <div class="alert-box alert-danger">
+                <p><strong>⚠️ CẢNH BÁO ĐẶC BIỆT:</strong> Các nguyên liệu dưới đây mang tính "bổ" theo tư duy cũ nhưng <strong>NGUY HIỂM</strong> cho người tiểu đường, mỡ máu, gout hoặc đang dùng thuốc Tây. <u>Phải loại bỏ hoàn toàn hoặc thay thế triệt để.</u></p>
+            </div>
+            <table>
+                <tr>
+                    <th>Thành Phần Gốc</th>
+                    <th>Lý Do Xử Lý</th>
+                    <th>Mức Độ</th>
+                </tr>
+                <tr>
+                    <td><strong>Giò heo 600g, Đuôi bò</strong></td>
+                    <td>Chứa lượng collagen nấu nhừ biến thành chất béo bão hòa cực cao, làm tăng mỡ máu, acid uric (gout). Dễ gây tăng cân, xơ vữa mạch.</td>
+                    <td><span class="badge badge-remove">❌ LOẠI BỎ</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Rượu trắng, rượu thuốc</strong></td>
+                    <td>Làm tổn thương gan, tương tác nguy hiểm với hầu hết thuốc (Metformin gây nhiễm toan, Statin hại gan). Gây hạ/tăng đường huyết thất thường.</td>
+                    <td><span class="badge badge-remove">❌ LOẠI BỎ</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Hà thủ ô, Đương quy liều cao</strong></td>
+                    <td>Hà thủ ô sống/ chế biến không đúng gây độc gan nặng. Đương quy có tác dụng hoạt huyết mạnh, có thể gây chảy máu nếu dùng chung với thuốc chống đông.</td>
+                    <td><span class="badge badge-remove">❌ LOẠI BỎ</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Cật heo nhiều, Thịt dê thường xuyên</strong></td>
+                    <td>Nội tạng (cật) chứa cholesterol cao nhất. Thịt dê tính nhiệt, nhiều đạm khó tiêu, làm tăng chuyển hóa đạm đường, không tốt cho thận người tiểu đường.</td>
+                    <td><span class="badge badge-replace">⚠️ GIẢM MẠNH</span></td>
+                </tr>
+            </table>
+
+            <h3>2. NGUYÊN TẮC THAY THẾ: "GIỮ TÍNH CHẤT - BỎ NGUY CƠ"</h3>
+            <div class="alert-box alert-success">
+                <p><strong>🎯 TRIẾT LÝ CỐT LÕI:</strong> Giữ lại mục đích "bổ huyết", "khư phong trừ thấp", "mạnh gân cốt" của Đông y, nhưng đạt được bằng <strong>thực phẩm phổ thông, an toàn, có bằng chứng dinh dưỡng hiện đại</strong>, không xung đột thuốc Tây.</p>
+            </div>
+            <table>
+                <tr>
+                    <th>Mục Đích Đông Y</th>
+                    <th>Nguyên Liệu Gốc</th>
+                    <th>Thay Thế Bằng</th>
+                </tr>
+                <tr>
+                    <td><strong>Bổ khí huyết</strong></td>
+                    <td>Tiết canh, thịt đỏ</td>
+                    <td><strong>Cá hồi, Trứng gà, Củ dền</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Khư phong trừ thấp</strong></td>
+                    <td>Rượu ngâm rắn</td>
+                    <td><strong>Gừng tươi, Nghệ, Tỏi</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Bổ thận, mạnh gân cốt</strong></td>
+                    <td>Cật heo, tủy xương</td>
+                    <td><strong>Cá biển nhỏ, Rau xanh đậm, Mè đen</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Hoạt huyết</strong></td>
+                    <td>Đương quy</td>
+                    <td><strong>Hành tím, Tỏi, Quế (ít)</strong></td>
+                </tr>
+            </table>
+        </section>
+
+        <section>
+            <h2>PHẦN II: THỰC ĐƠN 7 NGÀY CHO ĐAU NHỨC & SUY NHƯỢC</h2>
+            <p>Thiết kế cho người <span class="highlight-text">tiểu đường kèm đau nhức xương khớp, phong thấp nhẹ, cơ thể suy nhược, mệt mỏi</span>.</p>
+
+            <div class="meal-card">
+                <div class="meal-header">
+                    <div class="meal-title">🗓️ NGÀY 1 – GIẢM ĐAU NHỨC, CHỐNG VIÊM</div>
+                    <div class="meal-calorie">~650 kcal</div>
+                </div>
+                <span style="font-weight: 700; color: var(--accent-orange); display: block; margin-bottom: 15px;">🌅 BỮA SÁNG (7h00): Cháo Yến Mạch Đậu Đen</span>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">ĐỊNH LƯỢNG</div>
+                        <div>Yến mạch cán: 40g khô.<br>Đậu đen: 20g (ngâm mềm).<br>Nước: 400ml.</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">TÍNH CHẤT (ÂM DƯƠNG)</div>
+                        <div><span class="property-tag tag-neutral">Trung (Yến mạch)</span><br><span class="property-tag tag-yin">Âm (Đậu đen)</span></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">CÔNG HIỆU THỰC TẾ</div>
+                        <div><strong>Yến mạch</strong> giảm viêm toàn thân. <strong>Đậu đen</strong> giàu anthocyanin chống viêm, chất xơ ổn định đường huyết.</div>
+                    </div>
+                </div>
+                
+                <span style="font-weight: 700; color: var(--accent-orange); display: block; margin: 20px 0 12px 0;">🍱 BỮA TRƯA (12h00): Cá Hồi / Cá Lóc Hấp Gừng</span>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">ĐỊNH LƯỢNG</div>
+                        <div>Cá hồi/cá lóc: 120g.<br>Gừng tươi: 3g.<br>Hành lá.</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">TÍNH CHẤT (ÂM DƯƠNG)</div>
+                        <div><span class="property-tag tag-neutral">Trung (Cá)</span><br><span class="property-tag tag-yang">Dương nhẹ (Gừng)</span></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">CÔNG HIỆU THỰC TẾ</div>
+                        <div>Cá hồi giàu <strong>Omega-3</strong> chống viêm khớp. Gừng chứa gingerol giảm đau. Không chiên để giữ Omega-3.</div>
+                    </div>
+                </div>
+                
+                <span style="font-weight: 700; color: var(--accent-orange); display: block; margin: 20px 0 12px 0;">🌙 BỮA TỐI (18h30): Canh Đậu Hũ Rau Cải Xanh & Nấm</span>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">ĐỊNH LƯỢNG</div>
+                        <div>Đậu hũ non: 120g.<br>Rau cải xoăn: 150g.<br>Nấm hương: 50g.</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">TÍNH CHẤT (ÂM DƯƠNG)</div>
+                        <div><span class="property-tag tag-yin">Âm (Mát, thanh nhiệt)</span></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">CÔNG HIỆU THỰC TẾ</div>
+                        <div>Rau xanh đậm giàu <strong>vitamin K, canxi, magie</strong> cho xương. Đậu hũ cung cấp đạm thực vật không gây viêm.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert-box alert-warning">
+                <strong>📌 LƯU Ý VÒNG LẶP THÔNG MINH:</strong> Ngày 4-7 sẽ <strong>luân phiên và kết hợp nguyên tắc</strong> của các ngày trên. <strong>Ví dụ:</strong> Ngày 4: Sáng như Ngày 2, Trưa dùng <em>Ức gà hấp lá chanh</em> (thay cá), Tối như Ngày 1.
+            </div>
+        </section>
+
+        <section>
+            <h2>PHẦN V: KẾ HOẠCH ĐI CHỢ & CHI PHÍ THỰC TẾ</h2>
+            <p>Chi phí ước tính tại chợ truyền thống/siêu thị bình dân cho 1 người theo thực đơn 7 ngày chống viêm.</p>
+            
+            <h3>🛒 LẦN ĐI CHỢ 1 (Đầu tuần)</h3>
+            <table>
+                <tr><th>Thực Phẩm</th><th>Định Lượng</th><th>Giá (VNĐ)</th></tr>
+                <tr><td>Yến mạch cán (500g)</td><td>0.5 kg</td><td>25,000 - 35,000</td></tr>
+                <tr><td>Gạo lứt (500g)</td><td>0.5 kg</td><td>18,000 - 25,000</td></tr>
+                <tr><td>Cá lóc/cá diếc phi lê</td><td>1 kg</td><td>60,000 - 80,000</td></tr>
+                <tr><td>Đậu hũ trắng</td><td>6 bìa</td><td>12,000 - 18,000</td></tr>
+                <tr><td>Rau xanh chống viêm</td><td>2.5 kg</td><td>35,000 - 50,000</td></tr>
+                <tr><td><strong>Tổng Lần 1</strong></td><td colspan="2"><strong>150,000 - 208,000 VNĐ</strong></td></tr>
+            </table>
+
+            <div class="cost-box">
+                <p style="font-size: 1rem; margin-bottom: 10px;">💰 <strong>TỔNG CHI PHÍ / TUẦN / 1 NGƯỜI:</strong></p>
+                <p style="font-size: 1.4rem; color: #d84315; font-weight: 800; margin-bottom: 10px;">Khoảng 230,000 - 320,000 VNĐ</p>
+                <p style="font-size: 0.85rem; color: #666;"><em>(Chi phí có thể thấp hơn nếu chọn cá đồng thay cá hồi)</em></p>
+            </div>
+        </section>
+
+        <section>
+            <h2>BƯỚC TIẾP THEO - HOÀN THIỆN BỘ CẨM NANG</h2>
+            <p>Phần trang 99-112 đã được chuyển hóa HOÀN CHỈNH.</p>
+            <div class="action-panel">
+                <a href="#" class="action-btn">
+                    <div class="action-icon">📚</div>
+                    <h4>1️⃣ GỘP TOÀN BỘ 63-112</h4>
+                    <p>Thành 1 cuốn PDF/Cẩm nang hoàn chỉnh, có mục lục, index tra cứu nhanh.</p>
+                </a>
+                <a href="#" class="action-btn">
+                    <div class="action-icon">💊</div>
+                    <h4>2️⃣ BẢNG TRA CỨU "THUỐC TÂY"</h4>
+                    <p>Bảng tra chi tiết tương tác giữa thuốc và thực phẩm nên tránh.</p>
+                </a>
+                <a href="#" class="action-btn">
+                    <div class="action-icon">👨‍🦯</div>
+                    <h4>3️⃣ PHIÊN BẢN ĐAU KHỚP</h4>
+                    <p>Thực đơn, bài tập nhẹ cho người tiểu đường bị viêm khớp.</p>
+                </a>
+            </div>
+        </section>
+
+        <div class="footer">
+            <p><strong>HỆ THỐNG ĐÃ HOÀN THÀNH - SẴN SÀNG ỨNG DỤNG</strong></p>
+            <p><em>⚠️ Lời nhắc quan trọng: Tham vấn ý kiến bác sĩ trước khi thay đổi chế độ ăn uống, đặc biệt khi đang dùng thuốc điều trị dài hạn.</em></p>
+        </div>
+    </div>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

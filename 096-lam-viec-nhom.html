@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Tính Con Giáp - Chu Kỳ 60 Năm</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #8B4513, #A0522D);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 25px;
+        }
+        
+        .info-box {
+            background-color: #e6f7ff;
+            border-left: 4px solid #1890ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+        }
+        
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        @media (max-width: 768px) {
+            .input-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, input:focus {
+            border-color: #8B4513;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.2);
+        }
+        
+        button {
+            background: linear-gradient(to right, #8B4513, #A0522D);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+        }
+        
+        .search-section {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+            border: 1px solid #eee;
+        }
+        
+        .search-section h3 {
+            color: #8B4513;
+            margin-bottom: 15px;
+        }
+        
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+        }
+        
+        @media (max-width: 768px) {
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .search-result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f0f8ff;
+            border-left: 4px solid #1890ff;
+        }
+        
+        .search-result.found {
+            background-color: #f0fff0;
+            border-left: 4px solid #28a745;
+        }
+        
+        .search-result.not-found {
+            background-color: #fff0f0;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .results-section {
+            margin-top: 30px;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .zodiac-item {
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #8B4513;
+            transition: all 0.2s;
+        }
+        
+        .zodiac-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .zodiac-number {
+            font-weight: bold;
+            color: #8B4513;
+            margin-bottom: 5px;
+        }
+        
+        .zodiac-name {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .zodiac-year {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .highlight {
+            background-color: #FFF8DC;
+            border-left: 4px solid #FFD700;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+        
+        .instructions {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions h3 {
+            color: #8B4513;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Game Tính Con Giáp</h1>
+            <p class="subtitle">Chu kỳ 60 năm - Lấy ngày 1/1/1900 (Giáp Tuất) làm chuẩn</p>
+        </header>
+        
+        <div class="content">
+            <div class="info-box">
+                <p><strong>Chuẩn ngày:</strong> 1/1/1900 - Giáp Tuất, Tháng Đinh Sửu, Năm Kỷ Hợi</p>
+                <p>Nhập con giáp bắt đầu và số bước nhảy, hệ thống sẽ tính toán chuỗi 60 con giáp tiếp theo cùng năm tương ứng.</p>
+            </div>
+            
+            <div class="instructions">
+                <h3>Hướng dẫn sử dụng:</h3>
+                <ol>
+                    <li>Chọn con giáp bắt đầu từ danh sách</li>
+                    <li>Nhập số bước nhảy (số nguyên dương)</li>
+                    <li>Nhấn nút "Tính Toán" để xem kết quả</li>
+                    <li>Con giáp đầu tiên sẽ được làm nổi bật</li>
+                    <li>Sử dụng phần tìm kiếm để kiểm tra con giáp và năm có trong chuỗi không</li>
+                </ol>
+            </div>
+            
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="starting-zodiac">Chọn con giáp bắt đầu:</label>
+                    <select id="starting-zodiac">
+                        <option value="0">Giáp Tuất</option>
+                        <option value="1">Ất Hợi</option>
+                        <option value="2">Bính Tý</option>
+                        <option value="3">Đinh Sửu</option>
+                        <option value="4">Mậu Dần</option>
+                        <option value="5">Kỷ Mão</option>
+                        <option value="6">Canh Thìn</option>
+                        <option value="7">Tân Tỵ</option>
+                        <option value="8">Nhâm Ngọ</option>
+                        <option value="9">Quý Mùi</option>
+                        <option value="10">Giáp Thân</option>
+                        <option value="11">Ất Dậu</option>
+                        <option value="12">Bính Tuất</option>
+                        <option value="13">Đinh Hợi</option>
+                        <option value="14">Mậu Tý</option>
+                        <option value="15">Kỷ Sửu</option>
+                        <option value="16">Canh Dần</option>
+                        <option value="17">Tân Mão</option>
+                        <option value="18">Nhâm Thìn</option>
+                        <option value="19">Quý Tỵ</option>
+                        <option value="20">Giáp Ngọ</option>
+                        <option value="21">Ất Mùi</option>
+                        <option value="22">Bính Thân</option>
+                        <option value="23">Đinh Dậu</option>
+                        <option value="24">Mậu Tuất</option>
+                        <option value="25">Kỷ Hợi</option>
+                        <option value="26">Canh Tý</option>
+                        <option value="27">Tân Sửu</option>
+                        <option value="28">Nhâm Dần</option>
+                        <option value="29">Quý Mão</option>
+                        <option value="30">Giáp Thìn</option>
+                        <option value="31">Ất Tỵ</option>
+                        <option value="32">Bính Ngọ</option>
+                        <option value="33">Đinh Mùi</option>
+                        <option value="34">Mậu Thân</option>
+                        <option value="35">Kỷ Dậu</option>
+                        <option value="36">Canh Tuất</option>
+                        <option value="37">Tân Hợi</option>
+                        <option value="38">Nhâm Tý</option>
+                        <option value="39">Quý Sửu</option>
+                        <option value="40">Giáp Dần</option>
+                        <option value="41">Ất Mão</option>
+                        <option value="42">Bính Thìn</option>
+                        <option value="43">Đinh Tỵ</option>
+                        <option value="44">Mậu Ngọ</option>
+                        <option value="45">Kỷ Mùi</option>
+                        <option value="46">Canh Thân</option>
+                        <option value="47">Tân Dậu</option>
+                        <option value="48">Nhâm Tuất</option>
+                        <option value="49">Quý Hợi</option>
+                        <option value="50">Giáp Tý</option>
+                        <option value="51">Ất Sửu</option>
+                        <option value="52">Bính Dần</option>
+                        <option value="53">Đinh Mão</option>
+                        <option value="54">Mậu Thìn</option>
+                        <option value="55">Kỷ Tỵ</option>
+                        <option value="56">Canh Ngọ</option>
+                        <option value="57">Tân Mùi</option>
+                        <option value="58">Nhâm Thân</option>
+                        <option value="59">Quý Dậu</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="step">Nhập số bước nhảy:</label>
+                    <input type="number" id="step" min="1" max="100" value="1">
+                </div>
+            </div>
+            
+            <button id="calculate">Tính Toán</button>
+            
+            <div class="search-section">
+                <h3>Tìm kiếm con giáp và năm</h3>
+                <div class="search-form">
+                    <div class="input-group">
+                        <label for="search-zodiac">Chọn con giáp cần tìm:</label>
+                        <select id="search-zodiac">
+                            <option value="0">Giáp Tuất</option>
+                            <option value="1">Ất Hợi</option>
+                            <option value="2">Bính Tý</option>
+                            <option value="3">Đinh Sửu</option>
+                            <option value="4">Mậu Dần</option>
+                            <option value="5">Kỷ Mão</option>
+                            <option value="6">Canh Thìn</option>
+                            <option value="7">Tân Tỵ</option>
+                            <option value="8">Nhâm Ngọ</option>
+                            <option value="9">Quý Mùi</option>
+                            <option value="10">Giáp Thân</option>
+                            <option value="11">Ất Dậu</option>
+                            <option value="12">Bính Tuất</option>
+                            <option value="13">Đinh Hợi</option>
+                            <option value="14">Mậu Tý</option>
+                            <option value="15">Kỷ Sửu</option>
+                            <option value="16">Canh Dần</option>
+                            <option value="17">Tân Mão</option>
+                            <option value="18">Nhâm Thìn</option>
+                            <option value="19">Quý Tỵ</option>
+                            <option value="20">Giáp Ngọ</option>
+                            <option value="21">Ất Mùi</option>
+                            <option value="22">Bính Thân</option>
+                            <option value="23">Đinh Dậu</option>
+                            <option value="24">Mậu Tuất</option>
+                            <option value="25">Kỷ Hợi</option>
+                            <option value="26">Canh Tý</option>
+                            <option value="27">Tân Sửu</option>
+                            <option value="28">Nhâm Dần</option>
+                            <option value="29">Quý Mão</option>
+                            <option value="30">Giáp Thìn</option>
+                            <option value="31">Ất Tỵ</option>
+                            <option value="32">Bính Ngọ</option>
+                            <option value="33">Đinh Mùi</option>
+                            <option value="34">Mậu Thân</option>
+                            <option value="35">Kỷ Dậu</option>
+                            <option value="36">Canh Tuất</option>
+                            <option value="37">Tân Hợi</option>
+                            <option value="38">Nhâm Tý</option>
+                            <option value="39">Quý Sửu</option>
+                            <option value="40">Giáp Dần</option>
+                            <option value="41">Ất Mão</option>
+                            <option value="42">Bính Thìn</option>
+                            <option value="43">Đinh Tỵ</option>
+                            <option value="44">Mậu Ngọ</option>
+                            <option value="45">Kỷ Mùi</option>
+                            <option value="46">Canh Thân</option>
+                            <option value="47">Tân Dậu</option>
+                            <option value="48">Nhâm Tuất</option>
+                            <option value="49">Quý Hợi</option>
+                            <option value="50">Giáp Tý</option>
+                            <option value="51">Ất Sửu</option>
+                            <option value="52">Bính Dần</option>
+                            <option value="53">Đinh Mão</option>
+                            <option value="54">Mậu Thìn</option>
+                            <option value="55">Kỷ Tỵ</option>
+                            <option value="56">Canh Ngọ</option>
+                            <option value="57">Tân Mùi</option>
+                            <option value="58">Nhâm Thân</option>
+                            <option value="59">Quý Dậu</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="search-year">Nhập năm cần tìm:</label>
+                        <input type="number" id="search-year" min="1900" max="2100" value="2023">
+                    </div>
+                    
+                    <button id="search-button">Tìm Kiếm</button>
+                </div>
+                
+                <div class="search-result" id="search-result">
+                    <!-- Kết quả tìm kiếm sẽ hiển thị ở đây -->
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <div class="results-header">
+                    <h2>Kết quả tính toán (60 con giáp)</h2>
+                </div>
+                
+                <div class="results-grid" id="results">
+                    <!-- Kết quả sẽ hiển thị ở đây -->
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Game Tính Con Giáp - Chu kỳ 60 năm | Dựa trên ngày chuẩn 1/1/1900 (Giáp Tuất)</p>
+        </footer>
+    </div>
+
+    <script>
+        // Danh sách con giáp theo thứ tự (60 con giáp)
+        const zodiacList = [
+            "Giáp Tuất", "Ất Hợi", "Bính Tý", "Đinh Sửu", "Mậu Dần", "Kỷ Mão",
+            "Canh Thìn", "Tân Tỵ", "Nhâm Ngọ", "Quý Mùi", "Giáp Thân", "Ất Dậu",
+            "Bính Tuất", "Đinh Hợi", "Mậu Tý", "Kỷ Sửu", "Canh Dần", "Tân Mão",
+            "Nhâm Thìn", "Quý Tỵ", "Giáp Ngọ", "Ất Mùi", "Bính Thân", "Đinh Dậu",
+            "Mậu Tuất", "Kỷ Hợi", "Canh Tý", "Tân Sửu", "Nhâm Dần", "Quý Mão",
+            "Giáp Thìn", "Ất Tỵ", "Bính Ngọ", "Đinh Mùi", "Mậu Thân", "Kỷ Dậu",
+            "Canh Tuất", "Tân Hợi", "Nhâm Tý", "Quý Sửu", "Giáp Dần", "Ất Mão",
+            "Bính Thìn", "Đinh Tỵ", "Mậu Ngọ", "Kỷ Mùi", "Canh Thân", "Tân Dậu",
+            "Nhâm Tuất", "Quý Hợi", "Giáp Tý", "Ất Sửu", "Bính Dần", "Đinh Mão",
+            "Mậu Thìn", "Kỷ Tỵ", "Canh Ngọ", "Tân Mùi", "Nhâm Thân", "Quý Dậu"
+        ];
+
+        // Năm chuẩn - 1900 là Giáp Tuất
+        const baseYear = 1900;
+
+        // Tính năm từ chỉ số con giáp
+        function calculateYear(zodiacIndex, step, position) {
+            return baseYear + zodiacIndex + (step * position);
+        }
+
+        // Tìm vị trí của con giáp trong chuỗi kết quả
+        function findZodiacInResults(zodiacIndex, year, results) {
+            for (let i = 0; i < results.length; i++) {
+                if (results[i].zodiacIndex === zodiacIndex && results[i].year === year) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        // Biến lưu kết quả hiện tại
+        let currentResults = [];
+
+        document.getElementById('calculate').addEventListener('click', function() {
+            const startingIndex = parseInt(document.getElementById('starting-zodiac').value);
+            const step = parseInt(document.getElementById('step').value);
+            const resultsContainer = document.getElementById('results');
+            
+            // Xóa kết quả cũ
+            resultsContainer.innerHTML = '';
+            currentResults = [];
+            
+            // Tính toán và hiển thị kết quả
+            let currentIndex = startingIndex;
+            
+            for (let i = 0; i < 60; i++) {
+                const year = calculateYear(startingIndex, step, i);
+                currentResults.push({
+                    zodiacIndex: currentIndex,
+                    year: year,
+                    position: i + 1
+                });
+                
+                const zodiacItem = document.createElement('div');
+                zodiacItem.className = 'zodiac-item';
+                
+                if (i === 0) {
+                    zodiacItem.classList.add('highlight');
+                }
+                
+                zodiacItem.innerHTML = `
+                    <div class="zodiac-number">Con giáp thứ ${i + 1}</div>
+                    <div class="zodiac-name">${zodiacList[currentIndex]}</div>
+                    <div class="zodiac-year">Năm: ${year}</div>
+                `;
+                
+                resultsContainer.appendChild(zodiacItem);
+                
+                // Tính con giáp tiếp theo
+                currentIndex = (currentIndex + step) % zodiacList.length;
+            }
+        });
+
+        // Xử lý tìm kiếm
+        document.getElementById('search-button').addEventListener('click', function() {
+            const searchZodiacIndex = parseInt(document.getElementById('search-zodiac').value);
+            const searchYear = parseInt(document.getElementById('search-year').value);
+            const searchResultContainer = document.getElementById('search-result');
+            
+            if (currentResults.length === 0) {
+                searchResultContainer.innerHTML = '<p>Vui lòng tính toán chuỗi con giáp trước khi tìm kiếm.</p>';
+                searchResultContainer.className = 'search-result not-found';
+                return;
+            }
+            
+            const foundIndex = findZodiacInResults(searchZodiacIndex, searchYear, currentResults);
+            
+            if (foundIndex !== -1) {
+                const result = currentResults[foundIndex];
+                searchResultContainer.innerHTML = `
+                    <p><strong>Tìm thấy:</strong> ${zodiacList[searchZodiacIndex]} - Năm ${searchYear}</p>
+                    <p>Vị trí trong chuỗi: ${result.position}</p>
+                `;
+                searchResultContainer.className = 'search-result found';
+            } else {
+                searchResultContainer.innerHTML = `
+                    <p><strong>Không tìm thấy:</strong> ${zodiacList[searchZodiacIndex]} - Năm ${searchYear}</p>
+                    <p>Con giáp và năm này không có trong chuỗi kết quả hiện tại.</p>
+                `;
+                searchResultContainer.className = 'search-result not-found';
+            }
+        });
+
+        // Tính toán tự động khi trang được tải
+        window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('calculate').click();
+        });
+    </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

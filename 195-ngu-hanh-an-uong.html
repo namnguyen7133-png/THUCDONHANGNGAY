@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ngũ Hành Ăn Uống Theo Giờ - Dưỡng Sinh Toàn Diện</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --moc: #2ecc71;
+      --hoa: #e74c3c;
+      --tho: #f39c12;
+      --kim: #95a5a6;
+      --thuy: #3498db;
+      --primary: #2c3e50;
+      --light: #f8f9fa;
+      --white: #ffffff;
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+      color: #333;
+      line-height: 1.6;
+      padding: 10px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    
+    @media (min-width: 768px) {
+      .container {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      .full-width {
+        grid-column: 1 / span 2;
+      }
+    }
+    
+    header {
+      text-align: center;
+      padding: 25px 15px;
+      background: linear-gradient(to right, var(--primary), #34495e);
+      color: white;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    
+    header h1 i {
+      color: var(--moc);
+    }
+    
+    header p {
+      font-size: 16px;
+      opacity: 0.9;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .section {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease;
+    }
+    
+    .section:hover {
+      transform: translateY(-5px);
+    }
+    
+    .section-title {
+      color: var(--primary);
+      border-bottom: 3px solid;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .section-title i {
+      font-size: 22px;
+    }
+    
+    /* Bảng Ngũ Hành */
+    .table-container {
+      overflow-x: auto;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    
+    thead {
+      background: var(--primary);
+      color: white;
+    }
+    
+    th {
+      padding: 12px 15px;
+      text-align: left;
+      font-weight: 600;
+    }
+    
+    tbody tr {
+      border-bottom: 1px solid #e0e0e0;
+      transition: background 0.2s;
+    }
+    
+    tbody tr:hover {
+      background: #f9f9f9;
+    }
+    
+    td {
+      padding: 12px 15px;
+    }
+    
+    /* Card Ngũ Tạng */
+    .card-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .card {
+      padding: 15px;
+      border-radius: 8px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    
+    .card i {
+      font-size: 24px;
+    }
+    
+    .card-content h3 {
+      margin-bottom: 5px;
+      font-size: 18px;
+    }
+    
+    .moc-card { background: linear-gradient(to right, var(--moc), #27ae60); }
+    .hoa-card { background: linear-gradient(to right, var(--hoa), #c0392b); }
+    .tho-card { background: linear-gradient(to right, var(--tho), #e67e22); }
+    .kim-card { background: linear-gradient(to right, var(--kim), #7f8c8d); }
+    .thuy-card { background: linear-gradient(to right, var(--thuy), #2980b9); }
+    
+    /* Timeline Giờ Sinh Học */
+    .timeline {
+      list-style: none;
+      position: relative;
+      padding-left: 30px;
+    }
+    
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--primary);
+    }
+    
+    .timeline li {
+      background: var(--light);
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      position: relative;
+      border-left: 5px solid var(--thuy);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .timeline li::before {
+      content: '';
+      position: absolute;
+      left: -28px;
+      top: 20px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 3px solid white;
+    }
+    
+    .timeline li b {
+      color: var(--primary);
+      font-size: 17px;
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    /* Chọn Mệnh */
+    .menh-selector {
+      padding: 20px;
+      text-align: center;
+    }
+    
+    select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      background: white;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: border 0.3s;
+    }
+    
+    select:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+    
+    .goiy-box {
+      background: #e8f4fc;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 5px solid var(--thuy);
+    }
+    
+    .goiy-box h3 {
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    
+    /* Nguyên tắc ăn uống */
+    .principles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    .principle {
+      flex: 1;
+      min-width: 200px;
+      background: var(--light);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      border-top: 4px solid var(--moc);
+    }
+    
+    .principle i {
+      font-size: 24px;
+      color: var(--moc);
+      margin-bottom: 10px;
+    }
+    
+    /* Ăn uống theo giờ */
+    .eating-schedule {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    .eating-time {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      border-top: 4px solid;
+    }
+    
+    .morning { border-color: var(--moc); }
+    .noon { border-color: var(--hoa); }
+    .afternoon { border-color: var(--tho); }
+    .evening { border-color: var(--kim); }
+    .night { border-color: var(--thuy); }
+    
+    .eating-time h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+    
+    .eating-time p {
+      font-size: 14px;
+      color: #555;
+    }
+    
+    /* Phần Ăn uống theo giờ cơ bản */
+    .basic-eating-guide {
+      margin: 20px 0;
+      padding: 20px;
+      background: #f0f8ff;
+      border-radius: 10px;
+      border-left: 5px solid var(--moc);
+    }
+    
+    .basic-eating-guide h2 {
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+    
+    .basic-guide-item {
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px dashed #ddd;
+    }
+    
+    .basic-guide-item:last-child {
+      border-bottom: none;
+    }
+    
+    .basic-guide-item h3 {
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .basic-guide-item ul {
+      padding-left: 20px;
+    }
+    
+    .basic-guide-item li {
+      margin-bottom: 5px;
+    }
+    
+    .highlight-summary {
+      background: #fff9e6;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      text-align: center;
+      font-style: italic;
+      border-left: 5px solid var(--tho);
+    }
+    
+    /* Phần Sữa Chua Đặc Biệt */
+    .special-food {
+      background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+      border-radius: 12px;
+      padding: 25px;
+      margin: 20px 0;
+      border-left: 6px solid #ff9800;
+      box-shadow: 0 5px 15px rgba(255, 152, 0, 0.1);
+    }
+    
+    .special-food-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .special-food-header i {
+      font-size: 32px;
+      color: #ff9800;
+    }
+    
+    .yogurt-timing {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .yogurt-time {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    }
+    
+    .yogurt-time.recommended {
+      border: 2px solid #4caf50;
+      background: #f1f8e9;
+    }
+    
+    .yogurt-time.not-recommended {
+      border: 2px solid #f44336;
+      background: #ffebee;
+      opacity: 0.8;
+    }
+    
+    .yogurt-time h4 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    
+    .yogurt-time.recommended h4 {
+      color: #2e7d32;
+    }
+    
+    .yogurt-time.not-recommended h4 {
+      color: #c62828;
+    }
+    
+    .benefits-list {
+      margin: 15px 0;
+      padding-left: 20px;
+    }
+    
+    .benefits-list li {
+      margin-bottom: 8px;
+      position: relative;
+    }
+    
+    .benefits-list li:before {
+      content: "✓";
+      color: #4caf50;
+      font-weight: bold;
+      position: absolute;
+      left: -20px;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 30px;
+      color: #7f8c8d;
+      font-size: 14px;
+      border-top: 1px solid #e0e0e0;
+    }
+    
+    .highlight {
+      background: #fff9e6;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border-left: 5px solid var(--tho);
+      font-style: italic;
+    }
+    
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      background: var(--light);
+      border-radius: 20px;
+      font-size: 12px;
+      margin-right: 5px;
+      margin-top: 5px;
+    }
+    
+    .health-tip {
+      background: #e3f2fd;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin: 10px 0;
+      border-left: 4px solid #2196f3;
+      font-size: 14px;
+    }
+    
+    /* Animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="full-width">
+      <h1><i class="fas fa-leaf"></i> Ngũ Hành Ăn Uống Theo Giờ</h1>
+      <p>"Sáng chua – Trưa đắng – Chiều ngọt – Tối cay – Đêm mặn" - Ứng dụng Ngũ Hành vào bữa ăn hàng ngày để cân bằng sức khỏe</p>
+    </header>
+    
+    <!-- PHẦN ĂN UỐNG THEO GIỜ CƠ BẢN -->
+    <section class="section full-width">
+      <h2 class="section-title"><i class="fas fa-utensils"></i> Ngũ Hành Ăn Uống Theo Giờ</h2>
+      
+      <div class="basic-eating-guide">
+        <h2>Buổi sáng – Vị chua nhẹ (Mộc)</h2>
+        <div class="basic-guide-item">
+          <h3><i class="fas fa-sun" style="color: var(--moc);"></i> Mục đích: Đánh thức gan, khởi động tiêu hóa</h3>
+          <ul>
+            <li>1 cốc nước ấm + 3–5 giọt chanh</li>
+            <li>Hoặc 1/2 quả cam</li>
+          </ul>
+          <p><b>Định lượng:</b> tối đa 100–150g</p>
+          <span class="tag">5-7h</span>
+        </div>
+        
+        <h2>Buổi trưa – Vị đắng nhẹ (Hỏa)</h2>
+        <div class="basic-guide-item">
+          <h3><i class="fas fa-fire" style="color: var(--hoa);"></i> Mục đích: Xả nhiệt, mát tim</h3>
+          <ul>
+            <li>2–3 lát mướp đắng</li>
+            <li>1 bát rau má nhỏ</li>
+          </ul>
+          <span class="tag">11-13h</span>
+        </div>
+        
+        <h2>Buổi chiều – Vị ngọt vừa (Thổ)</h2>
+        <div class="basic-guide-item">
+          <h3><i class="fas fa-seedling" style="color: var(--tho);"></i> Mục đích: Nuôi tỳ vị, giữ sức</h3>
+          <ul>
+            <li>Cơm, cháo, khoai, bí đỏ</li>
+            <li>1 quả chuối nhỏ hoặc táo</li>
+          </ul>
+          <span class="tag">15-17h</span>
+        </div>
+        
+        <h2>Buổi tối – Vị cay nhẹ (Kim)</h2>
+        <div class="basic-guide-item">
+          <h3><i class="fas fa-wind" style="color: var(--kim);"></i> Mục đích: Thông khí, tránh đầy bụng</h3>
+          <ul>
+            <li>1–2 lát gừng nấu chín</li>
+            <li>Hành, tỏi vừa phải</li>
+          </ul>
+          <span class="tag">19-21h</span>
+        </div>
+        
+        <h2>Ban đêm – Vị mặn nhẹ (Thủy)</h2>
+        <div class="basic-guide-item">
+          <h3><i class="fas fa-tint" style="color: var(--thuy);"></i> Mục đích: Giữ tinh, bổ thận</h3>
+          <ul>
+            <li>1 bát canh xương nhạt</li>
+          </ul>
+          <span class="tag">21-23h</span>
+        </div>
+        
+        <div class="highlight-summary">
+          <p><i class="fas fa-lightbulb"></i> <b>Tóm tắt nguyên tắc:</b> Sáng chua – Trưa đắng – Chiều ngọt – Tối cay – Đêm mặn</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- PHẦN SỮA CHUA THEO NGŨ HÀNH -->
+    <section class="section full-width">
+      <div class="special-food">
+        <div class="special-food-header">
+          <i class="fas fa-blender"></i>
+          <div>
+            <h2 style="color: #ff9800; margin: 0;">SỮA CHUA TRONG NGŨ HÀNH</h2>
+            <p style="color: #666; margin-top: 5px;">Hướng dẫn ăn sữa chua đúng thời điểm theo Ngũ Hành</p>
+          </div>
+        </div>
+        
+        <div class="health-tip">
+          <i class="fas fa-info-circle"></i> <strong>Sữa chua thuộc hành Thổ</strong> (vị chua ngọt, tính mát, vào Tỳ Vị). Nhưng tùy thời điểm ăn sẽ tương tác với các hành khác.
+        </div>
+        
+        <div class="yogurt-timing">
+          <!-- Thời điểm TỐT NHẤT -->
+          <div class="yogurt-time recommended pulse">
+            <h4><i class="fas fa-check-circle"></i> TỐT NHẤT: Buổi chiều (15-17h)</h4>
+            <p><strong>Hành Thổ (Tỳ Vị)</strong></p>
+            <ul class="benefits-list">
+              <li>Tỳ vị hoạt động mạnh nhất</li>
+              <li>Hỗ trợ tiêu hóa bữa trưa</li>
+              <li>Cung cấp năng lượng cuối ngày</li>
+              <li>Lợi khuẩn phát triển tốt</li>
+            </ul>
+            <p><em>Lượng: 1 hộp 100g</em></p>
+          </div>
+          
+          <!-- Thời điểm TỐT -->
+          <div class="yogurt-time recommended">
+            <h4><i class="fas fa-thumbs-up"></i> TỐT: Sau bữa sáng 1-2h (9-10h)</h4>
+            <p><strong>Hành Thổ sinh Kim</strong></p>
+            <ul class="benefits-list">
+              <li>Dạ dày đã tiêu hóa xong</li>
+              <li>Bổ sung lợi khuẩn cho ruột</li>
+              <li>Chuẩn bị năng lượng cho trưa</li>
+            </ul>
+            <p><em>Lượng: 1/2 hộp 50g</em></p>
+          </div>
+          
+          <!-- Thời điểm KHÔNG NÊN -->
+          <div class="yogurt-time not-recommended">
+            <h4><i class="fas fa-times-circle"></i> KHÔNG NÊN: Buổi sáng sớm (5-7h)</h4>
+            <p><strong>Hành Mộc (Gan)</strong></p>
+            <ul style="color: #c62828;">
+              <li>Làm lạnh tỳ vị khi mới ngủ dậy</li>
+              <li>Ức chế hoạt động của gan</li>
+              <li>Gây đầy bụng, khó tiêu</li>
+            </ul>
+          </div>
+          
+          <!-- Thời điểm CẦN TRÁNH -->
+          <div class="yogurt-time not-recommended">
+            <h4><i class="fas fa-ban"></i> TRÁNH: Buổi tối muộn (sau 20h)</h4>
+            <p><strong>Hành Thủy (Thận)</strong></p>
+            <ul style="color: #c62828;">
+              <li>Làm thận phải làm việc nhiều</li>
+              <li>Tích tụ đờm, ẩm trong cơ thể</li>
+              <li>Dễ gây ho, viêm họng</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="highlight" style="margin-top: 20px;">
+          <h4><i class="fas fa-lightbulb"></i> MẸO ĂN SỮA CHUA THEO NGŨ HÀNH</h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+            <div>
+              <p><strong>Kết hợp tốt:</strong></p>
+              <ul>
+                <li>Với chuối (bổ Thổ)</li>
+                <li>Với táo (bổ Phế)</li>
+                <li>Với mật ong (ôn Tỳ)</li>
+              </ul>
+            </div>
+            <div>
+              <p><strong>Tránh kết hợp:</strong></p>
+              <ul>
+                <li>Với đồ lạnh (hại Tỳ)</li>
+                <li>Với hải sản (sinh đờm)</li>
+                <li>Khi bụng đói (tổn Vị)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="health-tip" style="background: #f3e5f5; border-left-color: #9c27b0;">
+          <i class="fas fa-user-md"></i> <strong>Nguyên tắc vàng:</strong> Ăn sữa chua ở nhiệt độ phòng (không lạnh), sau khi ăn no 30-60 phút, vào buổi chiều là tốt nhất theo Ngũ Hành.
+        </div>
+      </div>
+    </section>
+    
+    <section class="section">
+      <h2 class="section-title"><i class="fas fa-yin-yang"></i> Ngũ Hành Tương Ứng</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Hành</th>
+              <th>Tạng</th>
+              <th>Vị</th>
+              <th>Giờ</th>
+              <th>Thực phẩm tiêu biểu</th>
+            </tr>
+          </thead>
+          <tbody id="hanh"></tbody>
+        </table>
+      </div>
+    </section>
+    
+    <section class="section">
+      <h2 class="section-title"><i class="fas fa-heart"></i> Ngũ Tạng & Cảm Xúc</h2>
+      <div class="card-container">
+        <div class="card moc-card">
+          <div class="card-content">
+            <h3>Mộc – Gan</h3>
+            <p>Cảm xúc: Giận</p>
+            <small>Giờ: 23-3h</small>
+          </div>
+          <i class="fas fa-tree"></i>
+        </div>
+        
+        <div class="card hoa-card">
+          <div class="card-content">
+            <h3>Hỏa – Tim</h3>
+            <p>Cảm xúc: Vui</p>
+            <small>Giờ: 11-13h</small>
+          </div>
+          <i class="fas fa-fire"></i>
+        </div>
+        
+        <div class="card tho-card">
+          <div class="card-content">
+            <h3>Thổ – Tỳ</h3>
+            <p>Cảm xúc: Lo</p>
+            <small>Giờ: 7-9h</small>
+          </div>
+          <i class="fas fa-mountain"></i>
+        </div>
+        
+        <div class="card kim-card">
+          <div class="card-content">
+            <h3>Kim – Phổi</h3>
+            <p>Cảm xúc: Buồn</p>
+            <small>Giờ: 3-7h</small>
+          </div>
+          <i class="fas fa-gem"></i>
+        </div>
+        
+        <div class="card thuy-card">
+          <div class="card-content">
+            <h3>Thủy – Thận</h3>
+            <p>Cảm xúc: Sợ</p>
+            <small>Giờ: 17-19h</small>
+          </div>
+          <i class="fas fa-tint"></i>
+        </div>
+      </div>
+    </section>
+    
+    <section class="section">
+      <h2 class="section-title"><i class="fas fa-clock"></i> Giờ Sinh Học</h2>
+      <ul class="timeline" id="gio"></ul>
+    </section>
+    
+    <section class="section">
+      <h2 class="section-title"><i class="fas fa-star"></i> Chọn Mệnh Của Bạn</h2>
+      <div class="menh-selector">
+        <select id="menh">
+          <option value="Mộc">Mộc</option>
+          <option value="Hỏa">Hỏa</option>
+          <option value="Thổ">Thổ</option>
+          <option value="Kim">Kim</option>
+          <option value="Thủy">Thủy</option>
+        </select>
+        
+        <div class="goiy-box">
+          <h3>Gợi ý Hợp & Khắc</h3>
+          <p id="goiy">Chọn mệnh của bạn để xem gợi ý</p>
+        </div>
+      </div>
+    </section>
+    
+    <section class="section full-width">
+      <h2 class="section-title"><i class="fas fa-balance-scale"></i> Nguyên Tắc Dưỡng Sinh</h2>
+      <p>Trang này tổng hợp kiến thức ứng dụng Ngũ Hành trong đời sống: ăn uống theo âm dương, dưỡng sinh gia đình, và ứng dụng cho người bệnh, người già, trẻ em.</p>
+      
+      <div class="principles">
+        <div class="principle">
+          <i class="fas fa-clock"></i>
+          <h3>Ăn theo giờ</h3>
+          <p>Không theo miệng</p>
+        </div>
+        <div class="principle">
+          <i class="fas fa-balance-scale"></i>
+          <h3>Ăn vừa vị</h3>
+          <p>Không cực đoan</p>
+        </div>
+        <div class="principle">
+          <i class="fas fa-heartbeat"></i>
+          <h3>Điều thân trước</h3>
+          <p>Thuốc sau</p>
+        </div>
+      </div>
+      
+      <div class="eating-schedule">
+        <div class="eating-time morning">
+          <h3>🌅 Buổi sáng (Mộc)</h3>
+          <p><b>Vị chua nhẹ</b> - Đánh thức gan</p>
+          <p>• Nước ấm + vài giọt chanh</p>
+          <p>• 1/2 quả cam</p>
+          <p><span style="color: #c62828;">✗ Không sữa chua</span></p>
+          <span class="tag">5-7h</span>
+        </div>
+        
+        <div class="eating-time noon">
+          <h3>☀️ Buổi trưa (Hỏa)</h3>
+          <p><b>Vị đắng nhẹ</b> - Mát tim</p>
+          <p>• 2-3 lát mướp đắng</p>
+          <p>• 1 bát rau má nhỏ</p>
+          <p><span style="color: #666;">○ Có thể ăn ít</span></p>
+          <span class="tag">11-13h</span>
+        </div>
+        
+        <div class="eating-time afternoon">
+          <h3>🌇 Buổi chiều (Thổ)</h3>
+          <p><b>Vị ngọt vừa</b> - Nuôi tỳ vị</p>
+          <p>• Cơm, cháo, khoai</p>
+          <p>• Chuối, táo</p>
+          <p><span style="color: #2e7d32;">✓ Tốt nhất cho sữa chua</span></p>
+          <span class="tag">15-17h</span>
+        </div>
+        
+        <div class="eating-time evening">
+          <h3>🌙 Buổi tối (Kim)</h3>
+          <p><b>Vị cay nhẹ</b> - Thông khí</p>
+          <p>• 1-2 lát gừng nấu</p>
+          <p>• Hành, tỏi vừa phải</p>
+          <p><span style="color: #c62828;">✗ Tránh sữa chua</span></p>
+          <span class="tag">19-21h</span>
+        </div>
+        
+        <div class="eating-time night">
+          <h3>🌌 Ban đêm (Thủy)</h3>
+          <p><b>Vị mặn nhẹ</b> - Bổ thận</p>
+          <p>• Canh xương nhạt</p>
+          <p>• Ít muối</p>
+          <p><span style="color: #c62828;">✗ Tuyệt đối không</span></p>
+          <span class="tag">21-23h</span>
+        </div>
+      </div>
+    </section>
+    
+    <footer class="full-width">
+      <p>Ngũ Hành Ăn Uống Theo Giờ - Ứng dụng dưỡng sinh trong đời sống hiện đại</p>
+      <p>Lưu ý: Thông tin chỉ mang tính chất tham khảo, không thay thế tư vấn y tế chuyên nghiệp</p>
+      <p style="margin-top: 10px; font-size: 12px; color: #999;">"Sáng chua – Trưa đắng – Chiều ngọt – Tối cay – Đêm mặn"</p>
+    </footer>
+  </div>
+
+  <script>
+    // Dữ liệu Ngũ Hành (đã bổ sung thực phẩm tiêu biểu)
+    const hanh = [
+      ["Mộc", "Gan", "Chua", "23–3h", "#2ecc71", "Chanh, cam, dưa chuột"],
+      ["Hỏa", "Tim", "Đắng", "11–13h", "#e74c3c", "Mướp đắng, rau má, khổ qua"],
+      ["Thổ", "Tỳ", "Ngọt", "7–9h", "#f39c12", "Khoai, bí đỏ, chuối, sữa chua"],
+      ["Kim", "Phổi", "Cay", "3–7h", "#95a5a6", "Gừng, hành, tỏi, củ cải"],
+      ["Thủy", "Thận", "Mặn", "17–19h", "#3498db", "Rong biển, đậu đen, mè"]
+    ];
+
+    // Render bảng Ngũ Hành
+    document.getElementById("hanh").innerHTML = hanh.map(h => 
+      `<tr>
+        <td><strong style="color:${h[4]}">${h[0]}</strong></td>
+        <td>${h[1]}</td>
+        <td>${h[2]}</td>
+        <td>${h[3]}</td>
+        <td>${h[5]}</td>
+      </tr>`
+    ).join("");
+
+    // Dữ liệu Giờ Sinh Học
+    const gio = [
+      ["5–7h", "Đại tràng", "Thời gian tốt nhất để đi vệ sinh"],
+      ["7–9h", "Dạ dày", "Ăn sáng đầy đủ, bổ dưỡng"],
+      ["9–11h", "Tỳ", "Tiêu hóa tốt nhất - thời điểm có thể ăn sữa chua"],
+      ["11–13h", "Tim", "Nghỉ ngơi, tránh làm việc nặng"],
+      ["15–17h", "Bàng quang", "Thời điểm VÀNG để ăn sữa chua"],
+      ["23–3h", "Gan", "Ngủ sâu để gan thải độc"]
+    ];
+
+    // Render Timeline Giờ Sinh Học
+    document.getElementById("gio").innerHTML = gio.map(g => {
+      let icon = "⏰";
+      let highlight = "";
+      
+      if (g[1] === "Tỳ" || g[1] === "Bàng quang") {
+        icon = "🟡";
+        highlight = "style='background:#fff8e1;'";
+      }
+      
+      return `<li ${highlight}>
+        <b>${g[0]} – ${g[1]} ${icon}</b>
+        <br>${g[2]}
+      </li>`;
+    }).join("");
+
+    // Dữ liệu gợi ý Ngũ Hành
+    const goiY = {
+      "Mộc": "Hợp với Thủy (sinh) – tránh Kim (khắc). Màu sắc: xanh lá, đen. Hướng: Đông, Bắc. Thực phẩm: rau xanh, chanh, cam.",
+      "Hỏa": "Hợp với Mộc (sinh) – tránh Thủy (khắc). Màu sắc: đỏ, cam, xanh lá. Hướng: Nam. Thực phẩm: ớt, cà chua, dâu.",
+      "Thổ": "Hợp với Hỏa (sinh) – tránh Mộc (khắc). Màu sắc: vàng, nâu, đỏ. Hướng: Trung tâm. Thực phẩm: khoai, bí, sữa chua.",
+      "Kim": "Hợp với Thổ (sinh) – tránh Hỏa (khắc). Màu sắc: trắng, bạc, vàng. Hướng: Tây. Thực phẩm: gừng, tỏi, củ cải.",
+      "Thủy": "Hợp với Kim (sinh) – tránh Thổ (khắc). Màu sắc: đen, xanh biển, trắng. Hướng: Bắc. Thực phẩm: rong biển, đậu đen."
+    };
+
+    // Xử lý chọn mệnh
+    const menhSelect = document.getElementById("menh");
+    const goiyElement = document.getElementById("goiy");
+    
+    // Gợi ý ban đầu
+    goiyElement.textContent = goiY[menhSelect.value];
+    
+    // Cập nhật khi thay đổi
+    menhSelect.addEventListener("change", function(e) {
+      goiyElement.textContent = goiY[e.target.value];
+      
+      // Hiệu ứng visual
+      goiyElement.parentElement.style.animation = "none";
+      setTimeout(() => {
+        goiyElement.parentElement.style.animation = "fadeIn 0.5s ease";
+      }, 10);
+    });
+
+    // Thêm hiệu ứng cho card khi load trang
+    document.addEventListener("DOMContentLoaded", function() {
+      const cards = document.querySelectorAll(".card, .eating-time, .yogurt-time, .basic-guide-item");
+      cards.forEach((card, index) => {
+        card.style.opacity = "0";
+        card.style.transform = "translateY(20px)";
+        
+        setTimeout(() => {
+          card.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+          card.style.opacity = "1";
+          card.style.transform = "translateY(0)";
+        }, index * 100);
+      });
+      
+      // Thêm hiệu ứng cho phần sữa chua
+      const yogurtSection = document.querySelector(".special-food");
+      yogurtSection.style.animation = "fadeIn 1s ease";
+    });
+    
+    // Thêm hiệu ứng cho thời điểm tốt nhất
+    setInterval(() => {
+      const bestTime = document.querySelector('.pulse');
+      if (bestTime) {
+        bestTime.classList.toggle('pulse');
+        setTimeout(() => bestTime.classList.toggle('pulse'), 100);
+      }
+    }, 4000);
+  </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

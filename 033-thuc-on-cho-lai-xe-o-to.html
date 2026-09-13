@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thực đơn 2 ngày — Lái ô tô (4 chỗ → 60 chỗ)</title>
+<style>
+:root{--bg:#061021;--card:#071428;--accent:#ff5c39;--accent2:#ffd166;--muted:#9fb3c8;--glass:rgba(255,255,255,0.03)}*{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;color:#f2fbff}html,body{height:100%;margin:0;background:linear-gradient(180deg,#031022 0%,#061021 70%);-webkit-font-smoothing:antialiased}#app{max-width:1280px;margin:18px auto;padding:16px;display:grid;grid-template-columns:1fr 420px;gap:16px;min-height:80vh}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.title{font-size:22px;font-weight:900;color:var(--accent)}.lead{font-size:13px;color:var(--muted);margin-top:4px}
+.controls{display:flex;gap:8px}
+.btn{background:var(--accent);color:#081022;border:none;padding:10px 14px;border-radius:10px;font-weight:900;cursor:pointer}
+.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 12px;border-radius:10px;color:var(--muted);font-weight:700}
+.main{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:14px;padding:14px;overflow:auto;max-height:80vh}
+.side{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:12px;padding:14px;overflow:auto;max-height:80vh}
+.tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tab{padding:10px 12px;border-radius:10px;background:var(--glass);cursor:pointer;font-weight:900;color:var(--muted);border:1px solid rgba(255,255,255,0.03)}
+.tab.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#071428}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.card{background:rgba(255,255,255,0.02);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+.card h3{margin:0;font-size:18px;color:var(--accent);font-weight:900}
+.meta{color:var(--muted);font-size:13px;margin-top:6px}
+.meal{background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);padding:8px;border-radius:8px;margin-top:10px}
+.meal h4{margin:0;font-size:15px;color:var(--accent2);font-weight:900}
+.meal p{margin:6px 0 0;color:#e9fbff}
+.tag{display:inline-block;padding:6px 8px;border-radius:8px;font-weight:900;margin-top:8px}
+.tag.yin{background:#1f6fb0;color:#eaf6ff}
+.tag.yang{background:#8b3b00;color:#fff}
+.tag.neu{background:#40566a;color:#eaf6ff}
+.small{font-size:13px;color:var(--muted)}
+.table{width:100%;border-collapse:collapse;margin-top:8px}
+.table td{padding:6px 4px;border-bottom:1px dashed rgba(255,255,255,0.03);font-size:13px}
+.shop{list-style:none;padding:0;margin:0}
+.shop li{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,0.03)}
+.price{color:var(--accent);font-weight:900}
+.footer{margin-top:10px;color:var(--muted);font-size:13px;text-align:center}
+@media(max-width:1080px){#app{grid-template-columns:1fr}.side{max-height:44vh}.main{max-height:44vh}}*{word-break:break-word}html,body{overflow-x:hidden}
+</style>
+</head>
+<body>
+<div id="app">
+  <div>
+    <div class="header">
+      <div>
+        <div class="title">Thực đơn 2 ngày — Dành cho người lái ô tô (4 → 60 chỗ)</div>
+        <div class="lead">Giờ ăn: 08:00 • 12:00 • 16:00 — Kèm kcal, tính Âm/Dương/Trung, thuốc tây cần chuẩn bị, thức uống, giá & danh sách đi chợ 2 ngày.</div>
+      </div>
+      <div class="controls">
+        <button class="btn" onclick="window.print()">In / Xuất PDF</button>
+        <button class="ghost" id="toggleCal" onclick="toggleCal()">Ẩn/Hiện kcal</button>
+      </div>
+    </div>
+
+    <main class="main">
+      <div class="tabs" role="tablist">
+        <div class="tab active" data-key="all" onclick="selectTab(event)">Tất cả</div>
+        <div class="tab" data-key="4" onclick="selectTab(event)">4 chỗ</div>
+        <div class="tab" data-key="7" onclick="selectTab(event)">7 chỗ</div>
+        <div class="tab" data-key="16" onclick="selectTab(event)">16 chỗ</div>
+        <div class="tab" data-key="29" onclick="selectTab(event)">29 chỗ</div>
+        <div class="tab" data-key="45" onclick="selectTab(event)">45 chỗ</div>
+        <div class="tab" data-key="60" onclick="selectTab(event)">60 chỗ</div>
+      </div>
+
+      <div class="grid" id="grid">
+
+        <section class="card" data-size="4">
+          <h3>Xe 4 chỗ — Nhu cầu ~2.400 kcal/ngày</h3>
+          <div class="meta">Lái ngắn, ít vận động nặng. Ưu tiên bữa nhẹ, dễ tiêu, tránh quá no trước lái.</div>
+          <div class="meal"><h4>08:00 — Sáng <span class="small">~700 kcal</span></h4><p>Bánh mì nguyên cám + trứng 1–2 quả • Trái cây</p></div>
+          <div class="meal"><h4>12:00 — Trưa <span class="small">~900 kcal</span></h4><p>Cơm 1 chén • Thịt cá 120–150g • Rau • Canh</p></div>
+          <div class="meal"><h4>16:00 — Tối nhẹ <span class="small">~800 kcal</span></h4><p>Sandwich protein • Sữa chua • Nước lọc</p></div>
+          <div class="tag neu">Trung tính</div>
+        </section>
+
+        <section class="card" data-size="7">
+          <h3>Xe 7 chỗ — Nhu cầu ~2.600 kcal/ngày</h3>
+          <div class="meta">Thường đi gia đình, có hành lý — cần năng lượng vừa đủ, đồ ăn tiện lợi để chia sẻ.</div>
+          <div class="meal"><h4>08:00 — Sáng <span class="small">~750 kcal</span></h4><p>Phở / Bún nhỏ • Trà gừng</p></div>
+          <div class="meal"><h4>12:00 — Trưa <span class="small">~950 kcal</span></h4><p>Cơm 1.5 chén • Thịt 150–180g • Rau • Trái cây</p></div>
+          <div class="meal"><h4>16:00 — Tối nhẹ <span class="small">~900 kcal</span></h4><p>Bún/ mì • Snack hạt • Nước/electrolyte</p></div>
+          <div class="tag yang">Dương</div>
+        </section>
+
+        <section class="card" data-size="16">
+          <h3>Xe 16 chỗ — Nhu cầu ~2.800 kcal/người/ngày</h3>
+          <div class="meta">Chuyến nhóm, cần chuẩn bị thức ăn dễ chia, năng lượng ổn định cho nhiều người.</div>
+          <div class="meal"><h4>08:00 — Sáng <span class="small">~800 kcal</span></h4><p>Bánh mì + trứng + trái cây • Nước</p></div>
+          <div class="meal"><h4>12:00 — Trưa <span class="small">~1000 kcal</span></h4><p>Suất cơm (cơm + thịt 180–200g) • Canh • Rau</p></div>
+          <div class="meal"><h4>16:00 — Tối nhẹ <span class="small">~1000 kcal</span></h4><p>Pasta hoặc cơm hộp • Snack năng lượng • Trái cây</p></div>
+          <div class="tag yang">Dương</div>
+        </section>
+
+        <section class="card" data-size="29">
+          <h3>Xe 29 chỗ — Nhu cầu ~2.900 kcal/người/ngày</h3>
+          <div class="meta">Chuyến dài, có người lớn tuổi — chú ý thức ăn dễ tiêu, đủ nước, thuốc cơ bản.</div>
+          <div class="meal"><h4>08:00 — Sáng <span class="small">~850 kcal</span></h4><p>Cháo/Phở • Trứng • Trái cây</p></div>
+          <div class="meal"><h4>12:00 — Trưa <span class="small">~1000 kcal</span></h4><p>Suất cơm lớn (cơm + thịt 200g) • Canh • Rau</p></div>
+          <div class="meal"><h4>16:00 — Tối nhẹ <span class="small">~1050 kcal</span></h4><p>Mì / Pasta • Snack năng lượng • Nước/electrolyte</p></div>
+          <div class="tag yang">Dương</div>
+        </section>
+
+        <section class="card" data-size="45">
+          <h3>Xe 45 chỗ — Nhu cầu ~3.000 kcal/người/ngày</h3>
+          <div class="meta">Đòi hỏi logistic cao: suất ăn đóng hộp, nước, đồ uống cho nhiều người.</div>
+          <div class="meal"><h4>08:00 — Sáng <span class="small">~900 kcal</span></h4><p>Suất ăn sáng (bánh mì + trứng + trái cây) • Cà phê/Trà</p></div>
+          <div class="meal"><h4>12:00 — Trưa <span class="small">~1100 kcal</span></h4><p>Suất cơm đầy đủ (cơm + thịt 200–250g) • Canh • Tráng miệng</p></div>
+          <div class="meal"><h4>16:00 — Tối nhẹ <span class="small">~1000 kcal</span></h4><p>Snack, trái cây, nước/electrolyte</p></div>
+          <div class="tag yang">Dương</div>
+        </section>
+
+        <section class="card" data-size="60">
+          <h3>Xe 60 chỗ — Nhu cầu ~3.100 kcal/người/ngày</h3>
+          <div class="meta">Đoàn lớn, cần chuẩn bị suất hàng loạt, y tế dự phòng, nước dự trữ.</div>
+          <div class="meal"><h4>08:00 — Sáng <span class="small">~950 kcal</span></h4><p>Suất sáng đầy đủ (bánh mì, trứng, sữa, trái cây)</p></div>
+          <div class="meal"><h4>12:00 — Trưa <span class="small">~1200 kcal</span></h4><p>Suất cơm lớn (cơm + thịt 250g) • Canh • Rau • Tráng miệng</p></div>
+          <div class="meal"><h4>16:00 — Tối nhẹ <span class="small">~950 kcal</span></h4><p>Snack năng lượng • Nước/electrolyte • Trái cây</p></div>
+          <div class="tag yang">Dương</div>
+        </section>
+
+      </div>
+
+      <div class="footer">Lưu ý: kcal là ước tính trung bình; điều chỉnh theo tuổi, giới tính, cân nặng và mức hoạt động. Nếu cần tôi tách suất chi tiết theo số lượng người, mình sẽ tính toán.</div>
+    </main>
+  </div>
+
+  <aside class="side">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <strong style="font-size:18px;color:var(--accent)">Danh sách đi chợ & chuẩn bị y tế — 2 ngày</strong>
+      <span class="small">Giá tham khảo (VNĐ)</span>
+    </div>
+
+    <div style="font-weight:900;color:var(--accent2);margin-bottom:8px">Thức ăn & đồ uống — Gợi ý nhãn hiệu & số lượng</div>
+    <ul class="shop">
+      <li><span>Gạo 10kg (suất tập thể) — Vinagreen 10kg</span><span class="price">220.000₫</span></li>
+      <li><span>Thịt gà 5kg (suất chia) — Loại thịt tươi</span><span class="price">550.000₫</span></li>
+      <li><span>Thịt bò 3kg — suất nấu</span><span class="price">720.000₫</span></li>
+      <li><span>Cá tổng 4kg</span><span class="price">360.000₫</span></li>
+      <li><span>Trứng 60 quả</span><span class="price">180.000₫</span></li>
+      <li><span>Sữa hộp/ lốc 10 (200ml)</span><span class="price">220.000₫</span></li>
+      <li><span>Snack năng lượng (bánh, hạt) — 10 gói</span><span class="price">200.000₫</span></li>
+      <li><span>Nước khoáng 24 chai 500ml</span><span class="price">120.000₫</span></li>
+      <li><span>Nước điện giải (Oral) — 24 gói</span><span class="price">240.000₫</span></li>
+      <li><span>Rau củ tổng (rau, khoai, cà chua...)</span><span class="price">220.000₫</span></li>
+      <li><span>Trái cây (chuối, táo...) — 30 trái</span><span class="price">180.000₫</span></li>
+    </ul>
+
+    <div style="font-weight:900;color:var(--accent2);margin-top:12px">Thuốc tây & y tế cơ bản (khuyến nghị, không thay cho tư vấn y tế)</div>
+    <ul class="shop" style="margin-top:8px">
+      <li><span>Paracetamol (500 mg) — hộp 10 viên (hạ sốt, giảm đau nhẹ)</span><span class="price">30.000₫</span></li>
+      <li><span>Ibuprofen (200 mg) — hộp 10 viên (chống viêm, đau cơ)</span><span class="price">40.000₫</span></li>
+      <li><span>Thuốc chống dị ứng (Cetirizine 10 mg) — hộp 10 viên</span><span class="price">35.000₫</span></li>
+      <li><span>Thuốc đau bụng / chống nôn nhẹ (Ginger candy/ORS) — gói ORS 6 gói</span><span class="price">45.000₫</span></li>
+      <li><span>Thuốc chống tiêu chảy (Loperamide) — hộp nhỏ</span><span class="price">50.000₫</span></li>
+      <li><span>Thuốc dạ dày / antacid (Calcium carbonate) — hộp</span><span class="price">40.000₫</span></li>
+      <li><span>Thuốc bôi kháng khuẩn (mỡ kháng sinh) + băng gạc + băng dán</span><span class="price">60.000₫</span></li>
+      <li><span>Dung dịch sát khuẩn (Povidone iodine) — chai</span><span class="price">35.000₫</span></li>
+      <li><span>Thuốc theo toa / đặc biệt: mang theo theo yêu cầu y tế cá nhân</span><span class="price">—</span></li>
+    </ul>
+
+    <div style="font-weight:900;color:var(--accent2);margin-top:12px">Thức uống đề xuất (nhãn hiệu & lượng)</div>
+    <ul class="shop" style="margin-top:8px">
+      <li><span>Nước khoáng — LaVie / Aquafina 24 chai</span><span class="price">120.000₫</span></li>
+      <li><span>Nước uống điện giải — POCARI / ORS 24 gói</span><span class="price">240.000₫</span></li>
+      <li><span>Cà phê hòa tan / phin — G7 1 hộp</span><span class="price">120.000₫</span></li>
+      <li><span>Trà cấp — Lipton 1 hộp</span><span class="price">80.000₫</span></li>
+    </ul>
+
+    <div style="margin-top:12px;font-weight:900;color:var(--accent)">Tổng ước tính (cho đoàn lớn) : <span class="price">~3.5M — 5.5M₫</span></div>
+    <p class="small" style="margin-top:8px">Ghi chú y tế: Danh sách thuốc là gợi ý các loại thuốc tây cơ bản; không kê toa. Nếu có người có bệnh mạn tính (tim, tiểu đường, hen, dị ứng nặng) cần chuẩn bị đơn thuốc cá nhân và tư vấn bác sĩ trước khi đi.</p>
+
+    <div style="margin-top:12px">
+      <div style="font-weight:900;color:var(--accent2);margin-bottom:8px">Lịch mẫu 2 ngày (Mẫu chung)</div>
+      <table class="table">
+        <tr><td style="width:110px">05:30</td><td>Thức dậy • Kiểm tra xe • Uống nước</td></tr>
+        <tr><td>06:00</td><td>Chuẩn bị hành lý • Kiểm tra y tế cơ bản</td></tr>
+        <tr><td>08:00</td><td>Ăn sáng</td></tr>
+        <tr><td>08:30 — 11:30</td><td>Lái / Nghỉ ngắn (giãn cơ)</td></tr>
+        <tr><td>12:00</td><td>Ăn trưa</td></tr>
+        <tr><td>13:00 — 15:30</td><td>Tiếp tục hành trình • Nghỉ giữa đường</td></tr>
+        <tr><td>16:00</td><td>Ăn nhẹ</td></tr>
+        <tr><td>17:00</td><td>Thu dọn • Kiểm tra sức khỏe nhanh</td></tr>
+        <tr><td>21:30</td><td>Ngủ</td></tr>
+      </table>
+    </div>
+
+    <div style="margin-top:12px;color:var(--muted);font-size:13px">Mẹo: Chuẩn bị sẵn túi y tế nhỏ, nước dư và snack năng lượng cho mỗi xe; đánh dấu rõ thuốc theo tên người nếu đoàn có yêu cầu y tế đặc biệt.</div>
+  </aside>
+</div>
+<script>
+function selectTab(e){const key=e.currentTarget.getAttribute('data-key');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));e.currentTarget.classList.add('active');document.querySelectorAll('[data-size]').forEach(c=>{c.style.display=(key==='all'||c.getAttribute('data-size')===key)?'block':'none'});}function toggleCal(){document.querySelectorAll('.small').forEach(s=>s.style.display=(s.style.display==='none')?'':'none');const b=document.getElementById('toggleCal');b.textContent=b.textContent.includes('Ẩn')?'Hiện kcal':'Ẩn/Hiện kcal';}
+</script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

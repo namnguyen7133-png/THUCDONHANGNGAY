@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Cuộc Đối Thoại Điểm Binh Hàn Tín</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f2f5; text-align: center; padding: 20px; color: #333; }
+        .card { background: white; max-width: 850px; margin: 0 auto; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: left; }
+        h2 { text-align: center; color: #0984e3; }
+        .intro-box { background: #ffeaa7; border: 2px dashed #fdcb6e; padding: 15px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; text-align: center; }
+        
+        /* Khung chat */
+        .chat-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; max-height: 400px; overflow-y: auto; padding: 10px; background: #f8f9fa; border-radius: 8px; }
+        .chat-row { display: flex; gap: 10px; align-items: flex-start; }
+        .chat-row.general { flex-direction: row-reverse; }
+        
+        .avatar { width: 35px; height: 35px; border-radius: 50%; background: #0984e3; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; flex-shrink: 0; }
+        .chat-row.general .avatar { background: #e17055; }
+        
+        .bubble { background: white; padding: 12px 15px; border-radius: 8px; max-width: 75%; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 14px; line-height: 1.5; border: 1px solid #dfe6e9; }
+        .chat-row.general .bubble { background: #e8f4fd; border-color: #b2bec3; }
+        
+        .speaker-name { font-weight: bold; font-size: 12px; color: #636e72; margin-bottom: 3px; }
+        
+        button { padding: 10px 20px; font-size: 15px; background: #0984e3; color: white; border: none; border-radius: 5px; cursor: pointer; display: block; margin: 0 auto; }
+        button:hover { background: #74b9ff; }
+        
+        .highlight { color: #d63031; font-weight: bold; }
+        .formula-note { background: #1e272e; color: #f1f2f6; padding: 12px; border-radius: 6px; font-size: 13px; font-family: monospace; line-height: 1.5; margin-top: 15px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>📜 Cuộc Đàm Thoại: Hàn Tín Điểm Binh</h2>
+    
+    <div class="intro-box">
+        ⚔️ <strong>Bối cảnh:</strong> Quân doanh của Hàn Tín vừa trải qua trận chiến. Doanh trại cần kiểm tra gấp xem còn lại bao nhiêu quân. Hàn Tín không đếm từng người mà dùng diệu kế xếp hàng. Bấm nút dưới đây để xem cuộc đối thoại mô phỏng!
+    </div>
+
+    <button onclick="runConversation()">💬 Bắt đầu cuộc điểm binh</button>
+
+    <div class="chat-container" id="chatBox" style="display:none;"></div>
+
+    <div class="formula-note" id="formulaBox"></div>
+</div>
+
+<script>
+    function runConversation() {
+        let actual = Math.floor(Math.random() * 90) + 11; // Số quân ngẫu nhiên từ 11 đến 100
+        let r3 = actual % 3;
+        let r5 = actual % 5;
+        let r7 = actual % 7;
+
+        let chatBox = document.getElementById("chatBox");
+        let formulaBox = document.getElementById("formulaBox");
+        chatBox.style.display = "flex";
+        formulaBox.style.display = "none";
+
+        let messages = [
+            {
+                sender: "Đại tướng quân Hàn Tín", type: "general", avatar: "HT",
+                text: `Bẩm các tướng sĩ, hôm nay ta muốn kiểm tra nhanh quân số toàn doanh mà không cần điểm danh từng đầu người. Các ngươi hãy truyền lệnh xuống dưới!`
+            },
+            {
+                sender: "Phó tướng", type: "sub", avatar: "PT",
+                text: `Dạ tướng quân! Xin ngài cứ ra lệnh, chúng tôi phải làm thế nào ạ?`
+            },
+            {
+                sender: "Đại tướng quân Hàn Tín", type: "general", avatar: "HT",
+                text: `Hãy chia toàn bộ quân lính thành các hàng dọc, mỗi hàng đúng <span class="highlight">3 người</span>. Hàng cuối cùng còn dư ra bao nhiêu người, hãy báo cáo lại cho ta!`
+            },
+            {
+                sender: "Lính canh báo cáo", type: "sub", avatar: "LC",
+                text: `Dạ báo cáo! Khi xếp hàng 3 người, hàng cuối cùng bị lẻ ra <span class="highlight">${r3} người</span> ạ!`
+            },
+            {
+                sender: "Đại tướng quân Hàn Tín", type: "general", avatar: "HT",
+                text: `Tốt. Tiếp theo, hãy cho toàn quân xếp thành các hàng <span class="highlight">5 người</span>. Xem hàng cuối cùng dư mấy người!`
+            },
+            {
+                sender: "Lính canh báo cáo", type: "sub", avatar: "LC",
+                text: `Dạ báo cáo! Khi xếp hàng 5 người, hàng cuối cùng lẻ ra <span class="highlight">${r5} người</span> ạ!`
+            },
+            {
+                sender: "Đại tướng quân Hàn Tín", type: "general", avatar: "HT",
+                text: `Lệnh cuối cùng: Cho toàn quân xếp thành các hàng <span class="highlight">7 người</span>. Báo cáo số dư cho ta!`
+            },
+            {
+                sender: "Lính canh báo cáo", type: "sub", avatar: "LC",
+                text: `Dạ báo cáo! Khi xếp hàng 7 người, hàng cuối cùng lẻ ra <span class="highlight">${r7} người</span> ạ!`
+            },
+            {
+                sender: "Đại tướng quân Hàn Tín", type: "general", avatar: "HT",
+                text: `Ta đã rõ! Dựa vào các số dư <span class="highlight">[${r3}, ${r5}, ${r7}]</span> tương ứng với các hàng 3, 5, 7... Ta tính ra trong doanh trại hiện có chính xác <span style="color:#2ed573; font-weight:bold; font-size:16px;">${actual} người</span>!`
+            },
+            {
+                sender: "Phó tướng (kinh ngạc)", type: "sub", avatar: "PT",
+                text: `Trời đất quỷ thần ơi! Ngài chỉ nghe vài con số dư mà nhẩm ra được ngay tắp lự số quân chuẩn không sai một người. Thật như thần tiên hạ phàm! Xin ngài chỉ giáo cách tính cho anh em mở mang tầm mắt!`
+            }
+        ];
+
+        chatBox.innerHTML = "";
+        let index = 0;
+
+        function showNextMessage() {
+            if (index < messages.length) {
+                let m = messages[index];
+                let row = document.createElement("div");
+                row.className = "chat-row " + m.type;
+                row.innerHTML = `
+                    <div class="avatar">${m.avatar}</div>
+                    <div class="bubble">
+                        <div class="speaker-name">${m.sender}</div>
+                        <div>${m.text}</div>
+                    </div>
+                `;
+                chatBox.appendChild(row);
+                chatBox.scrollTop = chatBox.scrollHeight;
+                index++;
+                setTimeout(showNextMessage, 600); // Tốc độ hiện tin nhắn
+            } else {
+                // Hiện công thức giải thích sau khi hội thoại xong
+                let sum = (r3 * 70) + (r5 * 21) + (r7 * 15);
+                let finalAns = sum % 105;
+                if (finalAns === 0) finalAns = 105;
+
+                formulaBox.innerHTML = `
+                    <strong>💡 BÍ MỤC NHẨM TÍNH CỦA HÀN TÍN (Công thức Thặng dư Trung Hoa):</strong><br>
+                    • Hàng 3 dư ${r3} &rarr; Nhân hệ số 70: ${r3} &times; 70 = ${r3 * 70}<br>
+                    • Hàng 5 dư ${r5} &rarr; Nhân hệ số 21: ${r5} &times; 21 = ${r5 * 21}<br>
+                    • Hàng 7 dư ${r7} &rarr; Nhân hệ số 15: ${r7} &times; 15 = ${r7 * 15}<br>
+                    ------------------------------------------------------------<br>
+                    Cộng tổng lại: ${r3*70} + ${r5*21} + ${r7*15} = ${sum}. Lấy ${sum} chia lấy dư cho 105 $\rightarrow$ <strong>${finalAns} quân!</strong>
+                `;
+                formulaBox.style.display = "block";
+            }
+        }
+
+        showNextMessage();
+    }
+</script>
+
+</body>
+</html>

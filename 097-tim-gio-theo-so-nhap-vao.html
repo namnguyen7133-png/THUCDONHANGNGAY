@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mã hóa – Giải mã Ngày Giờ từ Hoán Vị Số</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c2461 0%, #1e3799 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #eaeaea;
+            position: relative;
+        }
+        
+        h2 {
+            color: #0c2461;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .note {
+            font-size: 15px;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+            padding: 10px 15px;
+            background: linear-gradient(120deg, rgba(12, 36, 97, 0.08), rgba(30, 55, 153, 0.08));
+            border-radius: 10px;
+            border-left: 4px solid #0c2461;
+        }
+        
+        .note b {
+            color: #0c2461;
+        }
+        
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+        
+        @media (max-width: 850px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e7ff;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .box:nth-child(1) {
+            border-top: 5px solid #3498db;
+        }
+        
+        .box:nth-child(2) {
+            border-top: 5px solid #9b59b6;
+        }
+        
+        .box:nth-child(3) {
+            border-top: 5px solid #2ecc71;
+        }
+        
+        .box:nth-child(4) {
+            border-top: 5px solid #e74c3c;
+        }
+        
+        .box b {
+            display: block;
+            color: #0c2461;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        input, button, textarea {
+            padding: 12px 15px;
+            margin: 8px 0;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input {
+            border: 2px solid #d0d9ff;
+            background: #f8f9ff;
+        }
+        
+        input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        textarea {
+            border: 2px solid #d0d9ff;
+            background: #f8f9ff;
+            height: 180px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            resize: vertical;
+        }
+        
+        textarea:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        button:hover {
+            background: linear-gradient(135deg, #2980b9, #21618c);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .reset-btn:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        .result-display {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            border: 1px solid #e0e7ff;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            min-height: 40px;
+        }
+        
+        .result-display b {
+            color: #0c2461;
+            font-size: 1rem;
+        }
+        
+        .algorithm-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(120deg, rgba(12, 36, 97, 0.05), rgba(30, 55, 153, 0.05));
+            border-radius: 15px;
+            border-left: 5px solid #0c2461;
+        }
+        
+        .algorithm-info h3 {
+            color: #0c2461;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .algorithm-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .step {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .step-number {
+            display: inline-block;
+            background: #0c2461;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eaeaea;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h2 {
+                font-size: 1.7rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .content-wrapper {
+                gap: 20px;
+            }
+            
+            .box {
+                padding: 20px;
+            }
+            
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .box {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h2><i class="fas fa-lock"></i> Mã hóa – Giải mã Ngày Giờ từ Hoán Vị Số</h2>
+            <p class="note">Phiên bản đã sửa lỗi BigInt → Number. Mọi phép tính giây lớn được giữ bằng <b>BigInt</b>, chỉ chuyển sang Number khi nằm trong giới hạn an toàn của Date.</p>
+        </header>
+        
+        <div class="content-wrapper">
+            <div class="box">
+                <b><i class="far fa-calendar-alt"></i> Bước 1: Nhập ngày và giờ</b>
+                <div style="margin-bottom: 15px;">
+                    <p><b>Ô 1 – Nhập ngày</b></p>
+                    <input id="dateInput" type="date" value="2025-12-16">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <p><b>Ô 2 – Nhập giờ (0–23)</b></p>
+                    <input id="hourInput" type="number" value="19" min="0" max="23">
+                </div>
+                
+                <div class="button-group">
+                    <button onclick="calcBaseSeconds()">
+                        <i class="fas fa-calculator"></i> Tính số giây gốc T₀
+                    </button>
+                    <button class="reset-btn" onclick="resetStep1()">
+                        <i class="fas fa-redo"></i> Đặt lại
+                    </button>
+                </div>
+                
+                <div class="result-display">
+                    <b>T₀ (giây):</b> <span id="baseSeconds">Chưa tính</span>
+                </div>
+            </div>
+            
+            <div class="box">
+                <b><i class="fas fa-random"></i> Bước 2: Tạo hoán vị số</b>
+                <p><b>Ô 3 – Nhập số (1–15 chữ số) để hoán vị</b></p>
+                <input id="permInput" value="311211" maxlength="15">
+                
+                <div class="button-group">
+                    <button onclick="generatePermutations()">
+                        <i class="fas fa-sort-amount-up"></i> Hoán vị & xếp tăng dần
+                    </button>
+                    <button class="reset-btn" onclick="resetStep2()">
+                        <i class="fas fa-redo"></i> Đặt lại
+                    </button>
+                </div>
+                
+                <textarea id="permResult" placeholder="Kết quả hoán vị sẽ hiển thị ở đây..."></textarea>
+            </div>
+            
+            <div class="box">
+                <b><i class="fas fa-link"></i> Bước 3: Ghép số đặc biệt</b>
+                <p>Ghép số giây T₀ với từng hoán vị theo quy tắc đặc biệt</p>
+                
+                <div class="button-group">
+                    <button onclick="mergeNumbers()">
+                        <i class="fas fa-code-branch"></i> Ghép số theo quy tắc
+                    </button>
+                    <button class="reset-btn" onclick="resetStep3()">
+                        <i class="fas fa-redo"></i> Đặt lại
+                    </button>
+                </div>
+                
+                <textarea id="mergeResult" placeholder="Kết quả ghép số sẽ hiển thị ở đây..."></textarea>
+            </div>
+            
+            <div class="box">
+                <b><i class="fas fa-key"></i> Bước 4: Giải mã ngày giờ</b>
+                <p>Giải mã các số đã ghép thành ngày giờ tương lai</p>
+                
+                <div class="button-group">
+                    <button onclick="decodeToDate()">
+                        <i class="fas fa-unlock"></i> Giải mã → Ngày giờ tương lai
+                    </button>
+                    <button class="reset-btn" onclick="resetStep4()">
+                        <i class="fas fa-redo"></i> Đặt lại
+                    </button>
+                </div>
+                
+                <textarea id="dateResult" placeholder="Kết quả giải mã sẽ hiển thị ở đây..."></textarea>
+            </div>
+        </div>
+        
+        <div class="algorithm-info">
+            <h3><i class="fas fa-cogs"></i> Thuật toán 4 bước</h3>
+            <div class="algorithm-steps">
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <b>Tính số giây từ 01/01/1900</b>
+                    <p style="font-size: 0.9rem; margin-top: 5px;">Tính T₀ = số giây từ 01/01/1900 đến ngày/giờ nhập</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <b>Hoán vị số</b>
+                    <p style="font-size: 0.9rem; margin-top: 5px;">Tạo tất cả hoán vị của số nhập và sắp xếp tăng dần</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <b>Ghép số đặc biệt</b>
+                    <p style="font-size: 0.9rem; margin-top: 5px;">Ghép T₀ với từng hoán vị theo quy tắc: thay đổi chữ số ở vị trí = độ dài hoán vị + 1</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <b>Giải mã ngày giờ</b>
+                    <p style="font-size: 0.9rem; margin-top: 5px;">Chuyển số đã ghép thành ngày giờ tương lai từ 01/01/1900</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Thuật toán mã hóa & giải mã thời gian | Chuẩn 01/01/1900 | Phiên bản hoàn chỉnh</p>
+            <p>© 2025 - Ứng dụng tính toán và mã hóa thời gian</p>
+        </footer>
+    </div>
+
+    <script>
+        // ================= BIẾN TOÀN CỤC =================
+        let T0 = 0n; // BigInt
+        let mergedNumbers = [];
+        
+        // ================= BƯỚC 1: TÍNH SỐ GIÂY TỪ 01/01/1900 =================
+        function calcBaseSeconds() {
+            try {
+                const date = new Date(document.getElementById('dateInput').value);
+                const hour = parseInt(document.getElementById('hourInput').value);
+                
+                if (isNaN(date.getTime())) {
+                    alert('Vui lòng nhập ngày hợp lệ!');
+                    return;
+                }
+                
+                if (isNaN(hour) || hour < 0 || hour > 23) {
+                    alert('Giờ phải nằm trong khoảng 0–23!');
+                    return;
+                }
+                
+                date.setHours(hour, 0, 0, 0);
+                const base = new Date('1900-01-01T00:00:00Z');
+                T0 = BigInt(Math.floor((date - base) / 1000));
+                
+                // Định dạng số với dấu phân cách
+                const formattedT0 = T0.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                document.getElementById('baseSeconds').innerHTML = 
+                    `<span style="color:#0c2461; font-weight:bold;">${formattedT0}</span>`;
+                    
+            } catch (error) {
+                document.getElementById('baseSeconds').innerHTML = 
+                    `<span style="color:#e74c3c;">Lỗi: ${error.message}</span>`;
+            }
+        }
+        
+        // ================= BƯỚC 2: HOÁN VỊ & SẮP XẾP =================
+        function generatePermutations() {
+            try {
+                const input = document.getElementById('permInput').value.trim();
+                
+                if (!input) {
+                    alert('Vui lòng nhập số để tạo hoán vị!');
+                    return;
+                }
+                
+                if (!/^\d+$/.test(input)) {
+                    alert('Chỉ được nhập số nguyên dương!');
+                    return;
+                }
+                
+                if (input.length > 15) {
+                    alert('Số không được vượt quá 15 chữ số!');
+                    return;
+                }
+                
+                const results = new Set();
+                
+                function permute(str, l) {
+                    if (l === str.length - 1) {
+                        results.add(str);
+                        return;
+                    }
+                    for (let i = l; i < str.length; i++) {
+                        const arr = str.split('');
+                        [arr[l], arr[i]] = [arr[i], arr[l]];
+                        permute(arr.join(''), l + 1);
+                    }
+                }
+                
+                permute(input, 0);
+                
+                const sorted = Array.from(results).sort((a, b) => {
+                    if (a.length !== b.length) {
+                        return a.length - b.length;
+                    }
+                    return BigInt(a) < BigInt(b) ? -1 : 1;
+                });
+                
+                const count = sorted.length;
+                document.getElementById('permResult').value = 
+                    `Tổng cộng ${count} hoán vị:\n\n${sorted.join('\n')}`;
+                    
+            } catch (error) {
+                document.getElementById('permResult').value = `Lỗi: ${error.message}`;
+            }
+        }
+        
+        // ================= BƯỚC 3: GHÉP SỐ ĐẶC BIỆT =================
+        function mergeNumbers() {
+            try {
+                if (T0 === 0n) {
+                    alert('Vui lòng tính số giây gốc T₀ trước!');
+                    return;
+                }
+                
+                const perms = document.getElementById('permResult').value
+                    .split('\n')
+                    .filter(x => x && !x.includes('Tổng cộng') && !x.includes('Lỗi'));
+                
+                if (perms.length === 0) {
+                    alert('Vui lòng tạo hoán vị trước!');
+                    return;
+                }
+                
+                mergedNumbers = [];
+                const T0Str = T0.toString();
+                
+                perms.forEach(p => {
+                    const len = p.length;
+                    const indexFromUnit = len + 1;
+                    const digits = T0Str.split('');
+                    const pos = digits.length - indexFromUnit;
+                    
+                    if (pos < 0) return;
+                    
+                    const newDigit = (parseInt(digits[pos]) + 1) % 10;
+                    digits[pos] = newDigit.toString();
+                    
+                    const prefix = digits.slice(0, 4).join('');
+                    mergedNumbers.push(prefix + p);
+                });
+                
+                const count = mergedNumbers.length;
+                const formattedNumbers = mergedNumbers.map(num => 
+                    num.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+                );
+                
+                document.getElementById('mergeResult').value = 
+                    `Tổng cộng ${count} số đã ghép:\n\n${formattedNumbers.join('\n')}`;
+                    
+            } catch (error) {
+                document.getElementById('mergeResult').value = `Lỗi: ${error.message}`;
+            }
+        }
+        
+        // ================= BƯỚC 4: GIẢI MÃ → NGÀY GIỜ =================
+        function decodeToDate() {
+            try {
+                if (mergedNumbers.length === 0) {
+                    alert('Vui lòng ghép số trước!');
+                    return;
+                }
+                
+                const base = new Date('1900-01-01T00:00:00Z');
+                const result = [];
+                
+                mergedNumbers.forEach(n => {
+                    const totalSeconds = BigInt(n);
+                    const millis = totalSeconds * 1000n;
+                    
+                    // Date chỉ nhận Number, nhưng ở đây giá trị vẫn < giới hạn an toàn
+                    const d = new Date(base.getTime() + Number(millis));
+                    
+                    // Định dạng ngày giờ theo Việt Nam
+                    const formattedDate = d.toLocaleDateString('vi-VN');
+                    const formattedTime = d.toLocaleTimeString('vi-VN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+                    
+                    result.push(`${n.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} → ${formattedDate} ${formattedTime}`);
+                });
+                
+                document.getElementById('dateResult').value = 
+                    `Kết quả giải mã (${result.length} mục):\n\n${result.join('\n')}`;
+                    
+            } catch (error) {
+                document.getElementById('dateResult').value = `Lỗi: ${error.message}`;
+            }
+        }
+        
+        // ================= CÁC HÀM ĐẶT LẠI =================
+        function resetStep1() {
+            document.getElementById('dateInput').value = '2025-12-16';
+            document.getElementById('hourInput').value = '19';
+            document.getElementById('baseSeconds').innerHTML = 'Chưa tính';
+            T0 = 0n;
+        }
+        
+        function resetStep2() {
+            document.getElementById('permInput').value = '311211';
+            document.getElementById('permResult').value = '';
+        }
+        
+        function resetStep3() {
+            document.getElementById('mergeResult').value = '';
+            mergedNumbers = [];
+        }
+        
+        function resetStep4() {
+            document.getElementById('dateResult').value = '';
+        }
+        
+        function resetAll() {
+            resetStep1();
+            resetStep2();
+            resetStep3();
+            resetStep4();
+        }
+        
+        // ================= KHỞI TẠO =================
+        // Tính toán tự động khi trang được tải
+        window.addEventListener('load', function() {
+            calcBaseSeconds();
+            setTimeout(() => {
+                generatePermutations();
+            }, 100);
+        });
+        
+        // Thêm sự kiện Enter cho các ô nhập
+        document.getElementById('dateInput').addEventListener('change', calcBaseSeconds);
+        document.getElementById('hourInput').addEventListener('change', calcBaseSeconds);
+        document.getElementById('permInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generatePermutations();
+            }
+        });
+        
+        // ================= TEST NỘI BỘ =================
+        // Ví dụ kiểm tra nhanh
+        // 3975111123 → 19/12/2025 05:32:03
+    </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

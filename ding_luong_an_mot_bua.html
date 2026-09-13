@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Khẩu Phần Ăn Theo Tỉ Lệ Thìa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin: auto;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .input-section {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .input-section input {
+            width: 35%;
+            padding: 8px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .meal-section {
+            background: #fafafa;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        .meal-section h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .food-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        label {
+            flex: 1;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .delete-btn {
+            background-color: #e74c3c;
+            padding: 4px 10px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        .full-width {
+            width: 100%;
+        }
+        .result {
+            margin-top: 20px;
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .result h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .highlight {
+            color: #d9534f;
+            font-weight: bold;
+        }
+        .warning {
+            color: #d9534f;
+            font-weight: bold;
+            background-color: #f8d7da;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .note {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Quản Lý Khẩu Phần Ăn Theo Tỉ Lệ Thìa</h2>
+    <p class="note">
+        <em>Quy ước: 1 bát = 10 thìa | Sức chứa tối đa: 3 bát = 30 thìa</em><br>
+        <strong>Ràng buộc tỉ lệ:</strong> Cứ <strong>1 thìa Cơm</strong> phải gắn với đúng <strong>2 thìa Rau</strong>.
+    </p>
+
+    <!-- THÊM MÓN ĂN MỚI -->
+    <div class="input-section">
+        <h3>Thêm món ăn mới</h3>
+        <input type="text" id="foodName" placeholder="Tên món (VD: Đạm - Cá, Đậu phụ)...">
+        <input type="number" id="foodThia" placeholder="Số thìa..." min="0" value="1">
+        <button onclick="addFoodItem()">Thêm món</button>
+    </div>
+
+    <!-- DANH SÁCH MÓN ĂN TRONG BỮA -->
+    <div class="meal-section">
+        <h3>Thực đơn bữa ăn</h3>
+        <div id="foodList">
+            <!-- Dữ liệu sẽ được tự động tải từ bộ nhớ máy -->
+        </div>
+    </div>
+
+    <button class="full-width" onclick="tinhToanKhauPhan()">Kiểm Tra Sức Chứa Bụng</button>
+
+    <!-- KẾT QUẢ -->
+    <div class="result" id="ketQua">
+        <h3>Kết quả tổng kết bữa ăn:</h3>
+        <p id="chiTietBaoCao"></p>
+        <div class="warning" id=" canhBaoVuotMuc"></div>
+    </div>
+</div>
+
+<script>
+    // Dữ liệu mặc định ban đầu nếu chưa có gì trong bộ nhớ
+    const defaultMenu = [
+        { name: "Cơm", value: 3, type: "com" },
+        { name: "Rau (Tự động theo tỉ lệ 1 cơm : 2 rau)", value: 6, type: "rau" },
+        { name: "Đạm (Cá, Thịt, Đậu phụ...)", value: 1, type: "normal" },
+        { name: "Nước quả (240ml)", value: 10, type: "normal" },
+        { name: "Bánh", value: 4, type: "normal" },
+        { name: "Chuối", value: 4, type: "normal" },
+        { name: "Khoai lang", value: 1, type: "normal" },
+        { name: "Sữa chua", value: 1, type: "normal" },
+        { name: "Thạch hoa quả", value: 1, type: "normal" },
+        { name: "Táo Tây", value: 1, type: "normal" },
+        { name: "Táo đỏ", value: 1, type: "normal" },
+        { name: "Kỷ tử", value: 1, type: "normal" },
+        { name: "Hạn nhân", value: 1, type: "normal" }
+    ];
+
+    // Tải dữ liệu khi mở trang
+    window.onload = function() {
+        loadMenu();
+    };
+
+    function loadMenu() {
+        let savedData = localStorage.getItem('khauPhanAnData');
+        let menuItems = savedData ? JSON.parse(savedData) : defaultMenu;
+        let listDiv = document.getElementById("foodList");
+        listDiv.innerHTML = "";
+
+        menuItems.forEach((item, index) => {
+            let newRow = document.createElement("div");
+            newRow.className = "food-row";
+
+            if (item.type === "com") {
+                newRow.innerHTML = `
+                    <label>${item.name}:</label>
+                    <span><input type="number" id="comInput" class="thia-input" value="${item.value}" min="0" oninput="updateComAndRau()"> thìa</span>
+                    <button class="delete-btn" style="visibility:hidden">Xóa</button>
+                `;
+            } else if (item.type === "rau") {
+                newRow.innerHTML = `
+                    <label>${item.name}:</label>
+                    <span><input type="number" id="rauInput" class="thia-input" value="${item.value}" min="0" readonly style="background-color: #e9ecef;"> thìa</span>
+                    <span>(Khóa tự động)</span>
+                `;
+            } else {
+                newRow.innerHTML = `
+                    <label>${item.name}:</label>
+                    <span><input type="number" class="thia-input" value="${item.value}" min="0" oninput="saveDataToStorage()"> thìa</span>
+                    <button class="delete-btn" onclick="removeFood(${index})">Xóa</button>
+                `;
+            }
+            listDiv.appendChild(newRow);
+        });
+    }
+
+    // Khi thay đổi số lượng Cơm -> Tự động tính Rau và Lưu lại
+    function updateComAndRau() {
+        let comInput = document.getElementById('comInput');
+        let rauInput = document.getElementById('rauInput');
+        if (comInput && rauInput) {
+            let comVal = parseFloat(comInput.value) || 0;
+            rauInput.value = comVal * 2;
+        }
+        saveDataToStorage();
+    }
+
+    // Lưu toàn bộ trạng thái hiện tại vào bộ nhớ trình duyệt
+    function saveDataToStorage() {
+        let rows = document.getElementById("foodList").children;
+        let menuItems = [];
+
+        // Lấy lại các giá trị cố định hoặc động từ giao diện
+        // Ta quy ước danh sách dựa trên thứ tự hiển thị trên màn hình
+        let comVal = document.getElementById('comInput') ? document.getElementById('comInput').value : 3;
+        let rauVal = document.getElementById('rauInput') ? document.getElementById('rauInput').value : 6;
+
+        // Lưu chuẩn cấu trúc
+        menuItems.push({ name: "Cơm", value: comVal, type: "com" });
+        menuItems.push({ name: "Rau (Tự động theo tỉ lệ 1 cơm : 2 rau)", value: rauVal, type: "rau" });
+
+        // Lấy các món còn lại từ dòng thứ 3 trở đi
+        for (let i = 2; i < rows.length; i++) {
+            let label = rows[i].querySelector("label").innerText;
+            let val = rows[i].querySelector(".thia-input").value;
+            menuItems.push({ name: label, value: val, type: "normal" });
+        }
+
+        localStorage.setItem('khauPhanAnData', JSON.stringify(menuItems));
+    }
+
+    function addFoodItem() {
+        let name = document.getElementById("foodName").value.trim();
+        let thia = parseFloat(document.getElementById("foodThia").value) || 0;
+
+        if (name && thia >= 0) {
+            let savedData = localStorage.getItem('khauPhanAnData');
+            let menuItems = savedData ? JSON.parse(savedData) : defaultMenu;
+
+            menuItems.push({ name: name, value: thia, type: "normal" });
+            localStorage.setItem('khauPhanAnData', JSON.stringify(menuItems));
+
+            document.getElementById("foodName").value = "";
+            document.getElementById("foodThia").value = "1";
+            loadMenu();
+        } else {
+            alert("Vui lòng nhập tên món và số lượng thìa hợp lệ!");
+        }
+    }
+
+    function removeFood(index) {
+        let savedData = localStorage.getItem('khauPhanAnData');
+        let menuItems = savedData ? JSON.parse(savedData) : defaultMenu;
+
+        // Xóa phần tử tại vị trí index (cần dịch chuyển do 2 ô đầu là Cơm và Rau)
+        menuItems.splice(index, 1);
+        localStorage.setItem('khauPhanAnData', JSON.stringify(menuItems));
+        loadMenu();
+    }
+
+    function tinhToanKhauPhan() {
+        updateComAndRau();
+        let inputs = document.getElementsByClassName("thia-input");
+        let totalThia = 0;
+
+        for (let i = 0; i < inputs.length; i++) {
+            totalThia += parseFloat(inputs[i].value) || 0;
+        }
+
+        let totalBat = totalThia / 10;
+        let maxThia = 30; // 3 bát = 30 thìa
+
+        let htmlContent = `
+            - <strong>Tổng số thìa nạp vào:</strong> <span class="highlight">${totalThia} thìa</span><br>
+            - <strong>Quy đổi ra số bát:</strong> <span class="highlight">${totalBat.toFixed(1)} bát</span> (Sức chứa tối đa: 3 bát / 30 thìa)<br>
+        `;
+
+        document.getElementById('chiTietBaoCao').innerHTML = htmlContent;
+        
+        let warningDiv = document.getElementById(' canhBaoVuotMuc');
+        let ketQuaDiv = document.getElementById('ketQua');
+        ketQuaDiv.style.display = 'block';
+
+        if (totalThia > maxThia) {
+            warningDiv.style.display = 'block';
+            warningDiv.innerHTML = `⚠️ <strong>Cảnh báo:</strong> Bụng bạn đã vượt quá sức chứa 3 bát (30 thìa)! Đang thừa ra ${totalThia - maxThia} thìa.`;
+        } else if (totalThia === maxThia) {
+            warningDiv.style.display = 'block';
+            warningDiv.innerHTML = `✅ <strong>Hoàn hảo:</strong> Khẩu phần vừa khít sức chứa tối đa 3 bát (30 thìa)!`;
+        } else {
+            warningDiv.style.display = 'block';
+            warningDiv.innerHTML = `👍 <strong>An toàn:</strong> Bụng vẫn còn trống ${maxThia - totalThia} thìa nữa.`;
+        }
+    }
+</script>
+
+</body>
+</html>

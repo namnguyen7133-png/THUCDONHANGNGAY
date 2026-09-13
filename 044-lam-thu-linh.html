@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Game Phân Vai Can Chi - Bảng Tuổi</title>
+  <style>
+    :root{--bg:#0f172a;--card:#0b1220;--accent:#ffb86b;--accent2:#7ee787;--muted:#94a3b8}
+    html,body{height:100%;margin:0;font-family:Inter, Roboto, Arial, sans-serif;background:linear-gradient(180deg,#071029 0%, #08162a 60%);color:#e6eef8}
+    .wrap{max-width:1100px;margin:28px auto;padding:22px;border-radius:16px;background:linear-gradient(135deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+    h1{font-size:28px;margin:0 0 6px;color:var(--accent)}
+    p.lead{margin:0 0 18px;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:380px 1fr;gap:20px}
+    .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.02)}
+    label{display:block;margin-bottom:6px;font-weight:600;color:#dff3ff}
+    input[type=text],input[type=number],select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.02);color:inherit;outline:none}
+    select[multiple]{height:240px}
+    .btn{display:inline-block;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#ff7a7a);color:#041022;font-weight:700;border:none;cursor:pointer}
+    .clear{background:transparent;border:1px dashed rgba(255,255,255,0.06);color:var(--muted);padding:8px 10px;border-radius:8px;margin-left:8px}
+    .result{padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));min-height:360px}
+    .section{margin-bottom:18px;padding:12px;border-radius:10px;background:linear-gradient(90deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));}
+    .section h2{margin:0 0 6px;font-size:18px}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);margin-right:8px;font-weight:700}
+    .person{padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.02);margin:6px 6px 6px 0;display:inline-block}
+    .bigtitle{font-size:22px;font-weight:800;color:var(--accent2);text-shadow:0 4px 14px rgba(0,0,0,0.6)}
+    .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .note{color:var(--muted);font-size:13px;margin-top:8px}
+    .animal{font-weight:900;padding:4px 10px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));}
+    @media(max-width:880px){.grid{grid-template-columns:1fr;}.wrap{margin:12px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Game Phân Vai Theo Can Chi</h1>
+    <p class="lead">Nhập năm sinh hoặc chọn người từ danh sách — hệ thống sẽ xác định tuổi (CAN CHI) và phân vai theo bảng cặp bạn cung cấp. Có thể chọn 1 người làm <strong>Giám đốc</strong> để quay vị trí tương ứng.</p>
+
+    <div class="grid">
+      <div class="card">
+        <label>Năm (vd: 1944)</label>
+        <input id="yearInput" type="number" value="1944" min="1800" max="2099" />
+        <div style="height:8px"></div>
+        <label>Hoặc chọn 1 người làm tham chiếu (Giám đốc)</label>
+        <select id="directorSelect">
+          <option value="">-- Chọn người làm Giám đốc (tuỳ chọn) --</option>
+        </select>
+        <div style="height:12px"></div>
+        <label>Danh sách (chọn nhiều để lọc)</label>
+        <select id="peopleList" multiple>
+        </select>
+
+        <div style="height:12px"></div>
+        <button class="btn" id="computeBtn">Tính & Phân Vai</button>
+        <button class="clear" id="resetBtn">Xóa chọn</button>
+        <p class="note">Gốc tham chiếu: bạn cho biết 1/1/1900 = 1/12/1899 âm lịch (sử dụng để tham khảo). Ứng dụng dùng NĂM dương lịch để tính tuổi (Chi). Công thức: <code>(năm - 4) % 12</code>.</p>
+      </div>
+
+      <div class="result card" id="output">
+        <div class="section">
+          <div class="bigtitle" id="singleResult">Tuổi: --</div>
+          <div id="singleDesc" style="margin-top:8px;color:var(--muted)"></div>
+        </div>
+
+        <div id="rolesContainer"></div>
+
+        <div class="section">
+          <h2>Ghi chú ngắn</h2>
+          <div class="note">Chọn 1 người làm Giám đốc (nếu không chọn, hệ thống sẽ dùng <strong>THÂN</strong> làm mặc định) — vai trò và thứ tự cặp sẽ được quay cho phù hợp.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Danh sách người và ngày
+    const peopleRaw = `
+NGUYENKHACNANG	04/06/1944
+TOTHIHA	29/08/1948
+NGUYENMINHNAM	03/03/1971
+THANTHIKIMANH	23/09/1981
+NGUYENTONGANAN	28/09/2014
+NGUYENTOMINHCHAU	25/07/2016
+NGUYENTOBICHNGOC	05/02/2020
+NGUYENTHIMINHHANG	07/01/1974
+NGOQUYCUONG	23/05/1973
+NGOGIABACH	12/10/2000
+NGOGIALINH	05/04/2005
+NGUYENTHIMINHPHUONG	06/11/1978
+HOANGANHDUNG	21/09/1978
+HOANGHAIVINH	03/06/2010
+HOANGTHIENBACHANH	14/11/2015
+NGUYỄN THỊ CHI	29/4/1945
+TÔ KIM HUỆ	9/8/1960
+NGUYỄN TUẤN ANH	23/10/1993
+NGUYỄN THẾ ANH	24/3/2001
+VŨ VĂN HIỆP	24/4/1974
+
+NGÔ THỊ MAI	12/12/1948
+TÔ VIỆT HƯNG	17/6/1996
+TÔ THỊ HỒNG	10/10/1964
+
+NGUYỄN TẤN BẮC	18/2/1957
+
+
+NGUYỄN THỊ TÂM	27/10/1953
+`.trim();
+
+    // mapping index -> animal (Vietnamese uppercase)
+    const animals = ['TÝ','SỬU','DẦN','MÃO','THÌN','TỴ','NGỌ','MÙI','THÂN','DẬU','TUẤT','HỢI'];
+    // pairs in order (base: THÂN is director pair 0)
+    let pairs = [['THÂN','DẦN'],['MÃO','DẬU'],['THÌN','TUẤT'],['TỴ','HỢI'],['TÝ','NGỌ'],['MÙI','SỬU']];
+    const roleLabels = [
+      ['GIÁM ĐỐC (LÃNH ĐẠO)','PHÓ GIÁM ĐỐC (THAM MƯU)'],
+      ['VAI TRÁI (TAY TRÁI)','VAI TRÁI (TAY TRÁI)'],
+      ['VAI PHẢI (TAY PHẢI)','VAI PHẢI (TAY PHẢI)'],
+      ['CHÂN TRÁI (NHÂN VIÊN)','CHÂN TRÁI (NHÂN VIÊN)'],
+      ['TRÁI TIM (CỘNG TÁC VIÊN - TƯ VẤN KH, TÌNH DUYÊN, LÀM ĂN)','TRÁI TIM (CỘNG TÁC)'],
+      ['MÙI CHÂN PHẢI (THUÊ MƯỚN)','SỬU CHÂN PHẢI (ĐÀN EM, GIÚP VIỆC)']
+    ];
+
+    // parse people list
+    const people = peopleRaw.split('\n').map(line=>{
+      const [name, date] = line.split('\t').map(s=>s.trim());
+      const d = date || '';
+      // try to parse year from date like dd/mm/yyyy or d/m/yyyy
+      let year = null;
+      const m = d.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if(m) year = parseInt(m[3],10);
+      return {name, date:d, year};
+    });
+
+    // fill select list
+    const peopleList = document.getElementById('peopleList');
+    const directorSelect = document.getElementById('directorSelect');
+    people.forEach((p,i)=>{
+      const opt = document.createElement('option'); opt.value = i; opt.textContent = `${p.name}  —  ${p.date||''}`; peopleList.appendChild(opt);
+      const opt2 = opt.cloneNode(true); directorSelect.appendChild(opt2);
+    });
+
+    // util: compute animal from year
+    function animalFromYear(y){
+      if(!y || isNaN(y)) return null;
+      const idx = ((y - 4) % 12 + 12) % 12; // 0..11
+      return animals[idx];
+    }
+
+    // find pair index containing an animal
+    function findPairIndexForAnimal(a, pairsArr){
+      for(let i=0;i<pairsArr.length;i++){
+        if(pairsArr[i][0]===a || pairsArr[i][1]===a) return i;
+      }
+      return -1;
+    }
+
+    // rotate pairs so given pairIndex becomes first
+    function rotatedPairsFromIndex(i){
+      const out = [];
+      for(let k=0;k< pairs.length;k++){
+        out.push(pairs[(i+k)%pairs.length]);
+      }
+      return out;
+    }
+
+    // main compute
+    function compute(){
+      const yearVal = parseInt(document.getElementById('yearInput').value,10);
+      const dirIdx = directorSelect.value!=='' ? parseInt(directorSelect.value,10) : null;
+      let directorAnimal = null; let directorName = null;
+      if(dirIdx!==null){
+        const p = people[dirIdx]; directorName = p.name; directorAnimal = animalFromYear(p.year);
+      }
+      // single year result
+      const singleAnimal = animalFromYear(yearVal);
+      const singleResult = document.getElementById('singleResult');
+      const singleDesc = document.getElementById('singleDesc');
+      if(singleAnimal){
+        singleResult.textContent = `${singleAnimal} — Tuổi ${singleAnimal}`;
+        singleDesc.innerHTML = `Năm <strong>${yearVal}</strong> là tuổi <strong>${singleAnimal}</strong>. Ví dụ: 1944 → ${singleAnimal}.`;
+      } else {
+        singleResult.textContent = 'Tuổi: --'; singleDesc.textContent='Vui lòng nhập năm hợp lệ.';
+      }
+
+      // determine base director animal (default THÂN)
+      const baseDirectorAnimal = directorAnimal || 'THÂN';
+      // find which pair contains it
+      const pairIdx = findPairIndexForAnimal(baseDirectorAnimal, pairs);
+      const rotated = rotatedPairsFromIndex(pairIdx===-1?0:pairIdx);
+
+      // prepare mapping from animal->role label
+      const roleMap = {};
+      for(let i=0;i<rotated.length;i++){
+        const pair = rotated[i];
+        const labels = roleLabels[i];
+        // determine which of pair is primary (director) when i==0
+        if(i===0){
+          // primary is baseDirectorAnimal
+          if(pair[0]===baseDirectorAnimal){
+            roleMap[pair[0]] = labels[0]; roleMap[pair[1]] = labels[1];
+          } else {
+            roleMap[pair[1]] = labels[0]; roleMap[pair[0]] = labels[1];
+          }
+        } else {
+          // assign labels in order of pair array
+          roleMap[pair[0]] = labels[0]; roleMap[pair[1]] = labels[1];
+        }
+      }
+
+      // collect selected people
+      const selectedIdxs = Array.from(peopleList.selectedOptions).map(o=>parseInt(o.value,10));
+      const filtered = selectedIdxs.length? selectedIdxs.map(i=>people[i]) : people; // if none selected, use all
+
+      // group people by their animal
+      const grouped = {};
+      filtered.forEach(p=>{
+        const a = animalFromYear(p.year) || '??';
+        if(!grouped[a]) grouped[a]=[];
+        grouped[a].push(p);
+      });
+
+      // render roles
+      const rolesContainer = document.getElementById('rolesContainer'); rolesContainer.innerHTML='';
+      for(let i=0;i<rotated.length;i++){
+        const pair = rotated[i];
+        const roleA = roleMap[pair[0]] || '';
+        const roleB = roleMap[pair[1]] || '';
+
+        const sec = document.createElement('div'); sec.className='section';
+        const h = document.createElement('h2'); h.innerHTML = `<span class="animal">${pair[0]}</span> &nbsp; &mdash; &nbsp; <span class="animal">${pair[1]}</span>`;
+        sec.appendChild(h);
+        const pdesc = document.createElement('div'); pdesc.style.margin='8px 0 12px'; pdesc.innerHTML = `<strong>${pair[0]}</strong> (${roleA}) &nbsp;&nbsp; | &nbsp;&nbsp; <strong>${pair[1]}</strong> (${roleB})`;
+        sec.appendChild(pdesc);
+
+        const peopleWrap = document.createElement('div');
+        const listA = grouped[pair[0]] || [];
+        const listB = grouped[pair[1]] || [];
+        if(listA.length===0 && listB.length===0){
+          const none = document.createElement('div'); none.className='note'; none.textContent='(Không có người trong danh sách)'; peopleWrap.appendChild(none);
+        } else {
+          listA.forEach(pp=>{ const d = document.createElement('span'); d.className='person'; d.textContent = pp.name + '  —  ' + (pp.date||''); peopleWrap.appendChild(d); });
+          listB.forEach(pp=>{ const d = document.createElement('span'); d.className='person'; d.textContent = pp.name + '  —  ' + (pp.date||''); peopleWrap.appendChild(d); });
+        }
+        sec.appendChild(peopleWrap);
+        rolesContainer.appendChild(sec);
+      }
+
+      // special top block: show current director highlighted
+      const topBlock = document.createElement('div'); topBlock.className='section';
+      const dirAnimalLabel = baseDirectorAnimal;
+      let dirNameText = directorName? ` — ${directorName}` : '';
+      topBlock.innerHTML = `<h2 style="color:${dirNameText? '#ffd6a5':'#fff'}">${dirAnimalLabel} (GIÁM ĐỐC)${dirNameText}</h2><div class="note">Bảng vai trò đã quay theo ${dirAnimalLabel} làm Giám đốc.</div>`;
+      rolesContainer.insertBefore(topBlock, rolesContainer.firstChild);
+
+    }
+
+    document.getElementById('computeBtn').addEventListener('click',compute);
+    document.getElementById('resetBtn').addEventListener('click',()=>{peopleList.selectedIndex=-1; directorSelect.value=''; document.getElementById('yearInput').value='1944'; compute();});
+
+    // initial compute
+    compute();
+  </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

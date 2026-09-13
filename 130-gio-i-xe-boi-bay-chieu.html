@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính toán Ngày Sinh - Xem Ngày</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .result-section {
+            flex: 2;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2980b9;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #2980b9;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        
+        select, input[type="date"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        select:focus, input[type="date"]:focus, input[type="text"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .result-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .special-number {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 3px;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .warning {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            color: #856404;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .emergency {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { background-color: #f8d7da; }
+            50% { background-color: #f5c6cb; }
+            100% { background-color: #f8d7da; }
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .highlight {
+            background-color: #ffeaa7 !important;
+            font-weight: bold;
+        }
+        
+        .critical {
+            background-color: #ffcccc !important;
+            font-weight: bold;
+        }
+        
+        .time-column {
+            min-width: 80px;
+        }
+        
+        .number-column {
+            min-width: 100px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .toggle-btn {
+            background-color: #95a5a6;
+            width: auto;
+            padding: 8px 16px;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        
+        .toggle-btn:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .health-alert {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+            font-weight: bold;
+        }
+        
+        .food-alert {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            color: #0c5460;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+            font-weight: bold;
+        }
+        
+        .medicine-alert {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            color: #856404;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+            font-weight: bold;
+        }
+        
+        .heart-alert {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+            font-weight: bold;
+            animation: heartbeat 1s infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .danger-list {
+            background-color: #f8d7da;
+            border: 2px solid #dc3545;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .danger-item {
+            background-color: #ffe6e6;
+            border-left: 4px solid #e74c3c;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .danger-time {
+            display: inline-block;
+            background-color: #e74c3c;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .danger-person {
+            font-weight: bold;
+            color: #c0392b;
+        }
+        
+        .danger-number {
+            display: inline-block;
+            background-color: #8b0000;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .input-section, .result-section {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>TÍNH TOÁN CHÊNH LỆCH NGÀY VÀ DỰ BÁO SỨC KHỎE</h1>
+    
+    <div class="container">
+        <div class="input-section">
+            <h2>NHẬP THÔNG TIN</h2>
+            
+            <div class="form-group">
+                <label for="personSelect">1. Chọn hoặc nhập tên:</label>
+                <select id="personSelect" onchange="updateBirthdateFromSelect()">
+                    <option value="">-- Chọn người --</option>
+                    <option value="NGUYENKHACNANG,04/06/1944">1. NGUYEN KHAC NANG</option>
+                    <option value="TOTHIHA,29/08/1948">2. TO THI HA</option>
+                    <option value="NGUYENMINHNAM,03/03/1971">3. NGUYEN MINH NAM</option>
+                    <option value="THANTHIKIMANH,23/09/1981">4. THAN THI KIM ANH</option>
+                    <option value="NGUYENTONGANAN,28/09/2014">5. NGUYEN TONG AN AN</option>
+                    <option value="NGUYENTOMINHCHAU,25/07/2016">6. NGUYEN TO MINH CHAU</option>
+                    <option value="NGUYENTOBICHNGOC,05/02/2020">7. NGUYEN TO BICH NGOC</option>
+                    <option value="NGUYENTHIMINHHANG,07/01/1974">8. NGUYEN THI MINH HANG</option>
+                    <option value="NGOQUYCUONG,23/05/1973">9. NGO QUY CUONG</option>
+                    <option value="NGOGIABACH,12/10/2000">10. NGO GIA BACH</option>
+                    <option value="NGOGIALINH,05/04/2005">11. NGO GIA LINH</option>
+                    <option value="NGUYENTHIMINHPHUONG,06/11/1978">12. NGUYEN THI MINH PHUONG</option>
+                    <option value="HOANGANHDUNG,21/09/1978">13. HOANG ANH DUNG</option>
+                    <option value="HOANGHAIVINH,03/06/2010">14. HOANG HAI VINH</option>
+                    <option value="HOANGTHIENBACHANH,14/11/2015">15. HOANG THIEN BACH ANH</option>
+                    <option value="TOKIMHUE,09/08/1960">16. TÔ KIM HUỆ</option>
+                    <option value="NGUYENTUANANH,23/10/1983">17. NGUYỄN TUẤN ANH</option>
+                    <option value="NGUYENTHEANH,24/03/2001">18. NGUYỄN THẾ ANH</option>
+                    <option value="NGOTHIMAI,12/12/1948">19. NGÔ THỊ MAI</option>
+                    <option value="TOVIETHUNG,17/06/1996">20. TÔ VIỆT HƯNG</option>
+                    <option value="TOTHIHONG,10/10/1964">21. TÔ THỊ HỒNG</option>
+                    <option value="VUVANHIEP,24/04/1974">22. VŨ VĂN HIỆP</option>
+                    <option value="NGUYENTHICHI,08/02/1946">23. NGUYỄN THỊ CHI</option>
+                    <option value="NGUYENTANBAC,30/11/1957">24. NGUYỄN TẤN BẮC</option>
+                    <option value="NGUYENTHITAM,08/08/1954">25. NGUYỄN THỊ TÂM</option>
+                </select>
+                <input type="text" id="personName" placeholder="Hoặc nhập tên tùy ý" style="margin-top: 10px;">
+            </div>
+            
+            <div class="form-group">
+                <label for="birthdate">2. Ngày tháng năm sinh:</label>
+                <input type="date" id="birthdate">
+            </div>
+            
+            <div class="form-group">
+                <label for="targetDate">3. Ngày tháng năm muốn xem:</label>
+                <input type="date" id="targetDate">
+            </div>
+            
+            <button onclick="calculateForSinglePerson()">TÍNH CHO 1 NGƯỜI</button>
+            <button onclick="calculateForAll()">TÍNH CHO TẤT CẢ NGƯỜI</button>
+            
+            <div class="warning">
+                <strong>Lưu ý:</strong> Những số đặc biệt tìm được là cột 2 bảng nên gắn kèm với giờ trong cột 1, bảng 1 để biết mà tránh rủi ro, tại nạn. 307 là (tụt huyết áp), các số khác là bệnh nặng.
+            </div>
+        </div>
+        
+        <div class="result-section">
+            <h2>KẾT QUẢ</h2>
+            
+            <div id="singleResult" class="hidden">
+                <h3>Kết quả cho 1 người</h3>
+                <div id="singlePersonInfo" class="result-box"></div>
+                
+                <h4>Phần 2: Tính toán chênh lệch</h4>
+                <div id="singleDifference" class="result-box"></div>
+                
+                <button class="toggle-btn" onclick="toggleSection('singleCalc1')">Hiện/Ẩn Phép tính 1</button>
+                <div id="singleCalc1" class="hidden">
+                    <h4>Phép tính 1: Chia lấy phần nguyên</h4>
+                    <div id="singleCalculation1" class="result-box"></div>
+                </div>
+                
+                <button class="toggle-btn" onclick="toggleSection('singleCalc2')">Hiện/Ẩn Phép tính 2</button>
+                <div id="singleCalc2" class="hidden">
+                    <h4>Phép tính 2: Chia lấy phần dư</h4>
+                    <div id="singleCalculation2" class="result-box"></div>
+                </div>
+                
+                <button class="toggle-btn" onclick="toggleSection('singleCalc3')">Hiện/Ẩn Phép tính 3</button>
+                <div id="singleCalc3" class="hidden">
+                    <h4>Phép tính 3: Chia kết quả chẵn của Phép tính 1</h4>
+                    <div id="singleCalculation3" class="result-box"></div>
+                </div>
+                
+                <h4>Tìm số đặc biệt trong Phép tính 3</h4>
+                <div id="singleSpecial3" class="result-box"></div>
+                
+                <h4>Tìm số đặc biệt trong Phép tính 2</h4>
+                <div id="singleSpecial2" class="result-box"></div>
+                
+                <h4>Cảnh báo sức khỏe và khuyến nghị</h4>
+                <div id="singleHealthAlerts"></div>
+                
+                <h4>Kết quả nguy hiểm (gắn với giờ và số thứ tự)</h4>
+                <div id="singleDangerDetails"></div>
+                
+                <h4>Cảnh báo thời gian cần tránh</h4>
+                <div id="singleWarning" class="result-box warning"></div>
+                
+                <div id="singleEmergency" class="emergency hidden">
+                    <h4>⚠️ CẢNH BÁO ĐẶC BIỆT ⚠️</h4>
+                    <p id="emergencyMessage"></p>
+                </div>
+            </div>
+            
+            <div id="allResult" class="hidden">
+                <h3>Kết quả cho tất cả người</h3>
+                
+                <button class="toggle-btn" onclick="toggleSection('allTable')">Hiện/Ẩn Bảng chênh lệch</button>
+                
+                <div id="allTable" class="hidden">
+                    <div class="table-container">
+                        <table id="allResultsTable">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Tên</th>
+                                    <th>Ngày sinh</th>
+                                    <th>Chênh lệch (ngày)</th>
+                                    <th>Số đặc biệt Phép tính 3</th>
+                                    <th>Số đặc biệt Phép tính 2</th>
+                                    <th>Cảnh báo sức khỏe</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allResultsBody">
+                                <!-- Dữ liệu sẽ được thêm bằng JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <h4>Tổng hợp số đặc biệt tìm được</h4>
+                <div id="allSpecial3" class="result-box"></div>
+                <div id="allSpecial2" class="result-box"></div>
+                
+                <h4>Tổng hợp cảnh báo sức khỏe cho tất cả</h4>
+                <div id="allHealthAlerts"></div>
+                
+                <h4>Kết quả nguy hiểm chi tiết (gắn với giờ, số thứ tự và tên người)</h4>
+                <div id="allDangerDetails" class="danger-list"></div>
+                
+                <h4>Cảnh báo thời gian cần tránh cho tất cả</h4>
+                <div id="allWarning" class="result-box warning"></div>
+                
+                <div id="allEmergency" class="heart-alert hidden">
+                    <h4>⚠️ CẢNH BÁO ĐẶC BIỆT CHO TẤT CẢ ⚠️</h4>
+                    <p id="allEmergencyMessage"></p>
+                </div>
+            </div>
+            
+            <div id="timeTableSection" class="hidden">
+                <h3>Bảng 1: Giờ và Số thứ tự</h3>
+                <button class="toggle-btn" onclick="toggleSection('timeTableContainer')">Hiện/Ẩn Bảng giờ</button>
+                <div id="timeTableContainer" class="hidden">
+                    <div class="table-container">
+                        <table id="timeTable">
+                            <thead>
+                                <tr>
+                                    <th class="time-column">Giờ</th>
+                                    <th class="number-column">Số thứ tự</th>
+                                </tr>
+                            </thead>
+                            <tbody id="timeTableBody">
+                                <!-- Dữ liệu sẽ được thêm bằng JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Tạo bảng giờ từ 18:01 đến 23:00 với số thứ tự mới
+        const timeTable = [];
+        let number = 1081;
+        
+        for (let hour = 18; hour <= 23; hour++) {
+            // Xác định phút bắt đầu và kết thúc cho mỗi giờ
+            let startMinute = (hour === 18) ? 1 : 0;
+            let endMinute = (hour === 23) ? 0 : 59;
+            
+            for (let minute = startMinute; minute <= endMinute; minute++) {
+                const timeStr = `${hour}:${minute.toString().padStart(2, '0')}`;
+                timeTable.push({ time: timeStr, number: number });
+                number++;
+                
+                // Dừng ở 23:00
+                if (hour === 23 && minute === 0) break;
+            }
+        }
+        
+        // Các số đặc biệt cần tìm trong Phép tính 2
+        const specialNumbers2 = [
+            307, 111, 222, 333, 444, 555, 666, 777, 888, 999,
+            159, 195, 168, 186, 267, 276, 249, 294, 285, 258,
+            357, 375, 384, 348, 438, 483, 429, 492, 528, 582,
+            537, 573, 519, 591, 627, 672, 618, 681, 726, 762,
+            735, 753, 825, 852, 816, 861, 843, 834, 915, 951,
+            924, 942
+        ];
+        
+        // Các số đặc biệt cần tìm trong Phép tính 3
+        const specialNumbers3 = [14, 41, 27, 72];
+        
+        // Số đặc biệt nguy hiểm nhất (đau tim)
+        const emergencyNumbers = [307, 14, 41, 27, 72];
+        
+        // Số đặc biệt cần mua thuốc
+        const medicineNumbers = [111, 222, 333, 444, 555, 666, 777, 888, 999];
+        
+        // Số đặc biệt cần chú ý ăn uống
+        const foodNumbers = [159, 195, 168, 186, 267, 276, 249, 294, 285, 258];
+        
+        // Số đặc biệt cần chú ý sức khỏe tổng quát
+        const healthNumbers = [357, 375, 384, 348, 438, 483, 429, 492, 528, 582];
+        
+        // Hiển thị bảng giờ
+        function displayTimeTable() {
+            const tableBody = document.getElementById('timeTableBody');
+            tableBody.innerHTML = '';
+            
+            timeTable.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="time-column">${item.time}</td>
+                    <td class="number-column">${item.number}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            document.getElementById('timeTableSection').classList.remove('hidden');
+        }
+        
+        // Cập nhật ngày sinh khi chọn người từ danh sách
+        function updateBirthdateFromSelect() {
+            const select = document.getElementById('personSelect');
+            const birthdateInput = document.getElementById('birthdate');
+            
+            if (select.value) {
+                const [name, dateStr] = select.value.split(',');
+                const [day, month, year] = dateStr.split('/');
+                const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                birthdateInput.value = formattedDate;
+                document.getElementById('personName').value = name;
+            }
+        }
+        
+        // Định dạng ngày tháng
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+        
+        // Tính chênh lệch ngày
+        function calculateDateDifference(date1, date2) {
+            const d1 = new Date(date1);
+            const d2 = new Date(date2);
+            const diffTime = Math.abs(d2 - d1);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+        
+        // Kiểm tra và tạo thông báo sức khỏe
+        function generateHealthAlerts(specialNumbers, specialResultsData) {
+            let alerts = [];
+            let emergencyFound = false;
+            let dangerDetails = [];
+            
+            // Kiểm tra số đau tim
+            specialNumbers.forEach((num, index) => {
+                if (emergencyNumbers.includes(num)) {
+                    emergencyFound = true;
+                    
+                    let timeInfo = "";
+                    let numberInfo = "";
+                    
+                    if (specialResultsData && specialResultsData[index]) {
+                        timeInfo = specialResultsData[index].time;
+                        numberInfo = specialResultsData[index].number;
+                    }
+                    
+                    dangerDetails.push({
+                        type: 'heart',
+                        number: num,
+                        time: timeInfo,
+                        stt: numberInfo,
+                        message: num === 307 ? 'TỤT HUYẾT ÁP' : 'ĐAU TIM'
+                    });
+                }
+            });
+            
+            // Kiểm tra số cần mua thuốc
+            const medicineNums = specialNumbers.filter(num => medicineNumbers.includes(num));
+            if (medicineNums.length > 0) {
+                alerts.push({
+                    type: 'medicine',
+                    message: `💊 MUA THUỐC Ở HIỆU THUỐC: Cần chuẩn bị thuốc cho các số ${medicineNums.join(', ')}`,
+                    numbers: medicineNums
+                });
+            }
+            
+            // Kiểm tra số cần chú ý ăn uống
+            const foodNums = specialNumbers.filter(num => foodNumbers.includes(num));
+            if (foodNums.length > 0) {
+                alerts.push({
+                    type: 'food',
+                    message: `🥗 CHÚ Ý ĂN UỐNG: Cần ăn uống điều độ, tránh thức ăn nhiều dầu mỡ cho các số ${foodNums.join(', ')}`,
+                    numbers: foodNums
+                });
+            }
+            
+            // Kiểm tra số cần chú ý sức khỏe tổng quát
+            const healthNums = specialNumbers.filter(num => healthNumbers.includes(num));
+            if (healthNums.length > 0) {
+                alerts.push({
+                    type: 'health',
+                    message: `🏥 CHÚ Ý SỨC KHỎE: Cần kiểm tra sức khỏe định kỳ cho các số ${healthNums.join(', ')}`,
+                    numbers: healthNums
+                });
+            }
+            
+            return { alerts, emergencyFound, dangerDetails };
+        }
+        
+        // Tính toán cho 1 người
+        function calculateForSinglePerson() {
+            const birthdate = document.getElementById('birthdate').value;
+            const targetDate = document.getElementById('targetDate').value;
+            const personName = document.getElementById('personName').value || document.getElementById('personSelect').options[document.getElementById('personSelect').selectedIndex].text;
+            
+            if (!birthdate || !targetDate) {
+                alert('Vui lòng nhập đầy đủ ngày tháng năm sinh và ngày muốn xem!');
+                return;
+            }
+            
+            // Hiển thị bảng giờ nếu chưa hiển thị
+            displayTimeTable();
+            
+            // Hiển thị kết quả cho 1 người
+            document.getElementById('singleResult').classList.remove('hidden');
+            document.getElementById('allResult').classList.add('hidden');
+            document.getElementById('singleEmergency').classList.add('hidden');
+            
+            const diffDays = calculateDateDifference(birthdate, targetDate);
+            
+            // Hiển thị thông tin người
+            document.getElementById('singlePersonInfo').innerHTML = `
+                <strong>Tên:</strong> ${personName}<br>
+                <strong>Ngày sinh:</strong> ${formatDate(birthdate)}<br>
+                <strong>Ngày xem:</strong> ${formatDate(targetDate)}
+            `;
+            
+            // Hiển thị chênh lệch
+            document.getElementById('singleDifference').innerHTML = `
+                <strong>Chênh lệch:</strong> ${diffDays} ngày<br>
+                (Từ ${formatDate(birthdate)} đến ${formatDate(targetDate)})
+            `;
+            
+            // Phép tính 1: Chia lấy phần nguyên
+            let calc1Results = [];
+            let calc1HTML = '<table><tr><th>Giờ</th><th>Số thứ tự</th><th>Kết quả (phần nguyên)</th></tr>';
+            
+            timeTable.forEach(item => {
+                const result = Math.floor(diffDays / item.number);
+                calc1Results.push({ time: item.time, number: item.number, result: result });
+                calc1HTML += `<tr><td>${item.time}</td><td>${item.number}</td><td>${result}</td></tr>`;
+            });
+            
+            calc1HTML += '</table>';
+            document.getElementById('singleCalculation1').innerHTML = calc1HTML;
+            
+            // Phép tính 2: Chia lấy phần dư
+            let calc2Results = [];
+            let special2Results = [];
+            let calc2HTML = '<table><tr><th>Giờ</th><th>Số thứ tự</th><th>Kết quả (phần dư)</th></tr>';
+            
+            timeTable.forEach(item => {
+                const result = diffDays % item.number;
+                calc2Results.push({ time: item.time, number: item.number, result: result });
+                
+                let rowClass = '';
+                if (specialNumbers2.includes(result)) {
+                    rowClass = 'class="highlight"';
+                    special2Results.push({ time: item.time, number: item.number, result: result });
+                }
+                
+                calc2HTML += `<tr ${rowClass}><td>${item.time}</td><td>${item.number}</td><td>${result}</td></tr>`;
+            });
+            
+            calc2HTML += '</table>';
+            document.getElementById('singleCalculation2').innerHTML = calc2HTML;
+            
+            // Phép tính 3: Chia kết quả chẵn của Phép tính 1
+            let calc3Results = [];
+            let special3Results = [];
+            let calc3HTML = '<table><tr><th>Giờ</th><th>Số thứ tự</th><th>Kết quả Phép tính 1</th><th>Kết quả Phép tính 3</th></tr>';
+            
+            timeTable.forEach((item, index) => {
+                const calc1Result = calc1Results[index].result;
+                const result = Math.floor(calc1Result / item.number);
+                calc3Results.push({ time: item.time, number: item.number, calc1Result: calc1Result, result: result });
+                
+                let rowClass = '';
+                if (specialNumbers3.includes(result)) {
+                    rowClass = 'class="highlight"';
+                    special3Results.push({ time: item.time, number: item.number, calc1Result: calc1Result, result: result });
+                }
+                
+                calc3HTML += `<tr ${rowClass}><td>${item.time}</td><td>${item.number}</td><td>${calc1Result}</td><td>${result}</td></tr>`;
+            });
+            
+            calc3HTML += '</table>';
+            document.getElementById('singleCalculation3').innerHTML = calc3HTML;
+            
+            // Hiển thị số đặc biệt trong Phép tính 3
+            let special3HTML = '';
+            if (special3Results.length > 0) {
+                special3HTML = `<p><strong>Tìm thấy ${special3Results.length} số đặc biệt trong Phép tính 3:</strong></p><ul>`;
+                special3Results.forEach(item => {
+                    special3HTML += `<li>Giờ ${item.time} (số ${item.number}): kết quả ${item.result}</li>`;
+                });
+                special3HTML += '</ul>';
+            } else {
+                special3HTML = '<p>Không tìm thấy số đặc biệt (14, 41, 27, 72) trong Phép tính 3.</p>';
+            }
+            document.getElementById('singleSpecial3').innerHTML = special3HTML;
+            
+            // Hiển thị số đặc biệt trong Phép tính 2
+            let special2HTML = '';
+            if (special2Results.length > 0) {
+                special2HTML = `<p><strong>Tìm thấy ${special2Results.length} số đặc biệt trong Phép tính 2:</strong></p><ul>`;
+                special2Results.forEach(item => {
+                    special2HTML += `<li>Giờ ${item.time} (số ${item.number}): kết quả ${item.result}</li>`;
+                });
+                special2HTML += '</ul>';
+            } else {
+                special2HTML = '<p>Không tìm thấy số đặc biệt trong Phép tính 2.</p>';
+            }
+            document.getElementById('singleSpecial2').innerHTML = special2HTML;
+            
+            // Tạo cảnh báo sức khỏe
+            const healthAlertsDiv = document.getElementById('singleHealthAlerts');
+            healthAlertsDiv.innerHTML = '';
+            
+            // Tổng hợp tất cả số đặc biệt
+            const allSpecialNumbers = [
+                ...special2Results.map(r => r.result),
+                ...special3Results.map(r => r.result)
+            ];
+            
+            const allSpecialResultsData = [
+                ...special2Results,
+                ...special3Results
+            ];
+            
+            const { alerts, emergencyFound, dangerDetails } = generateHealthAlerts(
+                allSpecialNumbers, 
+                allSpecialResultsData
+            );
+            
+            // Hiển thị cảnh báo
+            if (alerts.length > 0) {
+                alerts.forEach(alert => {
+                    const alertDiv = document.createElement('div');
+                    if (alert.type === 'medicine') {
+                        alertDiv.className = 'medicine-alert';
+                    } else if (alert.type === 'food') {
+                        alertDiv.className = 'food-alert';
+                    } else if (alert.type === 'health') {
+                        alertDiv.className = 'health-alert';
+                    } else {
+                        alertDiv.className = 'emergency';
+                    }
+                    alertDiv.innerHTML = alert.message;
+                    healthAlertsDiv.appendChild(alertDiv);
+                });
+            } else {
+                healthAlertsDiv.innerHTML = '<div class="health-alert">✅ Không có cảnh báo sức khỏe đặc biệt</div>';
+            }
+            
+            // Hiển thị chi tiết kết quả nguy hiểm
+            const dangerDetailsDiv = document.getElementById('singleDangerDetails');
+            dangerDetailsDiv.innerHTML = '';
+            
+            if (dangerDetails.length > 0) {
+                dangerDetailsDiv.innerHTML = '<div class="danger-list"><h4>Chi tiết các số nguy hiểm:</h4>';
+                
+                dangerDetails.forEach(detail => {
+                    if (detail.time && detail.stt) {
+                        const dangerItem = document.createElement('div');
+                        dangerItem.className = 'danger-item';
+                        dangerItem.innerHTML = `
+                            <span class="danger-time">${detail.time}</span>
+                            <span class="danger-person">${personName}</span>
+                            <span class="danger-number">Số ${detail.number} (${detail.message})</span>
+                            <br><small>Số thứ tự: ${detail.stt}</small>
+                        `;
+                        dangerDetailsDiv.appendChild(dangerItem);
+                    }
+                });
+                
+                dangerDetailsDiv.innerHTML += '</div>';
+            } else {
+                dangerDetailsDiv.innerHTML = '<div class="health-alert">✅ Không có số nguy hiểm đặc biệt</div>';
+            }
+            
+            // Hiển thị cảnh báo thời gian cần tránh
+            let warningHTML = '';
+            if (special2Results.length > 0 || special3Results.length > 0) {
+                warningHTML = '<h4>Thời gian cần đặc biệt chú ý:</h4>';
+                
+                if (special3Results.length > 0) {
+                    warningHTML += '<p><strong>Số đặc biệt từ Phép tính 3 (14, 41, 27, 72):</strong></p><ul>';
+                    special3Results.forEach(item => {
+                        warningHTML += `<li>Giờ ${item.time} (số ${item.number}): kết quả ${item.result}</li>`;
+                    });
+                    warningHTML += '</ul>';
+                }
+                
+                if (special2Results.length > 0) {
+                    warningHTML += '<p><strong>Số đặc biệt từ Phép tính 2:</strong></p><ul>';
+                    special2Results.forEach(item => {
+                        const warningText = item.result === 307 ? ' - TỤT HUYẾT ÁP' : ' - BỆNH NẶNG';
+                        warningHTML += `<li>Giờ ${item.time} (số ${item.number}): kết quả ${item.result}${warningText}</li>`;
+                    });
+                    warningHTML += '</ul>';
+                }
+            } else {
+                warningHTML = '<p>Không có thời gian nào cần đặc biệt chú ý.</p>';
+            }
+            document.getElementById('singleWarning').innerHTML = warningHTML;
+            
+            // Hiển thị cảnh báo đặc biệt nếu tìm thấy số nguy hiểm
+            if (emergencyFound) {
+                document.getElementById('singleEmergency').classList.remove('hidden');
+                let emergencyHTML = `<p><strong>⚠️ PHÁT HIỆN DẤU HIỆU NGUY HIỂM SỨC KHỎE ⚠️</strong></p>`;
+                emergencyHTML += `<p>Các thời điểm sau đây cần ĐẶC BIỆT CHÚ Ý:</p><ul>`;
+                
+                // Lọc các thời điểm nguy hiểm
+                const emergencyTimes = [];
+                special2Results.forEach(item => {
+                    if (emergencyNumbers.includes(item.result)) {
+                        emergencyTimes.push(`Giờ ${item.time} (số ${item.number}): kết quả ${item.result} - ${item.result === 307 ? 'TỤT HUYẾT ÁP' : 'ĐAU TIM'}`);
+                    }
+                });
+                
+                special3Results.forEach(item => {
+                    if (emergencyNumbers.includes(item.result)) {
+                        emergencyTimes.push(`Giờ ${item.time} (số ${item.number}): kết quả ${item.result} - ĐAU TIM`);
+                    }
+                });
+                
+                emergencyTimes.forEach(msg => {
+                    emergencyHTML += `<li>${msg}</li>`;
+                });
+                
+                emergencyHTML += `</ul>`;
+                emergencyHTML += `<p><strong>KHẨN CẤP:</strong> Cần thuốc giải hoặc mua thuốc ở hiệu thuốc ngay!</p>`;
+                emergencyHTML += `<p>Tránh các hoạt động mạnh, giữ bình tĩnh, và tìm sự giúp đỡ y tế ngay lập tức.</p>`;
+                document.getElementById('emergencyMessage').innerHTML = emergencyHTML;
+            }
+        }
+        
+        // Tính toán cho tất cả người
+        function calculateForAll() {
+            const targetDate = document.getElementById('targetDate').value;
+            
+            if (!targetDate) {
+                alert('Vui lòng nhập ngày tháng năm muốn xem!');
+                return;
+            }
+            
+            // Hiển thị bảng giờ nếu chưa hiển thị
+            displayTimeTable();
+            
+            // Hiển thị kết quả cho tất cả người
+            document.getElementById('singleResult').classList.add('hidden');
+            document.getElementById('allResult').classList.remove('hidden');
+            document.getElementById('allEmergency').classList.add('hidden');
+            
+            // Danh sách người (lấy từ select)
+            const people = [];
+            const selectOptions = document.getElementById('personSelect').options;
+            
+            for (let i = 1; i < selectOptions.length; i++) {
+                const [name, dateStr] = selectOptions[i].value.split(',');
+                const [day, month, year] = dateStr.split('/');
+                const birthdate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                const displayName = selectOptions[i].text.substring(3); // Bỏ "X. " ở đầu
+                
+                people.push({
+                    id: i,
+                    name: name,
+                    displayName: displayName,
+                    birthdate: birthdate
+                });
+            }
+            
+            // Tính toán cho từng người
+            const allSpecial3 = [];
+            const allSpecial2 = [];
+            const allHealthAlerts = [];
+            const allDangerDetails = [];
+            const tableBody = document.getElementById('allResultsBody');
+            tableBody.innerHTML = '';
+            
+            people.forEach(person => {
+                const diffDays = calculateDateDifference(person.birthdate, targetDate);
+                
+                // Tìm số đặc biệt trong Phép tính 3
+                let personSpecial3 = [];
+                timeTable.forEach(item => {
+                    const calc1Result = Math.floor(diffDays / item.number);
+                    const calc3Result = Math.floor(calc1Result / item.number);
+                    
+                    if (specialNumbers3.includes(calc3Result)) {
+                        personSpecial3.push({
+                            time: item.time,
+                            number: item.number,
+                            result: calc3Result
+                        });
+                        
+                        // Thêm vào danh sách tổng hợp
+                        const existingIndex = allSpecial3.findIndex(s => s.time === item.time && s.number === item.number && s.result === calc3Result);
+                        if (existingIndex === -1) {
+                            allSpecial3.push({
+                                time: item.time,
+                                number: item.number,
+                                result: calc3Result,
+                                people: [person.name]
+                            });
+                        } else {
+                            if (!allSpecial3[existingIndex].people.includes(person.name)) {
+                                allSpecial3[existingIndex].people.push(person.name);
+                            }
+                        }
+                        
+                        // Thêm vào danh sách nguy hiểm nếu là số nguy hiểm
+                        if (emergencyNumbers.includes(calc3Result)) {
+                            allDangerDetails.push({
+                                person: person.name,
+                                time: item.time,
+                                number: item.number,
+                                result: calc3Result,
+                                type: 'Phép tính 3',
+                                message: 'ĐAU TIM'
+                            });
+                        }
+                    }
+                });
+                
+                // Tìm số đặc biệt trong Phép tính 2
+                let personSpecial2 = [];
+                timeTable.forEach(item => {
+                    const calc2Result = diffDays % item.number;
+                    
+                    if (specialNumbers2.includes(calc2Result)) {
+                        personSpecial2.push({
+                            time: item.time,
+                            number: item.number,
+                            result: calc2Result
+                        });
+                        
+                        // Thêm vào danh sách tổng hợp
+                        const existingIndex = allSpecial2.findIndex(s => s.time === item.time && s.number === item.number && s.result === calc2Result);
+                        if (existingIndex === -1) {
+                            allSpecial2.push({
+                                time: item.time,
+                                number: item.number,
+                                result: calc2Result,
+                                people: [person.name]
+                            });
+                        } else {
+                            if (!allSpecial2[existingIndex].people.includes(person.name)) {
+                                allSpecial2[existingIndex].people.push(person.name);
+                            }
+                        }
+                        
+                        // Thêm vào danh sách nguy hiểm nếu là số nguy hiểm
+                        if (emergencyNumbers.includes(calc2Result)) {
+                            allDangerDetails.push({
+                                person: person.name,
+                                time: item.time,
+                                number: item.number,
+                                result: calc2Result,
+                                type: 'Phép tính 2',
+                                message: calc2Result === 307 ? 'TỤT HUYẾT ÁP' : 'ĐAU TIM'
+                            });
+                        }
+                    }
+                });
+                
+                // Tạo cảnh báo sức khỏe cho người này
+                const personSpecialNumbers = [
+                    ...personSpecial2.map(r => r.result),
+                    ...personSpecial3.map(r => r.result)
+                ];
+                
+                const personSpecialResultsData = [
+                    ...personSpecial2,
+                    ...personSpecial3
+                ];
+                
+                const { alerts } = generateHealthAlerts(
+                    personSpecialNumbers,
+                    personSpecialResultsData
+                );
+                
+                // Lưu cảnh báo
+                if (alerts.length > 0) {
+                    alerts.forEach(alert => {
+                        allHealthAlerts.push({
+                            person: person.name,
+                            alert: alert
+                        });
+                    });
+                }
+                
+                // Thêm vào bảng
+                const row = document.createElement('tr');
+                const healthWarning = alerts.length > 0 ? 'CÓ' : 'Không';
+                row.innerHTML = `
+                    <td>${person.id}</td>
+                    <td>${person.displayName}</td>
+                    <td>${formatDate(person.birthdate)}</td>
+                    <td>${diffDays}</td>
+                    <td>${personSpecial3.map(s => s.result).join(', ') || 'Không có'}</td>
+                    <td>${personSpecial2.map(s => s.result).join(', ') || 'Không có'}</td>
+                    <td>${healthWarning}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Hiển thị tổng hợp số đặc biệt Phép tính 3
+            let allSpecial3HTML = '';
+            if (allSpecial3.length > 0) {
+                allSpecial3HTML = '<p><strong>Số đặc biệt tìm thấy trong Phép tính 3 (14, 41, 27, 72):</strong></p><ul>';
+                allSpecial3.forEach(item => {
+                    allSpecial3HTML += `<li>Giờ ${item.time} (số ${item.number}): ${item.result} - Ảnh hưởng ${item.people.length} người: ${item.people.join(', ')}</li>`;
+                });
+                allSpecial3HTML += '</ul>';
+            } else {
+                allSpecial3HTML = '<p>Không tìm thấy số đặc biệt (14, 41, 27, 72) trong Phép tính 3 của bất kỳ ai.</p>';
+            }
+            document.getElementById('allSpecial3').innerHTML = allSpecial3HTML;
+            
+            // Hiển thị tổng hợp số đặc biệt Phép tính 2
+            let allSpecial2HTML = '';
+            if (allSpecial2.length > 0) {
+                allSpecial2HTML = '<p><strong>Số đặc biệt tìm thấy trong Phép tính 2:</strong></p><ul>';
+                allSpecial2.forEach(item => {
+                    const warningText = item.result === 307 ? ' (TỤT HUYẾT ÁP)' : ' (BỆNH NẶNG)';
+                    allSpecial2HTML += `<li>Giờ ${item.time} (số ${item.number}): ${item.result}${warningText} - Ảnh hưởng ${item.people.length} người: ${item.people.join(', ')}</li>`;
+                });
+                allSpecial2HTML += '</ul>';
+            } else {
+                allSpecial2HTML = '<p>Không tìm thấy số đặc biệt trong Phép tính 2 của bất kỳ ai.</p>';
+            }
+            document.getElementById('allSpecial2').innerHTML = allSpecial2HTML;
+            
+            // Hiển thị chi tiết kết quả nguy hiểm
+            const allDangerDetailsDiv = document.getElementById('allDangerDetails');
+            allDangerDetailsDiv.innerHTML = '';
+            
+            if (allDangerDetails.length > 0) {
+                allDangerDetailsDiv.innerHTML = '<h4>Chi tiết các số nguy hiểm (gắn với giờ và tên người):</h4>';
+                
+                // Nhóm theo giờ
+                const groupedByTime = {};
+                allDangerDetails.forEach(detail => {
+                    const key = `${detail.time}_${detail.number}`;
+                    if (!groupedByTime[key]) {
+                        groupedByTime[key] = {
+                            time: detail.time,
+                            number: detail.number,
+                            people: [detail.person],
+                            results: [detail.result],
+                            types: [detail.type],
+                            messages: [detail.message]
+                        };
+                    } else {
+                        if (!groupedByTime[key].people.includes(detail.person)) {
+                            groupedByTime[key].people.push(detail.person);
+                        }
+                        if (!groupedByTime[key].results.includes(detail.result)) {
+                            groupedByTime[key].results.push(detail.result);
+                        }
+                        if (!groupedByTime[key].types.includes(detail.type)) {
+                            groupedByTime[key].types.push(detail.type);
+                        }
+                        if (!groupedByTime[key].messages.includes(detail.message)) {
+                            groupedByTime[key].messages.push(detail.message);
+                        }
+                    }
+                });
+                
+                // Hiển thị theo nhóm
+                Object.values(groupedByTime).forEach(group => {
+                    const dangerItem = document.createElement('div');
+                    dangerItem.className = 'danger-item';
+                    dangerItem.innerHTML = `
+                        <span class="danger-time">${group.time}</span>
+                        <span class="danger-number">Số ${group.number}</span>
+                        <br><strong>Người bị ảnh hưởng:</strong> ${group.people.join(', ')}
+                        <br><strong>Số nguy hiểm:</strong> ${group.results.join(', ')}
+                        <br><strong>Loại:</strong> ${group.types.join(', ')}
+                        <br><strong>Cảnh báo:</strong> ${group.messages.join(', ')}
+                    `;
+                    allDangerDetailsDiv.appendChild(dangerItem);
+                });
+            } else {
+                allDangerDetailsDiv.innerHTML = '<div class="health-alert">✅ Không có số nguy hiểm đặc biệt cho tất cả mọi người</div>';
+            }
+            
+            // Hiển thị tổng hợp cảnh báo sức khỏe
+            const allHealthAlertsDiv = document.getElementById('allHealthAlerts');
+            allHealthAlertsDiv.innerHTML = '';
+            
+            if (allHealthAlerts.length > 0) {
+                // Nhóm cảnh báo theo loại
+                const groupedAlerts = {};
+                
+                allHealthAlerts.forEach(item => {
+                    const alertType = item.alert.type;
+                    if (!groupedAlerts[alertType]) {
+                        groupedAlerts[alertType] = {
+                            message: item.alert.message,
+                            people: [item.person],
+                            numbers: item.alert.numbers
+                        };
+                    } else {
+                        if (!groupedAlerts[alertType].people.includes(item.person)) {
+                            groupedAlerts[alertType].people.push(item.person);
+                        }
+                        // Kết hợp các số
+                        item.alert.numbers.forEach(num => {
+                            if (!groupedAlerts[alertType].numbers.includes(num)) {
+                                groupedAlerts[alertType].numbers.push(num);
+                            }
+                        });
+                    }
+                });
+                
+                // Hiển thị từng loại cảnh báo
+                Object.keys(groupedAlerts).forEach(alertType => {
+                    const alert = groupedAlerts[alertType];
+                    const alertDiv = document.createElement('div');
+                    
+                    if (alertType === 'medicine') {
+                        alertDiv.className = 'medicine-alert';
+                    } else if (alertType === 'food') {
+                        alertDiv.className = 'food-alert';
+                    } else if (alertType === 'health') {
+                        alertDiv.className = 'health-alert';
+                    } else {
+                        alertDiv.className = 'emergency';
+                    }
+                    
+                    alertDiv.innerHTML = `
+                        <strong>${alert.message}</strong><br>
+                        <small>Ảnh hưởng đến: ${alert.people.join(', ')}</small>
+                    `;
+                    allHealthAlertsDiv.appendChild(alertDiv);
+                });
+                
+                // Thêm cảnh báo đặc biệt nếu có số đau tim
+                const emergencyPeople = allDangerDetails.filter(d => d.message === 'ĐAU TIM' || d.message === 'TỤT HUYẾT ÁP')
+                                                        .map(d => d.person);
+                const uniqueEmergencyPeople = [...new Set(emergencyPeople)];
+                
+                if (uniqueEmergencyPeople.length > 0) {
+                    document.getElementById('allEmergency').classList.remove('hidden');
+                    let emergencyHTML = `<p><strong>⚠️ PHÁT HIỆN DẤU HIỆU NGUY HIỂM CHO ${uniqueEmergencyPeople.length} NGƯỜI ⚠️</strong></p>`;
+                    emergencyHTML += `<p>Những người bị ảnh hưởng: ${uniqueEmergencyPeople.join(', ')}</p>`;
+                    emergencyHTML += `<p>Xem chi tiết trong phần "Kết quả nguy hiểm chi tiết" ở trên</p>`;
+                    emergencyHTML += `<p><strong>KHẨN CẤP:</strong> Cần thuốc giải hoặc mua thuốc ở hiệu thuốc ngay!</p>`;
+                    emergencyHTML += `<p>Những người trên cần tránh các hoạt động mạnh, giữ bình tĩnh, và chuẩn bị sẵn thuốc hỗ trợ tim mạch.</p>`;
+                    document.getElementById('allEmergencyMessage').innerHTML = emergencyHTML;
+                }
+            } else {
+                allHealthAlertsDiv.innerHTML = '<div class="health-alert">✅ Không có cảnh báo sức khỏe đặc biệt cho tất cả mọi người</div>';
+            }
+            
+            // Hiển thị cảnh báo tổng hợp
+            let allWarningHTML = '';
+            if (allSpecial2.length > 0 || allSpecial3.length > 0) {
+                allWarningHTML = '<h4>THỜI GIAN CẦN ĐẶC BIỆT CHÚ Ý CHO TẤT CẢ MỌI NGƯỜI:</h4>';
+                
+                if (allSpecial3.length > 0) {
+                    allWarningHTML += '<p><strong>Thời gian có số đặc biệt từ Phép tính 3 (14, 41, 27, 72):</strong></p><ul>';
+                    allSpecial3.forEach(item => {
+                        allWarningHTML += `<li>Giờ ${item.time} (số ${item.number}): ảnh hưởng đến ${item.people.length} người</li>`;
+                    });
+                    allWarningHTML += '</ul>';
+                }
+                
+                if (allSpecial2.length > 0) {
+                    allWarningHTML += '<p><strong>Thời gian có số đặc biệt từ Phép tính 2:</strong></p><ul>';
+                    allSpecial2.forEach(item => {
+                        const warningText = item.result === 307 ? ' - TỤT HUYẾT ÁP' : ' - BỆNH NẶNG';
+                        allWarningHTML += `<li>Giờ ${item.time} (số ${item.number})${warningText}: ảnh hưởng đến ${item.people.length} người</li>`;
+                    });
+                    allWarningHTML += '</ul>';
+                }
+            } else {
+                allWarningHTML = '<p>Không có thời gian nào cần đặc biệt chú ý cho tất cả mọi người.</p>';
+            }
+            document.getElementById('allWarning').innerHTML = allWarningHTML;
+        }
+        
+        // Hiện/ẩn các phần
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.classList.toggle('hidden');
+        }
+        
+        // Thiết lập ngày mặc định
+        window.onload = function() {
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+            document.getElementById('targetDate').value = todayStr;
+            
+            // Thiết lập ngày sinh mặc định cho người đầu tiên
+            const birthdate = new Date();
+            birthdate.setFullYear(birthdate.getFullYear() - 30);
+            const birthdateStr = birthdate.toISOString().split('T')[0];
+            document.getElementById('birthdate').value = birthdateStr;
+            
+            // Hiển thị bảng giờ
+            displayTimeTable();
+        };
+    </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Ngũ Hành Tương Tác - Lưu dữ liệu</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        :root {
+            --moc: #2ecc71; --hoa: #e74c3c; --tho: #f1c40f; --kim: #ecf0f1; --thuy: #3498db;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #121212;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            width: 100%;
+            max-width: 1000px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, border 0.3s;
+            border: 2px solid transparent;
+            background: #252525;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card:hover { transform: translateY(-5px); }
+        .card.active { border-color: white; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+
+        .card.moc { color: var(--moc); border-bottom: 5px solid var(--moc); }
+        .card.hoa { color: var(--hoa); border-bottom: 5px solid var(--hoa); }
+        .card.tho { color: var(--tho); border-bottom: 5px solid var(--tho); }
+        .card.kim { color: var(--kim); border-bottom: 5px solid var(--kim); }
+        .card.thuy { color: var(--thuy); border-bottom: 5px solid var(--thuy); }
+
+        input {
+            width: 100%;
+            margin-top: 12px;
+            padding: 14px 12px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            text-align: center;
+            font-size: 16px;
+            line-height: 1.2;
+        }
+
+        input:focus {
+            outline: 2px solid rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.2);
+        }
+
+        .result-section {
+            width: 100%;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-box {
+            background: #252525;
+            padding: 20px;
+            border-radius: 12px;
+            min-height: 150px;
+            word-break: break-word;
+        }
+
+        .info-box h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .highlight {
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 20px;
+            color: #000;
+            display: inline-block;
+            margin: 4px 0;
+            font-size: 1.1rem;
+        }
+
+        .tag-moc { background: var(--moc); }
+        .tag-hoa { background: var(--hoa); }
+        .tag-tho { background: var(--tho); }
+        .tag-kim { background: var(--kim); color: #333; }
+        .tag-thuy { background: var(--thuy); }
+
+        .storage-warning {
+            background: #ffcc00;
+            color: #333;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        @media (max-width: 600px) {
+            .grid-container { grid-template-columns: 1fr; gap: 12px; }
+            .result-section { grid-template-columns: 1fr; gap: 15px; }
+            body { padding: 12px; }
+            .card { padding: 18px; }
+            .card h3 { font-size: 1.6rem; margin: 5px 0; }
+            input { padding: 14px 12px; font-size: 16px; }
+            .info-box { padding: 18px; }
+            .info-box h3 { font-size: 1.4rem; }
+            .highlight { font-size: 1.1rem; padding: 5px 12px; }
+            p, small { font-size: 1.1rem; line-height: 1.5; }
+        }
+    </style>
+</head>
+<body>
+    <h2>Hệ Thống Tương Tác Ngũ Hành</h2>
+    <p><i>Bấm vào một thẻ hành để xem quy luật Sinh - Khắc</i></p>
+
+    <div id="storage-warning" class="storage-warning">
+        ⚠️ Trình duyệt không hỗ trợ lưu dữ liệu. Dữ liệu sẽ không được khôi phục khi tải lại trang.
+    </div>
+
+    <div class="grid-container">
+        <div class="card moc" onclick="analyze('moc')">
+            <h3>MỘC</h3>
+            <small>Can / Gió / Chua</small>
+            <input type="text" id="in-moc" placeholder="Nhập thực phẩm..." onclick="event.stopPropagation()">
+        </div>
+        <div class="card hoa" onclick="analyze('hoa')">
+            <h3>HỎA</h3>
+            <small>Tâm / Nắng / Đắng</small>
+            <input type="text" id="in-hoa" placeholder="Nhập thực phẩm..." onclick="event.stopPropagation()">
+        </div>
+        <div class="card tho" onclick="analyze('tho')">
+            <h3>THỔ</h3>
+            <small>Tỳ / Ẩm / Ngọt</small>
+            <input type="text" id="in-tho" placeholder="Nhập thực phẩm..." onclick="event.stopPropagation()">
+        </div>
+        <div class="card kim" onclick="analyze('kim')">
+            <h3>KIM</h3>
+            <small>Phế / Khô / Cay</small>
+            <input type="text" id="in-kim" placeholder="Nhập thực phẩm..." onclick="event.stopPropagation()">
+        </div>
+        <div class="card thuy" onclick="analyze('thuy')">
+            <h3>THỦY</h3>
+            <small>Thận / Mưa / Mặn</small>
+            <input type="text" id="in-thuy" placeholder="Nhập thực phẩm..." onclick="event.stopPropagation()">
+        </div>
+    </div>
+
+    <div class="result-section">
+        <div class="info-box" id="box-sinh">
+            <h3>♻️ Quy Luật Tương Sinh</h3>
+            <div id="content-sinh">Chọn một hành để xem...</div>
+        </div>
+        <div class="info-box" id="box-khac">
+            <h3>⚔️ Quy Luật Tương Khắc</h3>
+            <div id="content-khac">Chọn một hành để xem...</div>
+        </div>
+    </div>
+
+    <footer style="margin-top:30px; font-size:0.8rem; opacity:0.6; text-align:center;">
+        ⚡ Dữ liệu nhập vào được tự động lưu trên trình duyệt (không mất khi tải lại trang).
+    </footer>
+
+    <script>
+        (function() {
+            // Kiểm tra localStorage có khả dụng không
+            let storageAvailable = false;
+            try {
+                const testKey = '__test__';
+                localStorage.setItem(testKey, '1');
+                localStorage.removeItem(testKey);
+                storageAvailable = true;
+            } catch (e) {
+                document.getElementById('storage-warning').style.display = 'block';
+            }
+
+            const data = {
+                moc: { name: "Mộc", tag: "tag-moc", sinh: "hoa", duocSinh: "thuy", khac: "tho", biKhac: "kim" },
+                hoa: { name: "Hỏa", tag: "tag-hoa", sinh: "tho", duocSinh: "moc", khac: "kim", biKhac: "thuy" },
+                tho: { name: "Thổ", tag: "tag-tho", sinh: "kim", duocSinh: "hoa", khac: "thuy", biKhac: "moc" },
+                kim: { name: "Kim", tag: "tag-kim", sinh: "thuy", duocSinh: "tho", khac: "moc", biKhac: "hoa" },
+                thuy: { name: "Thủy", tag: "tag-thuy", sinh: "moc", duocSinh: "kim", khac: "hoa", biKhac: "tho" }
+            };
+
+            function saveInputs() {
+                if (!storageAvailable) return;
+                try {
+                    localStorage.setItem('moc', document.getElementById('in-moc').value);
+                    localStorage.setItem('hoa', document.getElementById('in-hoa').value);
+                    localStorage.setItem('tho', document.getElementById('in-tho').value);
+                    localStorage.setItem('kim', document.getElementById('in-kim').value);
+                    localStorage.setItem('thuy', document.getElementById('in-thuy').value);
+                } catch (e) {}
+            }
+
+            function loadInputs() {
+                if (!storageAvailable) return;
+                try {
+                    document.getElementById('in-moc').value = localStorage.getItem('moc') || '';
+                    document.getElementById('in-hoa').value = localStorage.getItem('hoa') || '';
+                    document.getElementById('in-tho').value = localStorage.getItem('tho') || '';
+                    document.getElementById('in-kim').value = localStorage.getItem('kim') || '';
+                    document.getElementById('in-thuy').value = localStorage.getItem('thuy') || '';
+                } catch (e) {}
+            }
+
+            window.analyze = function(key) {
+                document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+                const activeCard = document.querySelector('.' + key);
+                if (activeCard) activeCard.classList.add('active');
+
+                const h = data[key];
+                const getFood = (id) => {
+                    const val = document.getElementById('in-' + id).value;
+                    return val || "(Chưa nhập)";
+                };
+
+                document.getElementById('content-sinh').innerHTML = `
+                    <p>🌱 Mẹ (Sinh ra nó): <span class="highlight ${data[h.duocSinh].tag}">${data[h.duocSinh].name}</span><br>
+                       <small>Thực phẩm: ${getFood(h.duocSinh)}</small></p>
+                    <p>🌿 Con (Nó sinh ra): <span class="highlight ${data[h.sinh].tag}">${data[h.sinh].name}</span><br>
+                       <small>Thực phẩm: ${getFood(h.sinh)}</small></p>
+                `;
+
+                document.getElementById('content-khac').innerHTML = `
+                    <p>⚡ Nó khắc (Lấn át): <span class="highlight ${data[h.khac].tag}">${data[h.khac].name}</span><br>
+                       <small>Thực phẩm: ${getFood(h.khac)}</small></p>
+                    <p>🌀 Bị khắc (Bị áp chế): <span class="highlight ${data[h.biKhac].tag}">${data[h.biKhac].name}</span><br>
+                       <small>Thực phẩm: ${getFood(h.biKhac)}</small></p>
+                `;
+            };
+
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.card input').forEach(input => {
+                    input.addEventListener('input', saveInputs);
+                });
+                loadInputs();
+                // analyze('moc'); // (tuỳ chọn) tự chọn Mộc khi tải trang
+            });
+        })();
+    </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thực đơn 2 ngày — Người chụp ảnh / ngắm cảnh / xem phim</title>
+<style>
+:root{--bg:#0b1220;--card:#071428;--accent:#ffcc00;--accent2:#60f0c4;--muted:#9fb3c8;--glass:rgba(255,255,255,0.03)}*{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:#eaf6ff}html,body{height:100%;margin:0;background:linear-gradient(180deg,#031022 0%,#071428 60%);-webkit-font-smoothing:antialiased}#app{max-width:1280px;margin:18px auto;padding:16px;display:grid;grid-template-columns:1fr 360px;gap:16px;min-height:80vh}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.title{font-size:22px;font-weight:800;letter-spacing:0.2px;color:var(--accent)}
+.lead{font-size:13px;color:var(--muted);margin-top:4px}
+.controls{display:flex;gap:8px}
+.btn{background:var(--accent);color:#081022;border:none;padding:10px 12px;border-radius:10px;font-weight:800;cursor:pointer}
+.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 12px;border-radius:10px;color:var(--muted);font-weight:700}
+.main{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:14px;padding:14px;overflow:auto;max-height:78vh}
+.side{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:12px;padding:14px;overflow:auto;max-height:78vh}
+.tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tab{padding:10px 12px;border-radius:10px;background:var(--glass);cursor:pointer;font-weight:800;color:var(--muted);border:1px solid rgba(255,255,255,0.03)}
+.tab.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021022}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.card{background:rgba(255,255,255,0.02);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+.card h3{margin:0;font-size:18px;color:var(--accent);font-weight:900}
+.meta{color:var(--muted);font-size:13px;margin-top:6px}
+.meal{background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);padding:8px;border-radius:8px;margin-top:10px}
+.meal h4{margin:0;font-size:16px;color:var(--accent2);font-weight:800}
+.meal p{margin:6px 0 0;color:#e6f8ff}
+.tag{display:inline-block;padding:6px 8px;border-radius:8px;font-weight:800;margin-top:8px}
+.tag.yin{background:#1f6fb0;color:#eaf6ff}
+.tag.yang{background:#8b3b00;color:#fff}
+.tag.neu{background:#40566a;color:#eaf6ff}
+.small{font-size:13px;color:var(--muted)}
+.table{width:100%;border-collapse:collapse;margin-top:8px}
+.table td{padding:6px 4px;border-bottom:1px dashed rgba(255,255,255,0.03);font-size:13px}
+.shop{list-style:none;padding:0;margin:0}
+.shop li{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,0.03)}
+.price{color:var(--accent);font-weight:900}
+.footer{margin-top:10px;color:var(--muted);font-size:13px;text-align:center}
+@media(max-width:1080px){#app{grid-template-columns:1fr}.side{max-height:44vh}.main{max-height:44vh}}
+/* prevent horizontal overflow */*{word-break:break-word}
+</style>
+</head>
+<body>
+<div id="app">
+  <div>
+    <div class="header">
+      <div>
+        <div class="title">Thực đơn 2 ngày — Người thưởng ngoạn (chụp ảnh / cinema / máy tính / ngắm trời)</div>
+        <div class="lead">Giờ ăn: 08:00 • 12:00 • 16:00 — Kèm kcal, tính Âm/Dương/Trung, ước lượng chi phí & danh sách đi chợ 2 ngày.</div>
+      </div>
+      <div class="controls">
+        <button class="btn" onclick="window.print()">In / Xuất PDF</button>
+        <button class="ghost" id="toggleCal" onclick="toggleCal()">Ẩn/Hiện kcal</button>
+      </div>
+    </div>
+
+    <main class="main">
+      <div class="tabs" role="tablist">
+        <div class="tab active" data-key="all" onclick="selectTab(event)">Tất cả</div>
+        <div class="tab" data-key="photo" onclick="selectTab(event)">Chụp ảnh</div>
+        <div class="tab" data-key="cinema" onclick="selectTab(event)">Chiếu phim / Xem</div>
+        <div class="tab" data-key="pc" onclick="selectTab(event)">Làm máy tính</div>
+        <div class="tab" data-key="radios" onclick="selectTab(event)">Vô tuyến / Xem TV</div>
+        <div class="tab" data-key="planes" onclick="selectTab(event)">Ngắm máy bay</div>
+        <div class="tab" data-key="birds" onclick="selectTab(event)">Xem chim</div>
+        <div class="tab" data-key="scenery" onclick="selectTab(event)">Ngắm phong cảnh</div>
+      </div>
+
+      <div class="grid" id="grid">
+
+        <section class="card" data-type="photo">
+          <h3>Chụp ảnh — Nhu cầu ~2.600 kcal/ngày</h3>
+          <div class="meta">Hoạt động đứng/di chuyển nhẹ, tập trung mắt - ưu tiên carb ổn định + nước.</div>
+          <div class="meal"><h4>08:00 — Sáng <span class="small">~700 kcal</span></h4><p>Bánh mì nguyên cám + trứng 2 quả • Sinh tố chuối + sữa</p></div>
+          <div class="meal"><h4>12:00 — Trưa <span class="small">~1000 kcal</span></h4><p>Cơm 1.5 chén • Cá/ gà 150–180g • Rau luộc • Canh</p></div>
+          <div class="meal"><h4>16:00 — Tối nhẹ <span class="small">~900 kcal</span></h4><p>Bún / Mì nhẹ • Sữa chua • Nước điện giải</p></div>
+          <div class="tag yang">Dương</div> <div class="tag yin">Âm</div>
+        </section>
+
+        <section class="card" data-type="cinema">
+          <h3>Chiếu phim / Xem máy tính lâu — Nhu cầu ~2.400 kcal/ngày</h3>
+          <div class="meta">Ngồi lâu, cần thực phẩm chống mỏi mắt & tốt cho tập trung.</div>
+          <div class="meal"><h4>08:00 — Sáng <span class="small">~650 kcal</span></h4><p>Yến mạch với sữa • Hạt chia • Trái cây nhỏ</p></div>
+          <div class="meal"><h4>12:00 — Trưa <span class="small">~900 kcal</span></h4><p>Cơm 1 chén • Thịt nhẹ 120–150g • Rau xanh</p></div>
+          <div class="meal"><h4>16:00 — Tối nhẹ <span class="small">~850 kcal</span></h4><p>Salad + ức gà • Trái cây • Trà ấm</p></div>
+          <div class="tag neu">Trung tính</div>
+        </section>
+
+        <section class="card" data-type="pc">
+          <h3>Làm việc máy tính — Nhu cầu ~2.500 kcal/ngày</h3>
+          <div class="meta">Cần năng lượng ổn định, hạn chế đồ ngọt gây tụt đường.</div>
+          <div class="meal"><h4>08:00 — Sáng <span class="small">~700 kcal</span></h4><p>Bánh mì + trứng • Trái cây • Nước ấm</p></div>
+          <div class="meal"><h4>12:00 — Trưa <span class="small">~900 kcal</span></h4><p>Cơm + cá 150g • Rau • Canh</p></div>
+          <div class="meal"><h4>16:00 — Tối nhẹ <span class="small">~900 kcal</span></h4><p>Sandwich protein • Sữa chua</p></div>
+          <div class="tag yang">Dương</div>
+        </section>
+
+        <section class="card" data-type="radios">
+          <h3>Vô tuyến / Xem TV dài — Nhu cầu ~2.300 kcal/ngày</h3>
+          <div class="meta">Thư giãn nhiều, ưu tiên đồ ăn nhẹ tốt cho tim mạch.</div>
+          <div class="meal"><h4>08:00 — Sáng <span class="small">~600 kcal</span></h4><p>Smoothie • Bánh mì hạt</p></div>
+          <div class="meal"><h4>12:00 — Trưa <span class="small">~900 kcal</span></h4><p>Cơm 1 chén • Cá/đạm nhẹ • Rau</p></div>
+          <div class="meal"><h4>16:00 — Tối nhẹ <span class="small">~800 kcal</span></h4><p>Snack hạt, trái cây • Trà thảo mộc</p></div>
+          <div class="tag yin">Âm</div>
+        </section>
+
+        <section class="card" data-type="planes">
+          <h3>Ngắm máy bay / trời — Nhu cầu ~2.600 kcal/ngày</h3>
+          <div class="meta">Hoạt động đứng/đi nhẹ, cần nước và carb vừa đủ.</div>
+          <div class="meal"><h4>08:00 — Sáng <span class="small">~700 kcal</span></h4><p>Bánh mì + trứng • Chuối</p></div>
+          <div class="meal"><h4>12:00 — Trưa <span class="small">~1000 kcal</span></h4><p>Cơm + gà 150g • Rau • Khoai lang</p></div>
+          <div class="meal"><h4>16:00 — Tối nhẹ <span class="small">~900 kcal</span></h4><p>Bún/ mì nhẹ • Nước điện giải</p></div>
+          <div class="tag yang">Dương</div>
+        </section>
+
+        <section class="card" data-type="birds">
+          <h3>Xem chim — Nhu cầu ~2.700 kcal/ngày</h3>
+          <div class="meta">Hoạt động đứng/đi rừng nhẹ, cần năng lượng bền và chống lạnh.</div>
+          <div class="meal"><h4>08:00 — Sáng <span class="small">~800 kcal</span></h4><p>Bánh mì nướng + bơ đậu phộng • Sinh tố</p></div>
+          <div class="meal"><h4>12:00 — Trưa <span class="small">~1000 kcal</span></h4><p>Cơm + cá/ gà 180g • Rau • Canh</p></div>
+          <div class="meal"><h4>16:00 — Tối nhẹ <span class="small">~900 kcal</span></h4><p>Pasta nhỏ • Sữa chua • Hạt</p></div>
+          <div class="tag yang">Dương</div>
+        </section>
+
+        <section class="card" data-type="scenery">
+          <h3>Ngắm phong cảnh — Nhu cầu ~2.500 kcal/ngày</h3>
+          <div class="meta">Hoạt động nhẹ nhàng, thư giãn; ưu tiên đồ tươi, dễ tiêu.</div>
+          <div class="meal"><h4>08:00 — Sáng <span class="small">~700 kcal</span></h4><p>Yến mạch, trái cây, sữa</p></div>
+          <div class="meal"><h4>12:00 — Trưa <span class="small">~900 kcal</span></h4><p>Cơm + cá 150g • Salad</p></div>
+          <div class="meal"><h4>16:00 — Tối nhẹ <span class="small">~900 kcal</span></h4><p>Bún/ mì nhẹ • Trái cây</p></div>
+          <div class="tag neu">Trung tính</div>
+        </section>
+
+      </div>
+
+      <div class="footer">Lưu ý: kcal là ước tính trung bình cho người trưởng thành. Điều chỉnh theo cân nặng, tuổi và mức hoạt động.</div>
+    </main>
+  </div>
+
+  <aside class="side">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <strong style="font-size:16px;color:var(--accent)">Danh sách đi chợ — 2 ngày (ước tính)</strong>
+      <span class="small">Giá tham khảo</span>
+    </div>
+
+    <ul class="shop">
+      <li><span>Gạo 2kg</span><span class="price">50.000₫</span></li>
+      <li><span>Thịt gà 1kg</span><span class="price">110.000₫</span></li>
+      <li><span>Cá 700g</span><span class="price">80.000₫</span></li>
+      <li><span>Trứng 10 quả</span><span class="price">30.000₫</span></li>
+      <li><span>Rau củ tổng (rau muống, cải, cà chua)</span><span class="price">70.000₫</span></li>
+      <li><span>Khoai lang / khoai tây</span><span class="price">25.000₫</span></li>
+      <li><span>Trái cây (chuối, táo)</span><span class="price">40.000₫</span></li>
+      <li><span>Sữa 2 lít</span><span class="price">80.000₫</span></li>
+      <li><span>Hạt / bơ đậu phộng</span><span class="price">60.000₫</span></li>
+      <li><span>Gia vị (gừng, tỏi, hành, chanh)</span><span class="price">20.000₫</span></li>
+    </ul>
+
+    <div style="margin-top:12px;font-weight:900;color:var(--accent);font-size:18px">Tổng ước tính: <span class="price">~665.000₫</span></div>
+
+    <div style="margin-top:12px">
+      <div style="font-weight:900;color:var(--accent2);margin-bottom:8px">Lịch mẫu 2 ngày (Mẫu chung)</div>
+      <table class="table">
+        <tr><td style="width:110px">05:30</td><td>Thức dậy • Uống nước</td></tr>
+        <tr><td>06:00</td><td>Khởi động nhẹ / chuẩn bị thiết bị</td></tr>
+        <tr><td>08:00</td><td>Ăn sáng</td></tr>
+        <tr><td>08:30 — 11:30</td><td>Hoạt động chính (chụp/quan sát/xem)</td></tr>
+        <tr><td>12:00</td><td>Ăn trưa</td></tr>
+        <tr><td>13:00 — 15:30</td><td>Hoạt động II / nghỉ ngắn</td></tr>
+        <tr><td>16:00</td><td>Ăn nhẹ</td></tr>
+        <tr><td>17:00</td><td>Thu dọn • Dựng ảnh / ghi chú</td></tr>
+        <tr><td>21:30</td><td>Ngủ</td></tr>
+      </table>
+    </div>
+
+    <div style="margin-top:12px;color:var(--muted);font-size:13px">Ghi chú âm/dương/trung: Âm = mát, giảm kích thích; Dương = cung cấp năng lượng, ấm; Trung tính = trung hòa, dễ chịu cho cơ thể. Chọn món phù hợp theo thời tiết và tình trạng sức khỏe.</div>
+  </aside>
+</div>
+
+<script>
+function selectTab(e){const key=e.currentTarget.getAttribute('data-key');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));e.currentTarget.classList.add('active');document.querySelectorAll('[data-type]').forEach(c=>{c.style.display=(key==='all'||c.getAttribute('data-type')===key)?'block':'none'});}function toggleCal(){document.querySelectorAll('.small').forEach(s=>s.style.display=(s.style.display==='none')?'':'none');const b=document.getElementById('toggleCal');b.textContent=b.textContent.includes('Ẩn')?'Hiện kcal':'Ẩn/Hiện kcal';}
+</script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

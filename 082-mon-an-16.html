@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hệ Thống Ứng Dụng Trang 80-97</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            background: #f5f7fa; 
+            color: #2d3748; 
+            line-height: 1.6; 
+            padding: 15px; 
+            font-size: 16px; 
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        .container { 
+            max-width: 100%; 
+            margin: 20px auto; 
+            background: white; 
+            border-radius: 16px; 
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); 
+            overflow: hidden; 
+        }
+        
+        .header { 
+            background: linear-gradient(135deg, #004d40 0%, #2c7873 100%); 
+            color: white; 
+            padding: 25px 20px; 
+            text-align: center; 
+        }
+        
+        h1 { 
+            font-size: 1.6rem; 
+            margin-bottom: 10px; 
+            line-height: 1.3; 
+            word-wrap: break-word; 
+        }
+        
+        .subtitle { 
+            font-size: 0.95rem; 
+            opacity: 0.95; 
+            margin-top: 8px; 
+        }
+        
+        section { 
+            padding: 25px 20px; 
+            border-bottom: 1px solid #e2e8f0; 
+        }
+        
+        h2 { 
+            color: #004d40; 
+            margin-bottom: 20px; 
+            padding-bottom: 12px; 
+            border-bottom: 2px solid #4db6ac; 
+            font-size: 1.4rem; 
+        }
+        
+        h3 { 
+            color: #2c7873; 
+            margin: 25px 0 15px 0; 
+            background: #e0f7fa; 
+            padding: 12px 15px; 
+            border-radius: 8px; 
+            font-size: 1.1rem; 
+        }
+        
+        .danger-box, .principle-box, .note-box { 
+            padding: 20px; 
+            margin: 20px 0; 
+            border-left: 5px solid; 
+            border-radius: 0 10px 10px 0; 
+            font-size: 0.95rem; 
+        }
+        
+        .danger-box { 
+            background: #ffebee; 
+            border-left-color: #c62828; 
+        }
+        
+        .principle-box { 
+            background: #e8f5e9; 
+            border-left-color: #43a047; 
+        }
+        
+        .note-box { 
+            background: #f3e5f5; 
+            border-left-color: #7b1fa2; 
+        }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 15px 0; 
+            font-size: 0.9rem; 
+            display: block; 
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch; 
+        }
+        
+        th { 
+            background: #004d40; 
+            color: white; 
+            padding: 14px 12px; 
+            text-align: left; 
+            font-weight: 600; 
+            white-space: nowrap; 
+        }
+        
+        td { 
+            padding: 12px; 
+            border-bottom: 1px solid #e2e8f0; 
+            vertical-align: top; 
+            word-break: break-word; 
+            min-width: 120px; 
+        }
+        
+        tr:nth-child(even) { 
+            background-color: #f8f9fa; 
+        }
+        
+        .badge { 
+            display: inline-block; 
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            font-size: 0.8rem; 
+            font-weight: 700; 
+            margin: 4px 2px; 
+            white-space: nowrap; 
+        }
+        
+        .badge-danger { 
+            background: linear-gradient(135deg, #ff5252 0%, #d32f2f 100%); 
+            color: white; 
+        }
+        
+        .badge-warning { 
+            background: linear-gradient(135deg, #ffb74d 0%, #f57c00 100%); 
+            color: white; 
+        }
+        
+        .property-tag { 
+            display: inline-block; 
+            padding: 4px 10px; 
+            border-radius: 15px; 
+            font-size: 0.75rem; 
+            margin: 2px; 
+            font-weight: 600; 
+            white-space: nowrap; 
+        }
+        
+        .tag-yin { 
+            background: #e3f2fd; 
+            color: #0d47a1; 
+        }
+        
+        .tag-yang { 
+            background: #ffebee; 
+            color: #b71c1c; 
+        }
+        
+        .tag-neutral { 
+            background: #f5f5f5; 
+            color: #424242; 
+        }
+        
+        .meal-section { 
+            background: #f8f9fa; 
+            padding: 20px; 
+            border-radius: 12px; 
+            margin: 25px 0; 
+            border: 1px solid #e0f2f1; 
+        }
+        
+        .meal-time { 
+            color: #004d40; 
+            font-weight: 700; 
+            margin: 20px 0 12px 0; 
+            display: block; 
+            font-size: 1rem; 
+            border-bottom: 1px dashed #4db6ac; 
+            padding-bottom: 8px; 
+        }
+        
+        .calorie { 
+            background: #e1bee7; 
+            color: #4a148c; 
+            padding: 4px 12px; 
+            border-radius: 15px; 
+            font-weight: 700; 
+            font-size: 0.9rem; 
+            display: inline-block; 
+            margin-top: 5px; 
+        }
+        
+        .footer { 
+            text-align: center; 
+            padding: 25px 20px; 
+            color: #666; 
+            background: #f8f9fa; 
+            font-size: 0.9rem; 
+        }
+        
+        .action-grid { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            margin-top: 30px; 
+        }
+        
+        .action-card { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 12px; 
+            text-align: center; 
+            text-decoration: none; 
+            color: inherit; 
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08); 
+            transition: all 0.2s; 
+            border: 1px solid #e0f2f1; 
+        }
+        
+        .action-card:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 12px 20px rgba(0,0,0,0.12); 
+        }
+        
+        .action-card h4 { 
+            color: #004d40; 
+            margin-bottom: 10px; 
+            font-size: 1rem; 
+        }
+        
+        .action-card p { 
+            font-size: 0.9rem; 
+            color: #666; 
+        }
+        
+        .highlight { 
+            background: #fff9c4; 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            font-weight: 600; 
+            font-size: 0.9rem; 
+        }
+        
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            body { padding: 20px; }
+            .container { max-width: 90%; }
+            .action-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+                display: grid; 
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .container { max-width: 1200px; }
+            .action-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+        }
+        
+        /* Fix for very small screens */
+        @media (max-width: 360px) {
+            .header { padding: 20px 15px; }
+            section { padding: 20px 15px; }
+            h1 { font-size: 1.4rem; }
+            h2 { font-size: 1.2rem; }
+            h3 { font-size: 1rem; }
+            .meal-section { padding: 15px; }
+        }
+        
+        /* Prevent text overflow in tables */
+        td, th { 
+            max-width: 100vw; 
+            overflow-wrap: break-word; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>HỆ THỐNG ỨNG DỤNG TRANG 80-97</h1>
+            <p class="subtitle">Chuyển hóa hoàn chỉnh từ nguyên tắc Đông y sang thực đơn hiện đại</p>
+        </div>
+
+        <section>
+            <h2>PHẦN I: THANH LỌC - LOẠI BỎ - THAY THẾ BẮT BUỘC</h2>
+            
+            <h3>1. NHÓM LOẠI BỎ HOÀN TOÀN</h3>
+            <div class="danger-box">
+                <p><strong>⚠️ CẢNH BÁO QUAN TRỌNG:</strong> Các món dưới đây KHÔNG CÒN PHÙ HỢP với người tiểu đường đang dùng thuốc Tây y.</p>
+            </div>
+            
+            <table>
+                <tr>
+                    <th>Món Trong Sách</th>
+                    <th>Lý Do Loại Bỏ</th>
+                    <th>Phân Loại</th>
+                </tr>
+                <tr>
+                    <td>Thịt chó, trứng chim sẻ, thần dề, pin dê</td>
+                    <td>Thịt chó: nhiều cholesterol, protein khó tiêu, dễ gây tăng mỡ máu, gút.</td>
+                    <td><span class="badge badge-danger">❌ LOẠI HOÀN TOÀN</span></td>
+                </tr>
+                <tr>
+                    <td>Rượu cất, rượu thuốc, ngâm rượu các loại</td>
+                    <td>Rượu gây hạ đường huyết nguy hiểm, tăng men gan, tương tác xấu với thuốc Tây.</td>
+                    <td><span class="badge badge-danger">❌ LOẠI HOÀN TOÀN</span></td>
+                </tr>
+                <tr>
+                    <td>Nhân sâm liều cao, Nhục thung dung, Hà thủ ô sống</td>
+                    <td>Nhân sâm làm tăng huyết áp, mất ngủ. Hà thủ ô sống có nguy cơ độc với gan.</td>
+                    <td><span class="badge badge-danger">❌ LOẠI HOÀN TOÀN</span></td>
+                </tr>
+                <tr>
+                    <td>Hải sâm, bồ câu, thịt dê ăn liên tục</td>
+                    <td>Hải sâm: hiếm, đắt, khó kiểm soát an toàn. Thịt dê, bồ câu: nhiều cholesterol.</td>
+                    <td><span class="badge badge-warning">⚠️ THAY THẾ BẮT BUỘC</span></td>
+                </tr>
+            </table>
+
+            <h3>2. NGUYÊN TẮC THAY THẾ "GIỮ TÍNH CHẤT - BỎ NGUY CƠ"</h3>
+            <div class="principle-box">
+                <p><strong>🎯 TRIẾT LÝ THAY THẾ:</strong> Giữ lại công dụng theo Đông y, nhưng sử dụng nguyên liệu PHỔ THÔNG, AN TOÀN.</p>
+            </div>
+            
+            <table>
+                <tr>
+                    <th>Mục Tiêu Đông Y</th>
+                    <th>Nguyên Liệu Gốc</th>
+                    <th>Thay Bằng</th>
+                </tr>
+                <tr>
+                    <td><strong>Bổ thận, tráng dương</strong></td>
+                    <td>Pin dê, thận dê, hải sâm</td>
+                    <td><strong>Cá lóc/cá diếc, Trứng gà, Đậu đen</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Đại bổ nguyên khí</strong></td>
+                    <td>Nhân sâm, nhung hươu</td>
+                    <td><strong>Yến mạch, Gạo lứt, Hạt sen</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Nhuận tràng, đen tóc</strong></td>
+                    <td>Hà thủ ô (phức tạp)</td>
+                    <td><strong>Mè đen (vừng đen)</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Tán hàn, ôn trung</strong></td>
+                    <td>Rượu ngâm</td>
+                    <td><strong>Gừng tươi, Hành lá, Tiêu (ít)</strong></td>
+                </tr>
+            </table>
+        </section>
+
+        <section>
+            <h2>PHẦN II: THỰC ĐƠN THAY THẾ 7 NGÀY</h2>
+            <p>Thiết kế chuyên biệt cho người tiểu đường kèm <span class="highlight">mệt mỏi, sinh lực giảm sút</span>.</p>
+
+            <div class="meal-section">
+                <h3>🗓️ NGÀY 1 – HỖ TRỢ THẬN YẾU, SINH LỰC GIẢM NHẸ</h3>
+                
+                <span class="meal-time">🌅 BỮA SÁNG (7h00): Cháo Yến Mạch Mè Đen</span>
+                <table>
+                    <tr>
+                        <td><strong>Định Lượng</strong></td>
+                        <td>Yến mạch cán: 40g khô. Mè đen: 5g. Nước: 350ml.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tính Chất Âm Dương</strong></td>
+                        <td><span class="property-tag tag-neutral">Trung (Yến mạch)</span>. <span class="property-tag tag-yin">Âm (Mè đen)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Năng Lượng</strong></td>
+                        <td><span class="calorie">~250 kcal</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Công Hiệu Thực Tế</strong></td>
+                        <td><strong>Yến mạch</strong> ổn định đường huyết. <strong>Mè đen</strong> thay thế vị thuốc "bổ thận" phức tạp.</td>
+                    </tr>
+                </table>
+
+                <span class="meal-time">🍱 BỮA TRƯA (12h00): Cá Hấp Gừng</span>
+                <table>
+                    <tr>
+                        <td><strong>Định Lượng</strong></td>
+                        <td>Cá lóc/cá diếc: 120g. Gừng: 3g. Hành lá.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tính Chất Âm Dương</strong></td>
+                        <td><span class="property-tag tag-neutral">Trung (Cá)</span>. <span class="property-tag tag-yang">Dương nhẹ (Gừng)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Năng Lượng</strong></td>
+                        <td><span class="calorie">~230 kcal</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Công Hiệu Thực Tế</strong></td>
+                        <td>Cá đạm tinh khiết, ít mỡ. Gừng làm ấm cơ thể, thay thế tính "tán hàn" của rượu.</td>
+                    </tr>
+                </table>
+
+                <span class="meal-time">🌙 BỮA TỐI (18h30): Canh Đậu Hũ Rau Cải</span>
+                <table>
+                    <tr>
+                        <td><strong>Định Lượng</strong></td>
+                        <td>Đậu hũ non: 120g. Rau cải xanh: 150g.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tính Chất Âm Dương</strong></td>
+                        <td><span class="property-tag tag-yin">Âm (Mát, thanh nhiệt)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Năng Lượng</strong></td>
+                        <td><span class="calorie">~160 kcal</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Công Hiệu Thực Tế</strong></td>
+                        <td>Giảm tải cho hệ tiêu hóa buổi tối. Đạm thực vật lành tính, tốt cho thận.</td>
+                    </tr>
+                </table>
+                
+                <div style="margin-top: 20px; text-align: center; font-weight: bold; background: #e8f5e9; padding: 12px; border-radius: 8px;">
+                    📊 <span class="highlight">TỔNG NĂNG LƯỢNG NGÀY 1:</span> ~640 kcal
+                </div>
+            </div>
+
+            <div class="meal-section">
+                <h3>🗓️ NGÀY 2 – PHỤC HỒI SINH LỰC, CHỐNG MỆT MỎI</h3>
+                
+                <span class="meal-time">🌅 Sáng:</span> <strong>Cháo Gạo Lứt Hạt Sen</strong><br>
+                Gạo lứt 40g, Hạt sen 20g. <span class="property-tag tag-yin">Âm</span>. <span class="calorie">~240 kcal</span>.<br>
+                <em>Hạt sen kiện tỳ, an thần.</em><br><br>
+                
+                <span class="meal-time">🍱 Trưa:</span> <strong>Trứng Gà Luộc + Canh Rong Biển</strong><br>
+                Trứng 1 quả, rong biển 5g, đậu hũ 50g. <span class="property-tag tag-neutral">Trung</span>. <span class="calorie">~180 kcal</span>.<br>
+                <em>Trứng cung cấp Lecithin tốt cho não.</em><br><br>
+                
+                <span class="meal-time">🌙 Tối:</span> <strong>Cá Diếc Hấp Bí Đao</strong><br>
+                Cá 100g, Bí đao 150g. <span class="property-tag tag-yin">Âm</span>. <span class="calorie">~220 kcal</span>.<br>
+                <em>Bí đao thanh nhiệt, lợi tiểu nhẹ.</em>
+                
+                <div style="text-align: center; margin-top: 15px; font-weight: bold;">
+                    📊 <span class="highlight">TỔNG NGÀY 2:</span> ~640 kcal
+                </div>
+            </div>
+
+            <div class="note-box">
+                <strong>📌 LƯU Ý VÒNG LẶP THỰC ĐƠN:</strong> Ngày 4-7 luân phiên nguyên tắc và nguyên liệu các ngày trên. <strong>Ví dụ:</strong> Ngày 4 đổi cá thành Ức gà hấp; Ngày 5 đổi canh rong biển thành Canh bí đao...
+            </div>
+        </section>
+
+        <section>
+            <h2>PHẦN V: KẾ HOẠCH ĐI CHỢ & CHI PHÍ THỰC TẾ</h2>
+            <p>Chi phí ước tính tại chợ truyền thống cho 1 người theo thực đơn 7 ngày.</p>
+            
+            <h3>🛒 LẦN ĐI CHỢ 1 (Đầu tuần)</h3>
+            <table>
+                <tr><th>Thực Phẩm</th><th>Định Lượng</th><th>Giá (VNĐ)</th></tr>
+                <tr><td>Yến mạch cán</td><td>0.5 kg</td><td>25,000 - 35,000</td></tr>
+                <tr><td>Gạo lứt</td><td>0.5 kg</td><td>18,000 - 25,000</td></tr>
+                <tr><td>Cá lóc/cá diếc</td><td>1 kg</td><td>60,000 - 80,000</td></tr>
+                <tr><td>Đậu hũ trắng</td><td>5-6 bìa</td><td>12,000 - 18,000</td></tr>
+                <tr><td>Rau xanh các loại</td><td>2.5 kg</td><td>35,000 - 50,000</td></tr>
+                <tr><td><strong>Tổng Lần 1</strong></td><td colspan="2"><strong>150,000 - 208,000 VNĐ</strong></td></tr>
+            </table>
+
+            <div style="text-align: center; margin-top: 25px; padding: 15px; background: #fff3e0; border-radius: 10px; font-weight: bold;">
+                💰 <span class="highlight">TỔNG CHI PHÍ / TUẦN / 1 NGƯỜI:</span><br>
+                <span style="font-size: 1.2rem; color: #d84315;">Khoảng 200,000 - 280,000 VNĐ</span><br>
+                <span style="font-size: 0.8rem; color: #666;">(Chi phí có thể dao động tùy vùng miền và mùa vụ)</span>
+            </div>
+        </section>
+
+        <section>
+            <h2>BƯỚC TIẾP THEO</h2>
+            <p>Hệ thống từ trang 80-97 đã được chuyển hóa HOÀN CHỈNH.</p>
+            <div class="action-grid">
+                <a href="#" class="action-card">
+                    <h4>1️⃣ GỘP TOÀN BỘ 63-97 → PDF</h4>
+                    <p>Tổng hợp tất cả phân tích, thực đơn thành file PDF chuyên nghiệp.</p>
+                </a>
+                <a href="#" class="action-card">
+                    <h4>2️⃣ BẢNG TRA CỨU THEO THUỐC</h4>
+                    <p>Bảng tra nhanh tương tác thuốc Tây - thực phẩm.</p>
+                </a>
+                <a href="#" class="action-card">
+                    <h4>3️⃣ PHIÊN BẢN NAM/NỮ</h4>
+                    <p>Điều chỉnh thực đơn cho phù hợp nam/nữ.</p>
+                </a>
+            </div>
+        </section>
+
+        <div class="footer">
+            <p><strong>HỆ THỐNG ĐÃ ĐƯỢC KIỂM ĐỊNH:</strong> AN TOÀN - KHÔNG XUNG ĐỘT - BỀN VỮNG</p>
+            <p><em>⚠️ Lưu ý: Thông tin mang tính tham khảo. Tham vấn bác sĩ trước khi áp dụng.</em></p>
+        </div>
+    </div>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

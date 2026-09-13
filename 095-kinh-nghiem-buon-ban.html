@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>11 Phép Tính Kinh Doanh Xương Máu Của Người Hoa</title>
+    <style>
+        /* Biến màu sắc để dễ chỉnh sửa */
+        :root {
+            --primary-color: #C62828;
+            --secondary-color: #1565C0;
+            --accent-color: #FF9800;
+            --light-color: #FFF8F0;
+            --dark-color: #333333;
+            --success-color: #2E7D32;
+            --warning-color: #F57C00;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--warning-color));
+            color: white;
+            padding: 20px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        /* Tabs điều hướng */
+        .tab-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-button {
+            padding: 12px 16px;
+            background-color: white;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .tab-button:hover {
+            background-color: rgba(198, 40, 40, 0.1);
+        }
+        
+        .tab-button.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* Các section của tab */
+        .tab-content {
+            display: none;
+            background-color: white;
+            padding: 20px 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Tiêu đề phép tính */
+        .calc-title {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-color);
+            font-size: 1.3rem;
+        }
+        
+        /* Các ô nhập liệu */
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+        
+        /* Nút tính toán */
+        .calculate-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 15px 0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(21, 101, 192, 0.2);
+        }
+        
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Kết quả */
+        .result-box {
+            background-color: var(--light-color);
+            border-left: 5px solid var(--success-color);
+            padding: 18px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result-box h3 {
+            color: var(--success-color);
+            margin-bottom: 10px;
+        }
+        
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 10px 0;
+        }
+        
+        .result-note {
+            font-style: italic;
+            color: #666;
+            font-size: 0.95rem;
+            margin-top: 10px;
+        }
+        
+        /* Thông tin giải thích */
+        .explanation {
+            background-color: #E3F2FD;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .explanation h4 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        /* Responsive điều chỉnh */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 90%;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .tab-button {
+                flex: none;
+                padding: 12px 20px;
+            }
+            
+            .input-row {
+                display: flex;
+                gap: 15px;
+            }
+            
+            .input-row .input-group {
+                flex: 1;
+            }
+        }
+        
+        /* Hiệu ứng nhấn mạnh */
+        .highlight {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>11 PHÉP TÍNH "XƯƠNG MÁU" CỦA NGƯỜI HOA</h1>
+            <p>Kinh doanh không phải là cảm tính - Hãy tính toán như người Hoa để luôn có lãi</p>
+        </div>
+        
+        <!-- Tab điều hướng -->
+        <div class="tab-container">
+            <button class="tab-button active" data-tab="break-even">Điểm Hòa Vốn</button>
+            <button class="tab-button" data-tab="cash-flow">Dòng Tiền</button>
+            <button class="tab-button" data-tab="profit">Tối Ưu Lợi Nhuận</button>
+            <button class="tab-button" data-tab="management">Quản Trị</button>
+            <button class="tab-button" data-tab="customer">Khách Hàng</button>
+        </div>
+        
+        <!-- Tab 1: Điểm hòa vốn -->
+        <div id="break-even" class="tab-content active">
+            <h2 class="calc-title">1. Điểm Hòa Vốn (Break-Even Point)</h2>
+            <p><strong>Câu hỏi:</strong> "Một ngày tôi phải bán được bao nhiêu bát phở thì mới bắt đầu có lãi?"</p>
+            
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="fixed-cost">Tổng chi phí cố định (đồng)</label>
+                    <input type="number" id="fixed-cost" placeholder="Ví dụ: 10000000">
+                </div>
+                
+                <div class="input-group">
+                    <label for="avg-price">Giá bán trung bình 1 sản phẩm (đồng)</label>
+                    <input type="number" id="avg-price" placeholder="Ví dụ: 50000">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="variable-cost">Chi phí biến đổi trung bình 1 sản phẩm (đồng)</label>
+                <input type="number" id="variable-cost" placeholder="Ví dụ: 25000">
+            </div>
+            
+            <button class="calculate-btn" id="calculate-break-even">Tính Điểm Hòa Vốn</button>
+            
+            <div class="result-box" id="break-even-result">
+                <h3>Kết Quả Điểm Hòa Vốn</h3>
+                <p>Bạn cần bán: <span class="result-value" id="break-even-value">0</span> sản phẩm để đạt điểm hòa vốn.</p>
+                <p class="result-note">Đây là con số quan trọng nhất, quyết định sự sống còn của quán.</p>
+            </div>
+            
+            <div class="explanation">
+                <h4>Giải thích:</h4>
+                <p><span class="highlight">Điểm hòa vốn</span> là số lượng sản phẩm bạn cần bán để trang trải tất cả chi phí (cố định và biến đổi).</p>
+                <p><strong>Công thức:</strong> Điểm hòa vốn = Tổng chi phí cố định / (Giá bán trung bình 1 sản phẩm - Chi phí biến đổi trung bình 1 sản phẩm)</p>
+            </div>
+        </div>
+        
+        <!-- Tab 2: Dòng tiền -->
+        <div id="cash-flow" class="tab-content">
+            <h2 class="calc-title">2. Dòng Tiền (Cash Flow)</h2>
+            <p><strong>Câu hỏi:</strong> "Tiền trong két có đủ để trả tiền nhà, lương nhân viên và tiền hàng tháng sau không?"</p>
+            
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="cash-in">Tiền thu vào (đồng)</label>
+                    <input type="number" id="cash-in" placeholder="Ví dụ: 50000000">
+                </div>
+                
+                <div class="input-group">
+                    <label for="cash-out">Tiền chi ra (đồng)</label>
+                    <input type="number" id="cash-out" placeholder="Ví dụ: 35000000">
+                </div>
+            </div>
+            
+            <button class="calculate-btn" id="calculate-cash-flow">Tính Dòng Tiền</button>
+            
+            <div class="result-box" id="cash-flow-result">
+                <h3>Kết Quả Dòng Tiền</h3>
+                <p>Dòng tiền của bạn: <span class="result-value" id="cash-flow-value">0</span> đồng</p>
+                <p class="result-note">Người Hoa ám ảnh với dòng tiền. Lãi trên giấy không quan trọng bằng tiền thật trong túi.</p>
+            </div>
+            
+            <div class="explanation">
+                <h4>Giải thích:</h4>
+                <p><span class="highlight">Dòng tiền</span> là sự chênh lệch giữa tiền thu vào và tiền chi ra trong một khoảng thời gian nhất định.</p>
+                <p><strong>Công thức:</strong> Dòng tiền = Tiền thu vào - Tiền chi ra</p>
+            </div>
+        </div>
+        
+        <!-- Tab 3: Tối ưu lợi nhuận -->
+        <div id="profit" class="tab-content">
+            <h2 class="calc-title">PHÉP TÍNH TỐI ƯU LỢI NHUẬN</h2>
+            
+            <h3>3. Tỷ lệ Lãi gộp (Gross Profit Margin)</h3>
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="revenue">Doanh thu (đồng)</label>
+                    <input type="number" id="revenue" placeholder="Ví dụ: 200000000">
+                </div>
+                
+                <div class="input-group">
+                    <label for="cogs">Giá vốn hàng bán (đồng)</label>
+                    <input type="number" id="cogs" placeholder="Ví dụ: 120000000">
+                </div>
+            </div>
+            
+            <button class="calculate-btn" id="calculate-gross-margin">Tính Tỷ lệ Lãi gộp</button>
+            
+            <div class="result-box" id="gross-margin-result">
+                <h3>Kết Quả Tỷ lệ Lãi gộp</h3>
+                <p>Tỷ lệ lãi gộp: <span class="result-value" id="gross-margin-value">0</span>%</p>
+                <p class="result-note">Nếu chỉ số này quá thấp, hoặc là giá bán của bạn quá rẻ, hoặc là giá nhập nguyên liệu của bạn quá cao.</p>
+            </div>
+            
+            <div class="explanation">
+                <h4>Giải thích từ ngữ:</h4>
+                <p><span class="highlight">Tỷ lệ Lãi gộp</span> cho biết phần trăm lợi nhuận còn lại sau khi trừ giá vốn hàng bán.</p>
+                <p><strong>Công thức:</strong> Lãi gộp (%) = ((Doanh thu - Giá vốn hàng bán) / Doanh thu) x 100</p>
+                <p><span class="highlight">Giá vốn hàng bán (COGS)</span> là chi phí trực tiếp để sản xuất/sản xuất hàng hóa bán ra.</p>
+            </div>
+        </div>
+        
+        <!-- Tab 4: Quản trị -->
+        <div id="management" class="tab-content">
+            <h2 class="calc-title">PHÉP TÍNH QUẢN TRỊ</h2>
+            
+            <h3>6. Doanh thu trên mỗi mét vuông (Revenue per Square Meter)</h3>
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="total-revenue">Tổng doanh thu (đồng)</label>
+                    <input type="number" id="total-revenue" placeholder="Ví dụ: 300000000">
+                </div>
+                
+                <div class="input-group">
+                    <label for="total-area">Tổng diện tích quán (m²)</label>
+                    <input type="number" id="total-area" placeholder="Ví dụ: 50">
+                </div>
+            </div>
+            
+            <button class="calculate-btn" id="calculate-revenue-per-area">Tính Doanh thu/m²</button>
+            
+            <div class="result-box" id="revenue-per-area-result">
+                <h3>Kết Quả Doanh thu/m²</h3>
+                <p>Doanh thu trên mỗi mét vuông: <span class="result-value" id="revenue-per-area-value">0</span> đồng/m²</p>
+                <p class="result-note">Giúp bạn biết liệu mặt bằng có đang được sử dụng hiệu quả hay không.</p>
+            </div>
+            
+            <div class="explanation">
+                <h4>Giải thích từ ngữ:</h4>
+                <p><span class="highlight">Doanh thu trên mỗi mét vuông</span> là chỉ số đo lường hiệu quả sử dụng mặt bằng kinh doanh.</p>
+                <p><strong>Công thức:</strong> Doanh thu/m² = Tổng doanh thu / Tổng diện tích quán</p>
+            </div>
+        </div>
+        
+        <!-- Tab 5: Khách hàng -->
+        <div id="customer" class="tab-content">
+            <h2 class="calc-title">PHÉP TÍNH VỀ KHÁCH HÀNG</h2>
+            
+            <h3>8. Giá trị Đơn hàng Trung bình (Average Order Value - AOV)</h3>
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="total-revenue-aov">Tổng doanh thu (đồng)</label>
+                    <input type="number" id="total-revenue-aov" placeholder="Ví dụ: 150000000">
+                </div>
+                
+                <div class="input-group">
+                    <label for="total-invoices">Tổng số hóa đơn</label>
+                    <input type="number" id="total-invoices" placeholder="Ví dụ: 1000">
+                </div>
+            </div>
+            
+            <button class="calculate-btn" id="calculate-aov">Tính Giá trị Đơn hàng Trung bình</button>
+            
+            <div class="result-box" id="aov-result">
+                <h3>Kết Quả AOV</h3>
+                <p>Giá trị đơn hàng trung bình: <span class="result-value" id="aov-value">0</span> đồng</p>
+                <p class="result-note">Tìm mọi cách để tăng chỉ số này (upsell, cross-sell, combo...).</p>
+            </div>
+            
+            <div class="explanation">
+                <h4>Giải thích từ ngữ:</h4>
+                <p><span class="highlight">Giá trị Đơn hàng Trung bình (AOV)</span> là số tiền trung bình mỗi khách hàng chi tiêu trong một lần mua hàng.</p>
+                <p><strong>Công thức:</strong> AOV = Tổng doanh thu / Tổng số hóa đơn</p>
+                <p><span class="highlight">Upsell</span>: Bán phiên bản cao cấp hơn của sản phẩm khách đang mua.</p>
+                <p><span class="highlight">Cross-sell</span>: Bán sản phẩm bổ sung liên quan đến sản phẩm khách đang mua.</p>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Bài học cốt lõi:</strong> Kinh doanh không phải là cảm tính. Đằng sau tư duy "làm chủ" của người Hoa là sự ám ảnh với những con số.</p>
+            <p>Ai nắm được những con số này, người đó nắm được vận mệnh của doanh nghiệp mình.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Hàm chuyển đổi tab
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Xóa class active khỏi tất cả các tab và nút
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Thêm class active vào tab và nút được chọn
+                this.classList.add('active');
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // 1. Tính Điểm Hòa Vốn
+        document.getElementById('calculate-break-even').addEventListener('click', function() {
+            const fixedCost = parseFloat(document.getElementById('fixed-cost').value) || 0;
+            const avgPrice = parseFloat(document.getElementById('avg-price').value) || 0;
+            const variableCost = parseFloat(document.getElementById('variable-cost').value) || 0;
+            
+            if (avgPrice <= variableCost) {
+                alert("Giá bán phải lớn hơn chi phí biến đổi!");
+                return;
+            }
+            
+            const breakEvenPoint = Math.ceil(fixedCost / (avgPrice - variableCost));
+            
+            document.getElementById('break-even-value').textContent = breakEvenPoint.toLocaleString('vi-VN');
+            document.getElementById('break-even-result').style.display = 'block';
+        });
+        
+        // 2. Tính Dòng Tiền
+        document.getElementById('calculate-cash-flow').addEventListener('click', function() {
+            const cashIn = parseFloat(document.getElementById('cash-in').value) || 0;
+            const cashOut = parseFloat(document.getElementById('cash-out').value) || 0;
+            
+            const cashFlow = cashIn - cashOut;
+            
+            document.getElementById('cash-flow-value').textContent = cashFlow.toLocaleString('vi-VN');
+            document.getElementById('cash-flow-result').style.display = 'block';
+        });
+        
+        // 3. Tính Tỷ lệ Lãi gộp
+        document.getElementById('calculate-gross-margin').addEventListener('click', function() {
+            const revenue = parseFloat(document.getElementById('revenue').value) || 0;
+            const cogs = parseFloat(document.getElementById('cogs').value) || 0;
+            
+            if (revenue === 0) {
+                alert("Doanh thu không thể bằng 0!");
+                return;
+            }
+            
+            const grossMargin = ((revenue - cogs) / revenue) * 100;
+            
+            document.getElementById('gross-margin-value').textContent = grossMargin.toFixed(2);
+            document.getElementById('gross-margin-result').style.display = 'block';
+        });
+        
+        // 6. Tính Doanh thu/m²
+        document.getElementById('calculate-revenue-per-area').addEventListener('click', function() {
+            const totalRevenue = parseFloat(document.getElementById('total-revenue').value) || 0;
+            const totalArea = parseFloat(document.getElementById('total-area').value) || 0;
+            
+            if (totalArea === 0) {
+                alert("Diện tích không thể bằng 0!");
+                return;
+            }
+            
+            const revenuePerArea = totalRevenue / totalArea;
+            
+            document.getElementById('revenue-per-area-value').textContent = revenuePerArea.toLocaleString('vi-VN');
+            document.getElementById('revenue-per-area-result').style.display = 'block';
+        });
+        
+        // 8. Tính Giá trị Đơn hàng Trung bình (AOV)
+        document.getElementById('calculate-aov').addEventListener('click', function() {
+            const totalRevenue = parseFloat(document.getElementById('total-revenue-aov').value) || 0;
+            const totalInvoices = parseInt(document.getElementById('total-invoices').value) || 0;
+            
+            if (totalInvoices === 0) {
+                alert("Tổng số hóa đơn không thể bằng 0!");
+                return;
+            }
+            
+            const aov = totalRevenue / totalInvoices;
+            
+            document.getElementById('aov-value').textContent = aov.toLocaleString('vi-VN');
+            document.getElementById('aov-result').style.display = 'block';
+        });
+        
+        // Tự động hiển thị tab đầu tiên khi trang tải xong
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('break-even-result').style.display = 'block';
+        });
+    </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

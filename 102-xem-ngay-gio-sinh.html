@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra Cứu Sinh Con Theo Cổ Học</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .result-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .bảng-section {
+            flex: 100%;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        h1, h2, h3 {
+            color: #333;
+            text-align: center;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        .result h4 {
+            margin: 0 0 10px 0;
+            color: #2e7d32;
+        }
+        .result p {
+            margin: 5px 0;
+        }
+        .gender {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .male { color: #2196F3; }
+        .female { color: #E91E63; }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .note {
+            font-style: italic;
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tra Cứu Sinh Con Theo Cổ Học</h1>
+    
+    <div class="container">
+        <div class="input-section">
+            <h2>Thông Tin Nhập Liệu</h2>
+            
+            <div class="input-group">
+                <label>1. Can Chi năm sinh Chồng:</label>
+                <select id="chongNam">
+                    <option value="">Chọn chi</option>
+                    <option value="1">TÝ (1)</option>
+                    <option value="2">SỬU (2)</option>
+                    <option value="3">DẦN (3)</option>
+                    <option value="4">MÃO (4)</option>
+                    <option value="5">THÌN (5)</option>
+                    <option value="6">TỴ (6)</option>
+                    <option value="7">NGỌ (7)</option>
+                    <option value="8">MÙI (8)</option>
+                    <option value="9">THÂN (9)</option>
+                    <option value="10">DẬU (10)</option>
+                    <option value="11">TUẤT (11)</option>
+                    <option value="12">HỢI (12)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>2. Can Chi năm sinh Vợ:</label>
+                <select id="voNam">
+                    <option value="">Chọn chi</option>
+                    <option value="1">TÝ (1)</option>
+                    <option value="2">SỬU (2)</option>
+                    <option value="3">DẦN (3)</option>
+                    <option value="4">MÃO (4)</option>
+                    <option value="5">THÌN (5)</option>
+                    <option value="6">TỴ (6)</option>
+                    <option value="7">NGỌ (7)</option>
+                    <option value="8">MÙI (8)</option>
+                    <option value="9">THÂN (9)</option>
+                    <option value="10">DẬU (10)</option>
+                    <option value="11">TUẤT (11)</option>
+                    <option value="12">HỢI (12)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>3. Can Chi tháng Chồng:</label>
+                <select id="chongThang">
+                    <option value="">Chọn chi</option>
+                    <option value="1">TÝ (1)</option>
+                    <option value="2">SỬU (2)</option>
+                    <option value="3">DẦN (3)</option>
+                    <option value="4">MÃO (4)</option>
+                    <option value="5">THÌN (5)</option>
+                    <option value="6">TỴ (6)</option>
+                    <option value="7">NGỌ (7)</option>
+                    <option value="8">MÙI (8)</option>
+                    <option value="9">THÂN (9)</option>
+                    <option value="10">DẬU (10)</option>
+                    <option value="11">TUẤT (11)</option>
+                    <option value="12">HỢI (12)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>4. Can Chi tháng Vợ:</label>
+                <select id="voThang">
+                    <option value="">Chọn chi</option>
+                    <option value="1">TÝ (1)</option>
+                    <option value="2">SỬU (2)</option>
+                    <option value="3">DẦN (3)</option>
+                    <option value="4">MÃO (4)</option>
+                    <option value="5">THÌN (5)</option>
+                    <option value="6">TỴ (6)</option>
+                    <option value="7">NGỌ (7)</option>
+                    <option value="8">MÙI (8)</option>
+                    <option value="9">THÂN (9)</option>
+                    <option value="10">DẬU (10)</option>
+                    <option value="11">TUẤT (11)</option>
+                    <option value="12">HỢI (12)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>5. Tháng sinh âm lịch Chồng:</label>
+                <input type="number" id="chongThangAm" min="1" max="12" placeholder="Nhập tháng (1-12)">
+            </div>
+            
+            <div class="input-group">
+                <label>6. Tháng sinh âm lịch Vợ:</label>
+                <input type="number" id="voThangAm" min="1" max="12" placeholder="Nhập tháng (1-12)">
+            </div>
+            
+            <div class="input-group">
+                <label>7. Ngày tháng năm muốn xem:</label>
+                <input type="date" id="ngayXem">
+            </div>
+            
+            <div class="input-group">
+                <label>8. Can Chi năm của ô 7:</label>
+                <select id="namXem">
+                    <option value="">Chọn chi</option>
+                    <option value="1">TÝ (1)</option>
+                    <option value="2">SỬU (2)</option>
+                    <option value="3">DẦN (3)</option>
+                    <option value="4">MÃO (4)</option>
+                    <option value="5">THÌN (5)</option>
+                    <option value="6">TỴ (6)</option>
+                    <option value="7">NGỌ (7)</option>
+                    <option value="8">MÙI (8)</option>
+                    <option value="9">THÂN (9)</option>
+                    <option value="10">DẬU (10)</option>
+                    <option value="11">TUẤT (11)</option>
+                    <option value="12">HỢI (12)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>9. Can Chi tháng của ô 7:</label>
+                <select id="thangXem">
+                    <option value="">Chọn chi</option>
+                    <option value="1">TÝ (1)</option>
+                    <option value="2">SỬU (2)</option>
+                    <option value="3">DẦN (3)</option>
+                    <option value="4">MÃO (4)</option>
+                    <option value="5">THÌN (5)</option>
+                    <option value="6">TỴ (6)</option>
+                    <option value="7">NGỌ (7)</option>
+                    <option value="8">MÙI (8)</option>
+                    <option value="9">THÂN (9)</option>
+                    <option value="10">DẬU (10)</option>
+                    <option value="11">TUẤT (11)</option>
+                    <option value="12">HỢI (12)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>10. Can Chi ngày của ô 7:</label>
+                <select id="ngayXemChi">
+                    <option value="">Chọn chi</option>
+                    <option value="1">TÝ (1)</option>
+                    <option value="2">SỬU (2)</option>
+                    <option value="3">DẦN (3)</option>
+                    <option value="4">MÃO (4)</option>
+                    <option value="5">THÌN (5)</option>
+                    <option value="6">TỴ (6)</option>
+                    <option value="7">NGỌ (7)</option>
+                    <option value="8">MÙI (8)</option>
+                    <option value="9">THÂN (9)</option>
+                    <option value="10">DẬU (10)</option>
+                    <option value="11">TUẤT (11)</option>
+                    <option value="12">HỢI (12)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>11. Tên Chồng:</label>
+                <input type="text" id="tenChong" placeholder="Nhập tên chồng">
+                <div class="note">Số chữ cái: <span id="demTenChong">0</span></div>
+            </div>
+            
+            <div class="input-group">
+                <label>12. Tên Vợ:</label>
+                <input type="text" id="tenVo" placeholder="Nhập tên vợ">
+                <div class="note">Số chữ cái: <span id="demTenVo">0</span></div>
+            </div>
+            
+            <button onclick="traCuu()">Tra Cứu Kết Quả</button>
+        </div>
+        
+        <div class="result-section">
+            <h2>Kết Quả Tra Cứu</h2>
+            
+            <div id="ketQuaNam" class="result">
+                <h4>Xem Theo Năm</h4>
+                <p id="namChinh"></p>
+                <p id="namDao"></p>
+            </div>
+            
+            <div id="ketQuaThang" class="result">
+                <h4>Xem Theo Tháng</h4>
+                <p id="thangChinh"></p>
+                <p id="thangDao"></p>
+            </div>
+            
+            <div id="ketQuaNgay" class="result">
+                <h4>Xem Theo Ngày</h4>
+                <p id="ngayChinh"></p>
+                <p id="ngayDao"></p>
+            </div>
+            
+            <div id="ketQuaThangAm" class="result">
+                <h4>Xem Theo Tháng Âm Lịch</h4>
+                <p id="thangAmChinh"></p>
+                <p id="thangAmDao"></p>
+            </div>
+            
+            <div id="ketQuaTen" class="result">
+                <h4>Xem Theo Tên</h4>
+                <p id="tenChinh"></p>
+                <p id="tenDao"></p>
+            </div>
+            
+            <div class="result">
+                <h4>Tổng Kết</h4>
+                <p id="tongKet"></p>
+                <p id="khuyenNghi"></p>
+            </div>
+        </div>
+        
+        <div class="bảng-section">
+            <h2>Bảng Tra Cứu</h2>
+            
+            <h3>Bảng 1: Quy đổi Chi thành Số</h3>
+            <div class="table-container">
+                <table>
+                    <tr>
+                        <th>TÝ</th><th>SỬU</th><th>DẦN</th><th>MÃO</th><th>THÌN</th><th>TỴ</th>
+                        <th>NGỌ</th><th>MÙI</th><th>THÂN</th><th>DẬU</th><th>TUẤT</th><th>HỢI</th>
+                    </tr>
+                    <tr>
+                        <td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td>
+                        <td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <h3>Bảng 2: Ma Trận Tra Cứu</h3>
+            <div class="table-container">
+                <table id="bang2">
+                    <!-- Bảng sẽ được tạo bằng JavaScript -->
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Bảng 2 dữ liệu
+        const bang2 = [
+            [1, 5, 9, 1, 5, 9, 1, 5, 9, 1, 5, 9],
+            [10, 2, 6, 10, 2, 6, 10, 2, 6, 10, 2, 6],
+            [7, 11, 3, 7, 11, 3, 7, 11, 3, 7, 11, 3],
+            [4, 8, 12, 4, 8, 12, 4, 8, 12, 4, 8, 12],
+            [1, 5, 9, 1, 5, 9, 1, 5, 9, 1, 5, 9],
+            [10, 2, 6, 10, 2, 6, 10, 2, 6, 10, 2, 6],
+            [7, 11, 3, 7, 11, 3, 7, 11, 3, 7, 11, 3],
+            [4, 8, 12, 4, 8, 12, 4, 8, 12, 4, 8, 12],
+            [1, 5, 9, 1, 5, 9, 1, 5, 9, 1, 5, 9],
+            [10, 2, 6, 10, 2, 6, 10, 2, 6, 10, 2, 6],
+            [7, 11, 3, 7, 11, 3, 7, 11, 3, 7, 11, 3],
+            [4, 8, 12, 4, 8, 12, 4, 8, 12, 4, 8, 12]
+        ];
+
+        // Tên các chi
+        const chiNames = ["TÝ", "SỬU", "DẦN", "MÃO", "THÌN", "TỴ", "NGỌ", "MÙI", "THÂN", "DẬU", "TUẤT", "HỢI"];
+
+        // Khởi tạo bảng 2
+        function khoiTaoBang2() {
+            const table = document.getElementById('bang2');
+            let html = '<tr><th>V/C</th>';
+            
+            // Tiêu đề cột
+            for (let i = 1; i <= 12; i++) {
+                html += `<th>${i}</th>`;
+            }
+            html += '</tr>';
+            
+            // Dữ liệu bảng
+            for (let i = 0; i < 12; i++) {
+                html += `<tr><th>${i+1}</th>`;
+                for (let j = 0; j < 12; j++) {
+                    html += `<td>${bang2[i][j]}</td>`;
+                }
+                html += '</tr>';
+            }
+            
+            table.innerHTML = html;
+        }
+
+        // Đếm số chữ cái trong tên
+        function demChuCai(ten) {
+            // Loại bỏ khoảng trắng và đếm ký tự
+            return ten.replace(/\s+/g, '').length;
+        }
+
+        // Cập nhật đếm chữ cái
+        document.getElementById('tenChong').addEventListener('input', function() {
+            document.getElementById('demTenChong').textContent = demChuCai(this.value);
+        });
+
+        document.getElementById('tenVo').addEventListener('input', function() {
+            document.getElementById('demTenVo').textContent = demChuCai(this.value);
+        });
+
+        // Hàm tra cứu chính
+        function traCuu() {
+            // Lấy giá trị từ các ô nhập liệu
+            const chongNam = parseInt(document.getElementById('chongNam').value) - 1;
+            const voNam = parseInt(document.getElementById('voNam').value) - 1;
+            const chongThang = parseInt(document.getElementById('chongThang').value) - 1;
+            const voThang = parseInt(document.getElementById('voThang').value) - 1;
+            const chongThangAm = parseInt(document.getElementById('chongThangAm').value);
+            const voThangAm = parseInt(document.getElementById('voThangAm').value);
+            const namXem = parseInt(document.getElementById('namXem').value) - 1;
+            const thangXem = parseInt(document.getElementById('thangXem').value) - 1;
+            const ngayXemChi = parseInt(document.getElementById('ngayXemChi').value) - 1;
+            const tenChong = document.getElementById('tenChong').value;
+            const tenVo = document.getElementById('tenVo').value;
+            
+            // Hàm kiểm tra và lấy kết quả từ bảng 2
+            function layKetQua(dong, cot) {
+                if (dong >= 0 && dong < 12 && cot >= 0 && cot < 12) {
+                    return bang2[dong][cot];
+                }
+                return null;
+            }
+            
+            // Hàm xác định giới tính
+            function xacDinhGioiTinh(so) {
+                if (so === null) return "Không xác định";
+                if (so % 2 === 0) {
+                    return `<span class="gender female">SINH CON GÁI</span> (số ${so} là số chẵn)`;
+                } else {
+                    return `<span class="gender male">SINH CON TRAI</span> (số ${so} là số lẻ)`;
+                }
+            }
+            
+            // 1. Xem theo năm
+            let ketQuaNamChinh = null;
+            let ketQuaNamDao = null;
+            
+            if (chongNam >= 0 && voNam >= 0) {
+                // Chính: Chồng dòng, Vợ cột
+                ketQuaNamChinh = layKetQua(chongNam, voNam);
+                // Đảo: Vợ dòng, Chồng cột
+                ketQuaNamDao = layKetQua(voNam, chongNam);
+            }
+            
+            document.getElementById('namChinh').innerHTML = ketQuaNamChinh !== null ? 
+                `Chồng ${chiNames[chongNam]} (dòng ${chongNam+1}) + Vợ ${chiNames[voNam]} (cột ${voNam+1}) = ${ketQuaNamChinh}<br>${xacDinhGioiTinh(ketQuaNamChinh)}` : 
+                "Chưa nhập đủ thông tin năm";
+            
+            document.getElementById('namDao').innerHTML = ketQuaNamDao !== null ? 
+                `Vợ ${chiNames[voNam]} (dòng ${voNam+1}) + Chồng ${chiNames[chongNam]} (cột ${chongNam+1}) = ${ketQuaNamDao}<br>${xacDinhGioiTinh(ketQuaNamDao)}` : 
+                "";
+            
+            // 2. Xem theo tháng
+            let ketQuaThangChinh = null;
+            let ketQuaThangDao = null;
+            
+            if (chongThang >= 0 && voThang >= 0) {
+                ketQuaThangChinh = layKetQua(chongThang, voThang);
+                ketQuaThangDao = layKetQua(voThang, chongThang);
+            }
+            
+            document.getElementById('thangChinh').innerHTML = ketQuaThangChinh !== null ? 
+                `Chồng ${chiNames[chongThang]} (dòng ${chongThang+1}) + Vợ ${chiNames[voThang]} (cột ${voThang+1}) = ${ketQuaThangChinh}<br>${xacDinhGioiTinh(ketQuaThangChinh)}` : 
+                "Chưa nhập đủ thông tin tháng";
+            
+            document.getElementById('thangDao').innerHTML = ketQuaThangDao !== null ? 
+                `Vợ ${chiNames[voThang]} (dòng ${voThang+1}) + Chồng ${chiNames[chongThang]} (cột ${chongThang+1}) = ${ketQuaThangDao}<br>${xacDinhGioiTinh(ketQuaThangDao)}` : 
+                "";
+            
+            // 3. Xem theo ngày
+            let ketQuaNgayChinh = null;
+            let ketQuaNgayDao = null;
+            
+            if (ngayXemChi >= 0 && thangXem >= 0) {
+                ketQuaNgayChinh = layKetQua(ngayXemChi, thangXem);
+                ketQuaNgayDao = layKetQua(thangXem, ngayXemChi);
+            }
+            
+            document.getElementById('ngayChinh').innerHTML = ketQuaNgayChinh !== null ? 
+                `Ngày ${chiNames[ngayXemChi]} (dòng ${ngayXemChi+1}) + Tháng ${chiNames[thangXem]} (cột ${thangXem+1}) = ${ketQuaNgayChinh}<br>${xacDinhGioiTinh(ketQuaNgayChinh)}` : 
+                "Chưa nhập đủ thông tin ngày/tháng xem";
+            
+            document.getElementById('ngayDao').innerHTML = ketQuaNgayDao !== null ? 
+                `Tháng ${chiNames[thangXem]} (dòng ${thangXem+1}) + Ngày ${chiNames[ngayXemChi]} (cột ${ngayXemChi+1}) = ${ketQuaNgayDao}<br>${xacDinhGioiTinh(ketQuaNgayDao)}` : 
+                "";
+            
+            // 4. Xem theo tháng âm lịch
+            let ketQuaThangAmChinh = null;
+            let ketQuaThangAmDao = null;
+            
+            if (chongThangAm >= 1 && chongThangAm <= 12 && voThangAm >= 1 && voThangAm <= 12) {
+                ketQuaThangAmChinh = layKetQua(chongThangAm - 1, voThangAm - 1);
+                ketQuaThangAmDao = layKetQua(voThangAm - 1, chongThangAm - 1);
+            }
+            
+            document.getElementById('thangAmChinh').innerHTML = ketQuaThangAmChinh !== null ? 
+                `Chồng tháng ${chongThangAm} (dòng ${chongThangAm}) + Vợ tháng ${voThangAm} (cột ${voThangAm}) = ${ketQuaThangAmChinh}<br>${xacDinhGioiTinh(ketQuaThangAmChinh)}` : 
+                "Chưa nhập đủ thông tin tháng âm lịch";
+            
+            document.getElementById('thangAmDao').innerHTML = ketQuaThangAmDao !== null ? 
+                `Vợ tháng ${voThangAm} (dòng ${voThangAm}) + Chồng tháng ${chongThangAm} (cột ${chongThangAm}) = ${ketQuaThangAmDao}<br>${xacDinhGioiTinh(ketQuaThangAmDao)}` : 
+                "";
+            
+            // 5. Xem theo tên
+            let ketQuaTenChinh = null;
+            let ketQuaTenDao = null;
+            
+            if (tenChong && tenVo) {
+                const soTenChong = demChuCai(tenChong) % 12;
+                const soTenVo = demChuCai(tenVo) % 12;
+                
+                // Điều chỉnh về khoảng 0-11
+                const dongTenChong = soTenChong === 0 ? 11 : soTenChong - 1;
+                const cotTenVo = soTenVo === 0 ? 11 : soTenVo - 1;
+                const dongTenVo = soTenVo === 0 ? 11 : soTenVo - 1;
+                const cotTenChong = soTenChong === 0 ? 11 : soTenChong - 1;
+                
+                ketQuaTenChinh = layKetQua(dongTenChong, cotTenVo);
+                ketQuaTenDao = layKetQua(dongTenVo, cotTenChong);
+            }
+            
+            document.getElementById('tenChinh').innerHTML = ketQuaTenChinh !== null ? 
+                `Tên Chồng ${soTenChong+1} (dòng ${soTenChong+1}) + Tên Vợ ${soTenVo+1} (cột ${soTenVo+1}) = ${ketQuaTenChinh}<br>${xacDinhGioiTinh(ketQuaTenChinh)}` : 
+                "Chưa nhập đủ tên";
+            
+            document.getElementById('tenDao').innerHTML = ketQuaTenDao !== null ? 
+                `Tên Vợ ${soTenVo+1} (dòng ${soTenVo+1}) + Tên Chồng ${soTenChong+1} (cột ${soTenChong+1}) = ${ketQuaTenDao}<br>${xacDinhGioiTinh(ketQuaTenDao)}` : 
+                "";
+            
+            // 6. Tổng kết
+            const ketQuaAll = [
+                ketQuaNamChinh, ketQuaNamDao,
+                ketQuaThangChinh, ketQuaThangDao,
+                ketQuaNgayChinh, ketQuaNgayDao,
+                ketQuaThangAmChinh, ketQuaThangAmDao,
+                ketQuaTenChinh, ketQuaTenDao
+            ].filter(kq => kq !== null);
+            
+            if (ketQuaAll.length > 0) {
+                const demTrai = ketQuaAll.filter(kq => kq % 2 === 1).length;
+                const demGai = ketQuaAll.filter(kq => kq % 2 === 0).length;
+                
+                document.getElementById('tongKet').innerHTML = 
+                    `Tổng số phương pháp áp dụng: ${ketQuaAll.length}<br>
+                     Số phương pháp dự đoán TRAI: ${demTrai}<br>
+                     Số phương pháp dự đoán GÁI: ${demGai}`;
+                
+                let khuyenNghi = "";
+                if (demTrai > demGai) {
+                    khuyenNghi = "DỰ ĐOÁN: Khả năng cao sinh CON TRAI";
+                } else if (demGai > demTrai) {
+                    khuyenNghi = "DỰ ĐOÁN: Khả năng cao sinh CON GÁI";
+                } else {
+                    khuyenNghi = "DỰ ĐOÁN: Tỷ lệ ngang nhau, cần xem xét thêm yếu tố khác";
+                }
+                
+                document.getElementById('khuyenNghi').innerHTML = `<strong>${khuyenNghi}</strong>`;
+            } else {
+                document.getElementById('tongKet').innerHTML = "Vui lòng nhập đầy đủ thông tin để tra cứu";
+                document.getElementById('khuyenNghi').innerHTML = "";
+            }
+        }
+
+        // Khởi tạo bảng 2 khi trang được tải
+        window.onload = khoiTaoBang2;
+    </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

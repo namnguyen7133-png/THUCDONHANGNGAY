@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Tư Vấn Món Ăn - Phần 12/15</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        .input-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .input-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-top: 25px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .results-section {
+            margin-top: 30px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        .pagination button {
+            margin: 0;
+            padding: 8px 15px;
+        }
+        
+        .page-info {
+            font-weight: bold;
+            margin: 0 10px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        
+        .result-count {
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        @media (max-width: 768px) {
+            .input-section {
+                flex-direction: column;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            th, td {
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Game Tư Vấn Món Ăn Theo Nhiệt Độ và Bệnh Tật - Phần 12/15</h1>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label for="temperature">Nhiệt độ hiện tại (°C):</label>
+                <input type="number" id="temperature" placeholder="Nhập nhiệt độ...">
+            </div>
+            
+            <div class="input-group">
+                <label for="condition">Tình trạng sức khỏe:</label>
+                <select id="condition">
+                    <option value="">-- Chọn tình trạng --</option>
+                    <option value="Người mất ngủ">Người mất ngủ</option>
+                    <option value="Người đói đêm">Người đói đêm</option>
+                    <option value="Trẻ em">Trẻ em</option>
+                    <option value="Người lao động chân tay">Người lao động chân tay</option>
+                    <option value="Người khỏe mạnh">Người khỏe mạnh</option>
+                    <option value="Người đầy bụng">Người đầy bụng</option>
+                    <option value="Người thèm đồ béo">Người thèm đồ béo</option>
+                    <option value="Người làm việc ngoài trời">Người làm việc ngoài trời</option>
+                    <option value="Người thiếu canxi">Người thiếu canxi</option>
+                    <option value="Người thích đồ chua cay">Người thích đồ chua cay</option>
+                    <option value="Người thích trà chanh">Người thích trà chanh</option>
+                    <option value="Người thích đồ nguội">Người thích đồ nguội</option>
+                    <option value="Người thích đồ nướng">Người thích đồ nướng</option>
+                    <option value="Người thèm ngọt">Người thèm ngọt</option>
+                    <option value="Người thèm chua cay">Người thèm chua cay</option>
+                </select>
+            </div>
+            
+            <button id="search-btn">Tìm Món Ăn</button>
+        </div>
+        
+        <div class="results-section">
+            <div class="result-count" id="result-count"></div>
+            
+            <div class="table-container">
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Người bệnh</th>
+                            <th>Triệu chứng</th>
+                            <th>Món ăn thể hàn</th>
+                            <th>Món ăn thể nhiệt</th>
+                            <th>Lượng ăn</th>
+                            <th>Thời điểm</th>
+                            <th>Món thay thế</th>
+                            <th>Hoa quả</th>
+                            <th>Đồ uống</th>
+                            <th>Giá</th>
+                            <th>Thực phẩm tránh</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body">
+                        <!-- Kết quả sẽ được hiển thị ở đây -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="pagination" id="pagination">
+                <button id="prev-btn">Trước</button>
+                <span class="page-info" id="page-info">Trang 1/1</span>
+                <button id="next-btn">Sau</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dữ liệu 11 dòng tiếp theo (111-121)
+        const foodData = [
+            {
+                organ: "Không",
+                code: "Sáng111",
+                patient_id: "111",
+                disease: "Người thích trà chanh",
+                temperature_range: "0-10°C",
+                cold_constitution: "Xôi xéo nóng",
+                hot_constitution: "Bánh bao chay + trà hoa cúc",
+                meal_amount: "1 phần nhỏ + 1 ly",
+                meal_time: "7-8h",
+                rest_time: "3 tiếng",
+                alternative_dish: "Bánh giò nóng",
+                suitable_fruits: "Chanh dây",
+                suitable_drinks: "Trà chanh gừng ấm",
+                estimated_price: "20,000 - 35,000 VNĐ",
+                avoid_foods: "Đồ uống lạnh, kem",
+                note: "Trà pha ấm"
+            },
+            {
+                organ: "Không",
+                code: "Sáng112",
+                patient_id: "112",
+                disease: "Người thích đồ nguội",
+                temperature_range: "0-10°C",
+                cold_constitution: "Cháo trai nóng",
+                hot_constitution: "Ngũ cốc trộn sữa (ủ ấm)",
+                meal_amount: "1 bát",
+                meal_time: "7h30-9h",
+                rest_time: "2 tiếng",
+                alternative_dish: "Bánh flan (ủ ấm)",
+                suitable_fruits: "Dâu tây",
+                suitable_drinks: "Sữa đậu nành ấm",
+                estimated_price: "25,000 - 40,000 VNĐ",
+                avoid_foods: "Đồ nóng sốt cay",
+                note: "Để ra ngoài 15 phút trước ăn"
+            },
+            {
+                organ: "Da",
+                code: "Sáng113",
+                patient_id: "113",
+                disease: "Người thích đồ nướng",
+                temperature_range: "0-10°C",
+                cold_constitution: "Bánh mì nướng bơ tỏi nóng",
+                hot_constitution: "Bánh mì nướng phết bơ đậu phộng",
+                meal_amount: "1 củ + 1 quả",
+                meal_time: "7-8h30",
+                rest_time: "3-4 tiếng",
+                alternative_dish: "Bánh giò nướng",
+                suitable_fruits: "Táo nướng quế",
+                suitable_drinks: "Cacao nóng",
+                estimated_price: "15,000 - 30,000 VNĐ",
+                avoid_foods: "Đồ chiên rán, nước lạnh",
+                note: "Dùng lò nướng"
+            },
+            {
+                organ: "Tuyến tụy",
+                code: "Sáng114",
+                patient_id: "114",
+                disease: "Người thèm ngọt",
+                temperature_range: "0-10°C",
+                cold_constitution: "Xôi vò gừng",
+                hot_constitution: "Chè hạt sen long nhãn",
+                meal_amount: "1 bát nhỏ",
+                meal_time: "7-8h30",
+                rest_time: "2 tiếng",
+                alternative_dish: "Cháo đậu đỏ",
+                suitable_fruits: "Hồng xiêm",
+                suitable_drinks: "Trà quế mật ong",
+                estimated_price: "15,000 - 25,000 VNĐ",
+                avoid_foods: "Đồ chiên rán, nước đá",
+                note: "Giảm đường nếu tiểu đường"
+            },
+            {
+                organ: "Dạ dày",
+                code: "Sáng115",
+                patient_id: "115",
+                disease: "Người thèm chua cay",
+                temperature_range: "0-10°C",
+                cold_constitution: "Phở bò gừng",
+                hot_constitution: "Bún chả giò chua cay",
+                meal_amount: "1 tô vừa",
+                meal_time: "7-8h",
+                rest_time: "3 tiếng",
+                alternative_dish: "Miến lươn cay",
+                suitable_fruits: "Dứa",
+                suitable_drinks: "Nước gừng chanh ấm",
+                estimated_price: "30,000 - 45,000 VNĐ",
+                avoid_foods: "Sữa chua, đồ ngọt",
+                note: "Giảm ớt nếu viêm dạ dày"
+            },
+            {
+                organ: "Dạ dày",
+                code: "Sáng116",
+                patient_id: "116",
+                disease: "Người thích đồ lạnh",
+                temperature_range: "0-10°C",
+                cold_constitution: "Cháo gà nóng",
+                hot_constitution: "Ngũ cốc sữa ấm",
+                meal_amount: "1 bát",
+                meal_time: "7h30-9h",
+                rest_time: "2 tiếng",
+                alternative_dish: "Bánh flan ủ ấm",
+                suitable_fruits: "Xoài chín",
+                suitable_drinks: "Sữa đậu nành ấm",
+                estimated_price: "20,000 - 35,000 VNĐ",
+                avoid_foods: "Đồ nóng sốt cay",
+                note: "Để ngoài 15 phút trước ăn"
+            },
+            {
+                organ: "Dạ dày",
+                code: "Sáng117",
+                patient_id: "117",
+                disease: "Người đau bụng",
+                temperature_range: "0-10°C",
+                cold_constitution: "Súp gà nấm loãng",
+                hot_constitution: "Cháo đậu xanh",
+                meal_amount: "1 bát con",
+                meal_time: "7-8h",
+                rest_time: "2-3 tiếng",
+                alternative_dish: "Cháo thịt bằm gừng",
+                suitable_fruits: "Chuối chín",
+                suitable_drinks: "Trà gừng loãng",
+                estimated_price: "15,000 - 25,000 VNĐ",
+                avoid_foods: "Đồ chiên, đồ chua",
+                note: "Ăn khi còn ấm"
+            },
+            {
+                organ: "Cơ",
+                code: "Sáng118",
+                patient_id: "118",
+                disease: "Người tập gym",
+                temperature_range: "0-10°C",
+                cold_constitution: "Phở bò tái",
+                hot_constitution: "Cháo gà lức",
+                meal_amount: "1 bát đầy",
+                meal_time: "6-7h",
+                rest_time: "3-4 tiếng",
+                alternative_dish: "Bánh mì trứng bơ",
+                suitable_fruits: "Chuối, bơ",
+                suitable_drinks: "Sữa whey protein",
+                estimated_price: "25,000 - 40,000 VNĐ",
+                avoid_foods: "Đồ nhiều dầu mỡ",
+                note: "Bổ sung protein"
+            },
+            {
+                organ: "Gan",
+                code: "Sáng119",
+                patient_id: "119",
+                disease: "Người cần detox",
+                temperature_range: "0-10°C",
+                cold_constitution: "Trà gạo lứt rang",
+                hot_constitution: "Nước ép cần tây ủ ấm",
+                meal_amount: "1 ly",
+                meal_time: "7-7h30",
+                rest_time: "1.5 tiếng",
+                alternative_dish: "Nước rau má ấm",
+                suitable_fruits: "Táo xanh",
+                suitable_drinks: "Trà bồ công anh",
+                estimated_price: "20,000 - 35,000 VNĐ",
+                avoid_foods: "Đồ hộp, thịt đỏ",
+                note: "Uống chậm"
+            },
+            {
+                organ: "Cơ thể",
+                code: "Sáng120",
+                patient_id: "120",
+                disease: "Người thiếu vitamin",
+                temperature_range: "0-10°C",
+                cold_constitution: "Cháo bí đỏ hạt chia",
+                hot_constitution: "Sinh tố cam cà rốt ủ ấm",
+                meal_amount: "1 đĩa nhỏ",
+                meal_time: "7h30-8h30",
+                rest_time: "2 tiếng",
+                alternative_dish: "Bưởi ủ ấm",
+                suitable_fruits: "Kiwi, đu đủ",
+                suitable_drinks: "Nước ép ổi ủ ấm",
+                estimated_price: "25,000 - 40,000 VNĐ",
+                avoid_foods: "Trà, cà phê",
+                note: "Đa dạng màu sắc trái cây"
+            },
+            {
+                organ: "Miệng",
+                code: "Sáng121",
+                patient_id: "121",
+                disease: "Người thích đồ chua mặn",
+                temperature_range: "0-10°C",
+                cold_constitution: "Thịt kho trứng nóng",
+                hot_constitution: "Gỏi xoài tôm khô",
+                meal_amount: "1 đĩa vừa",
+                meal_time: "7-8h",
+                rest_time: "3 tiếng",
+                alternative_dish: "Bánh mì patê chua",
+                suitable_fruits: "Cóc, xoài xanh",
+                suitable_drinks: "Trà chanh muối ấm",
+                estimated_price: "25,000 - 40,000 VNĐ",
+                avoid_foods: "Sữa tươi, đồ ngọt",
+                note: "Giảm muối nếu tăng huyết áp"
+            }
+        ];
+
+        // Biến toàn cục
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let filteredData = [];
+
+        // Các phần tử DOM
+        const temperatureInput = document.getElementById('temperature');
+        const conditionSelect = document.getElementById('condition');
+        const searchBtn = document.getElementById('search-btn');
+        const resultsBody = document.getElementById('results-body');
+        const resultCount = document.getElementById('result-count');
+        const pageInfo = document.getElementById('page-info');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const pagination = document.getElementById('pagination');
+
+        // Hàm lọc dữ liệu
+        function filterData() {
+            const temperature = parseInt(temperatureInput.value);
+            const condition = conditionSelect.value;
+            
+            filteredData = foodData.filter(item => {
+                let matchesTemperature = true;
+                let matchesCondition = true;
+                
+                // Kiểm tra nhiệt độ
+                if (!isNaN(temperature)) {
+                    const tempRange = item.temperature_range;
+                    if (tempRange && tempRange.includes('°C')) {
+                        try {
+                            let rangeText = tempRange.replace('°C', '').trim();
+                            if (rangeText.includes('-')) {
+                                const rangeParts = rangeText.split('-');
+                                const minTemp = parseInt(rangeParts[0]);
+                                const maxTemp = parseInt(rangeParts[1]);
+                                matchesTemperature = temperature >= minTemp && temperature <= maxTemp;
+                            }
+                            else if (!isNaN(parseInt(rangeText))) {
+                                const exactTemp = parseInt(rangeText);
+                                matchesTemperature = temperature === exactTemp;
+                            }
+                        } catch (e) {
+                            console.error("Lỗi xử lý nhiệt độ:", e);
+                            matchesTemperature = false;
+                        }
+                    } else {
+                        matchesTemperature = true;
+                    }
+                }
+                
+                // Kiểm tra tình trạng sức khỏe
+                if (condition) {
+                    matchesCondition = item.disease.includes(condition);
+                }
+                
+                return matchesTemperature && matchesCondition;
+            });
+            
+            currentPage = 1;
+            displayResults();
+        }
+
+        // Hàm hiển thị kết quả
+        function displayResults() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageData = filteredData.slice(startIndex, endIndex);
+            
+            resultsBody.innerHTML = '';
+            
+            if (pageData.length === 0) {
+                resultsBody.innerHTML = '<tr><td colspan="13" class="no-results">Không tìm thấy kết quả phù hợp</td></tr>';
+                pagination.style.display = 'none';
+                resultCount.textContent = 'Không tìm thấy kết quả nào';
+            } else {
+                pageData.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.code}</td>
+                        <td>${item.patient_id}</td>
+                        <td>${item.disease}</td>
+                        <td>${item.cold_constitution}</td>
+                        <td>${item.hot_constitution}</td>
+                        <td>${item.meal_amount}</td>
+                        <td>${item.meal_time}</td>
+                        <td>${item.alternative_dish}</td>
+                        <td>${item.suitable_fruits}</td>
+                        <td>${item.suitable_drinks}</td>
+                        <td>${item.estimated_price}</td>
+                        <td>${item.avoid_foods}</td>
+                        <td>${item.note}</td>
+                    `;
+                    resultsBody.appendChild(row);
+                });
+                
+                const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+                pageInfo.textContent = `Trang ${currentPage}/${totalPages}`;
+                
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+                
+                resultCount.textContent = `Tìm thấy ${filteredData.length} kết quả`;
+                pagination.style.display = totalPages > 1 ? 'flex' : 'none';
+            }
+        }
+
+        // Sự kiện
+        searchBtn.addEventListener('click', filterData);
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayResults();
+            }
+        });
+        nextBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayResults();
+            }
+        });
+
+        // Tự động tìm kiếm khi trang được tải
+        window.addEventListener('DOMContentLoaded', () => {
+            filterData();
+        });
+    </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

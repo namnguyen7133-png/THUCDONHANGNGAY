@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trợ Lý Lên Lịch Theo Nhịp Sinh Học</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e67e22;
+            --accent: #27ae60;
+            --bg: #1e1e1e;
+            --card-bg: #2d2d2d;
+            --text: #f4f4f4;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            font-size: 18px;
+        }
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+            border: 2px solid var(--secondary);
+        }
+        h2 {
+            text-align: center;
+            color: var(--secondary);
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            font-size: 28px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #ddd;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: #3d3d3d;
+            border: 1px solid #777;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 18px;
+            box-sizing: border-box;
+        }
+        button.action-btn {
+            background: var(--accent);
+            color: white;
+            border: 2px solid #fff;
+            padding: 14px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            width: 100%;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+        button.action-btn:hover {
+            opacity: 0.9;
+            box-shadow: 0 0 12px var(--accent);
+        }
+        .result-box {
+            margin-top: 25px;
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 6px solid var(--secondary);
+            padding: 20px;
+            border-radius: 6px;
+            line-height: 1.6;
+            font-size: 18px;
+        }
+        .desc {
+            font-size: 16px;
+            color: #aaa;
+            margin-bottom: 20px;
+            font-style: italic;
+            text-align: center;
+        }
+        .schedule-item {
+            margin-bottom: 12px;
+            padding: 15px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid var(--accent);
+        }
+        .bio-status {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px dashed #555;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Lên Thời Gian Biểu Theo Nhịp Sinh Học</h2>
+    <div class="desc">Thuật toán tự động đánh giá năng lượng cơ thể ngày hôm nay để sắp xếp khung giờ làm việc tối ưu nhất!</div>
+
+    <div class="input-group">
+        <label>Ngày sinh của bạn:</label>
+        <input type="date" id="dob" value="1995-01-01">
+    </div>
+    <div class="input-group">
+        <label>Ngày cần lên lịch:</label>
+        <input type="date" id="target_date">
+    </div>
+    <div class="input-group">
+        <label>Giờ bắt đầu trong ngày (Ví dụ: 8 cho 8:00 sáng):</label>
+        <input type="number" id="start_hour" value="8">
+    </div>
+    <div class="input-group">
+        <label>Tổng số giờ tối đa có thể làm việc:</label>
+        <input type="number" id="total_limit" value="8">
+    </div>
+    <div class="input-group">
+        <label>Danh sách việc (Tên, Thời gian tốn [giờ], Giá trị gốc, Loại [Trietue / Thechat / Camxuc]):</label>
+        <textarea id="task_items" rows="6">Học lập trình, 3, 9, Trietue
+Viết báo cáo, 2, 7, Trietue
+Xem phim giải trí, 4, 4, Camxuc
+Tập thể dục, 1, 8, Thechat
+Đi chợ nấu ăn, 2, 6, Thechat</textarea>
+    </div>
+    
+    <button class="action-btn" onclick="generateSchedule()">Tạo Thời Gian Biểu Chi Tiết</button>
+    
+    <div class="result-box" id="result_output">Nhấn nút để khởi chạy hệ thống...</div>
+</div>
+
+<script>
+// Tự động điền ngày hôm nay vào ô ngày cần lên lịch
+document.getElementById('target_date').valueAsDate = new Date();
+
+function generateSchedule() {
+    let dobStr = document.getElementById('dob').value;
+    let targetStr = document.getElementById('target_date').value;
+    let limit = parseFloat(document.getElementById('total_limit').value);
+    let startHour = parseInt(document.getElementById('start_hour').value);
+    
+    let dob = new Date(dobStr);
+    let target = new Date(targetStr);
+    let diffDays = Math.floor((target - dob) / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) {
+        document.getElementById('result_output').innerHTML = "<span style='color: #e74c3c;'>Ngày xem không thể nhỏ hơn ngày sinh!</span>";
+        return;
+    }
+
+    // 1. Tính phần trăm nhịp sinh học chính xác
+    let bioTheChat = Math.sin((2 * Math.PI * diffDays) / 23);
+    let bioCamXuc = Math.sin((2 * Math.PI * diffDays) / 28);
+    let bioTriTue = Math.sin((2 * Math.PI * diffDays) / 33);
+
+    let tcPct = (bioTheChat * 100).toFixed(1);
+    let cxPct = (bioCamXuc * 100).toFixed(1);
+    let ttPct = (bioTriTue * 100).toFixed(1);
+
+    // Hệ số nhân điều chỉnh giá trị công việc
+    let getMultiplier = (val) => Math.max(0.2, 1 + val * 0.5);
+    let mTheChat = getMultiplier(bioTheChat);
+    let mCamXuc = getMultiplier(bioCamXuc);
+    let mTriTue = getMultiplier(bioTriTue);
+
+    // 2. Đọc và xử lý danh sách công việc
+    let raw = document.getElementById('task_items').value.trim().split('\n');
+    let items = raw.map(line => {
+        let p = line.split(',');
+        let name = p[0] ? p[0].trim() : "Công việc";
+        let cost = p[1] ? parseFloat(p[1]) : 1;
+        let baseValue = p[2] ? parseFloat(p[2]) : 5;
+        let category = p[3] ? p[3].trim() : "Thechat";
+
+        let multiplier = 1.0;
+        if (category === "Trietue") multiplier = mTriTue;
+        else if (category === "Thechat") multiplier = mTheChat;
+        else if (category === "Camxuc") multiplier = mCamXuc;
+
+        let adjustedValue = baseValue * multiplier;
+        let ratio = adjustedValue / cost;
+
+        return { name, cost, baseValue, adjustedValue: adjustedValue.toFixed(1), ratio, category };
+    });
+
+    // Sắp xếp chọn việc tối ưu theo hiệu suất thích ứng
+    items.sort((a, b) => b.ratio - a.ratio);
+
+    let totalCost = 0;
+    let chosen = [];
+
+    for (let item of items) {
+        if (totalCost + item.cost <= limit) {
+            totalCost += item.cost;
+            chosen.push(item);
+        }
+    }
+
+    // 3. Hiển thị kết quả ra màn hình
+    let html = `<div class="bio-status">
+        <b>📊 Trạng thái năng lượng sinh học ngày hôm nay:</b><br>
+        • Thể chất (23 ngày): <span style="color: ${bioTheChat >= 0 ? '#2ecc71' : '#e74c3c'}; font-weight: bold;">${tcPct}%</span><br>
+        • Cảm xúc (28 ngày): <span style="color: ${bioCamXuc >= 0 ? '#2ecc71' : '#e74c3c'}; font-weight: bold;">${cxPct}%</span><br>
+        • Trí tuệ (33 ngày): <span style="color: ${bioTriTue >= 0 ? '#2ecc71' : '#e74c3c'}; font-weight: bold;">${ttPct}%</span>
+    </div>`;
+
+    html += `<b>📅 THỜI GIAN BIỂU CHI TIẾT (Bắt đầu từ ${String(startHour).padStart(2, '0')}:00):</b><br><br>`;
+    
+    let currentHour = startHour;
+    chosen.forEach((i) => {
+        let endHour = currentHour + i.cost;
+        let timeSlot = `${String(currentHour).padStart(2, '0')}:00 ➔ ${String(endHour).padStart(2, '0')}:00`;
+        
+        html += `<div class="schedule-item">
+            <b>⏰ ${timeSlot}</b><br>
+            👉 Làm việc: <span style="color: #2ecc71; font-weight: bold;">${i.name}</span> (Thời gian: ${i.cost} tiếng)<br>
+            <span style="font-size: 15px; color: #aaa;">Giá trị thích ứng theo nhịp: ${i.adjustedValue} điểm</span>
+        </div>`;
+        
+        currentHour = endHour;
+    });
+
+    if (currentHour < startHour + limit) {
+        let freeTime = (startHour + limit) - currentHour;
+        html += `<div class="schedule-item" style="border-left-color: #e67e22;">
+            <b>⏰ ${String(currentHour).padStart(2, '0')}:00 ➔ ${String(startHour + limit).padStart(2, '0')}:00</b><br>
+            👉 Khoảng thời gian trống / Dành để nghỉ ngơi (${freeTime} tiếng)
+        </div>`;
+    }
+
+    html += `<br>👉 <b>Tổng thời lượng thực hiện:</b> ${totalCost} / ${limit} tiếng`;
+    document.getElementById('result_output').innerHTML = html;
+}
+</script>
+
+</body>
+</html>

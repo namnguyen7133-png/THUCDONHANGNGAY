@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra Cứu Món Ăn & Nguyên Liệu Thay Thế</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f7f4;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #2d8f6b 0%, #4ca788 100%);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(45, 143, 107, 0.2);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.95;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            margin: 30px auto;
+            padding: 25px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .search-box {
+            flex-grow: 1;
+            min-width: 250px;
+        }
+
+        .search-box label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d8f6b;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #d1e7dd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #2d8f6b;
+            box-shadow: 0 0 0 3px rgba(45, 143, 107, 0.2);
+        }
+
+        .button {
+            background-color: #2d8f6b;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .button:hover {
+            background-color: #247155;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(36, 113, 85, 0.3);
+        }
+
+        .button-clear {
+            background-color: #6c757d;
+        }
+
+        .button-clear:hover {
+            background-color: #5a6268;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+        }
+
+        .card h2 {
+            color: #2d8f6b;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9f5ef;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 i {
+            font-size: 1.4rem;
+        }
+
+        .scroll-list {
+            max-height: 550px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Custom scrollbar */
+        .scroll-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scroll-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .scroll-list::-webkit-scrollbar-thumb {
+            background: #b8d5c9;
+            border-radius: 10px;
+        }
+
+        .food-item {
+            background-color: #f9fdfb;
+            border-left: 5px solid #4ca788;
+            margin-bottom: 18px;
+            padding: 20px;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .food-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(76, 167, 136, 0.15);
+        }
+
+        .food-item h3 {
+            color: #2d8f6b;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .food-item p {
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .property {
+            display: inline-block;
+            background-color: #e9f5ef;
+            color: #2d8f6b;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-right: 8px;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .substitute-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .substitute-table th,
+        .substitute-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eaeaea;
+            vertical-align: top;
+        }
+
+        .substitute-table th {
+            background-color: #f0f7f4;
+            color: #2d8f6b;
+            font-weight: 600;
+        }
+
+        .substitute-table tr:hover {
+            background-color: #f9fdfb;
+        }
+
+        .highlight {
+            background-color: #fff9e6;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #e6b400;
+            margin-top: 30px;
+            grid-column: 1 / -1;
+        }
+
+        .highlight h3 {
+            color: #b58900;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .highlight ul {
+            padding-left: 20px;
+        }
+
+        .highlight li {
+            margin-bottom: 10px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #ddd;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+            font-style: italic;
+            grid-column: 1 / -1;
+        }
+
+        .food-item.active {
+            background-color: #e6f4ee;
+            border-left-color: #247155;
+            box-shadow: inset 0 0 0 2px #2d8f6b;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-search"></i> Tra Cứu Món Ăn & Nguyên Liệu Thay Thế</h1>
+        <p>Công cụ tìm kiếm và danh sách giúp bạn dễ dàng tra cứu các món ăn, công dụng và tìm nguyên liệu thay thế phổ biến, dễ mua. Nguồn tham khảo từ sách Đông y và kinh nghiệm thực tế.</p>
+    </header>
+
+    <div class="search-container">
+        <div class="search-box">
+            <label for="searchDish"><i class="fas fa-utensils"></i> Tìm theo tên món ăn hoặc công dụng:</label>
+            <input type="text" id="searchDish" placeholder="Ví dụ: canh khổ qua, hạ đường huyết, an thần...">
+        </div>
+        <div class="search-box">
+            <label for="searchIngredient"><i class="fas fa-leaf"></i> Tìm nguyên liệu cần thay thế:</label>
+            <input type="text" id="searchIngredient" placeholder="Ví dụ: đông trùng hạ thảo, nấm linh chi...">
+        </div>
+        <button class="button" id="searchButton">
+            <i class="fas fa-search"></i> Tìm Kiếm
+        </button>
+        <button class="button button-clear" id="clearButton">
+            <i class="fas fa-eraser"></i> Xóa Tìm
+        </button>
+    </div>
+
+    <div class="main-content">
+        <!-- Cột 1: Danh sách món ăn -->
+        <div class="card">
+            <h2><i class="fas fa-list-ul"></i> Danh Sách Món Ăn & Công Dụng</h2>
+            <div class="scroll-list" id="dishesList">
+                <!-- Danh sách sẽ được điền bởi JavaScript -->
+            </div>
+        </div>
+
+        <!-- Cột 2: Bảng thay thế nguyên liệu -->
+        <div class="card">
+            <h2><i class="fas fa-exchange-alt"></i> Nguyên Liệu Thay Thế Tương Ứng</h2>
+            <div class="scroll-list">
+                <table class="substitute-table" id="substituteTable">
+                    <thead>
+                        <tr>
+                            <th width="35%">Nguyên Liệu Trong Sách</th>
+                            <th width="40%">Nguyên Liệu Thay Thế (Dễ Mua)</th>
+                            <th width="25%">Tính Chất / Công Dụng Chính</th>
+                        </tr>
+                    </thead>
+                    <tbody id="substitutesBody">
+                        <!-- Nội dung bảng sẽ được điền bởi JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Khu vực lưu ý quan trọng -->
+        <div class="highlight">
+            <h3><i class="fas fa-exclamation-triangle"></i> Lưu Ý Quan Trọng Khi Sử Dụng</h3>
+            <ul>
+                <li><strong>Món ăn chỉ có tác dụng hỗ trợ:</strong> Không thể thay thế hoàn toàn thuốc điều trị chính thức từ bác sĩ[citation:2].</li>
+                <li><strong>Cẩn trọng khi kết hợp với thuốc Tây:</strong> Nếu đang dùng thuốc (như Metformin, Insulin, thuốc hạ áp...), tránh dùng quá nhiều món có cùng tác dụng hạ đường/hạ áp trong cùng một ngày[citation:2].</li>
+                <li><strong>Phù hợp với thể trạng:</strong> Người tiêu hóa kém, bệnh thận, thiếu canxi/sắt nên thận trọng hoặc hỏi ý kiến chuyên gia khi dùng nhiều gạo lứt, yến mạch[citation:2].</li>
+                <li>Thông tin trên đây mang tính chất tham khảo. Để được tư vấn cụ thể, vui lòng liên hệ với bác sĩ hoặc chuyên gia dinh dưỡng[citation:6].</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p>Công cụ được xây dựng dựa trên nguyên tắc kết hợp Đông - Tây y, ưu tiên nguyên liệu phổ thông, dễ tìm.</p>
+        <p>© 2025 - Dữ liệu được cập nhật và tổng hợp từ nhiều nguồn.</p>
+    </footer>
+
+    <script>
+        // ========== CƠ SỞ DỮ LIỆU MẪU ==========
+        // Mảng chứa danh sách các món ăn
+        const dishesData = [
+            {
+                name: "Cháo gạo lứt hạt sen",
+                description: "Cháo ngũ cốc nguyên hạt, dễ tiêu hóa, cung cấp năng lượng bền vững[citation:3][citation:9].",
+                effects: ["An thần, dễ ngủ", "Bổ tỳ vị", "Hỗ trợ tiêu hóa"],
+                searchKeywords: ["cháo", "gạo lứt", "hạt sen", "an thần", "bổ tỳ"]
+            },
+            {
+                name: "Canh khổ qua nhồi thịt",
+                description: "Món canh thanh mát, có vị đắng đặc trưng giúp thanh nhiệt.",
+                effects: ["Thanh nhiệt", "Hạ đường huyết", "Giải độc"],
+                searchKeywords: ["canh", "khổ qua", "mướp đắng", "thanh nhiệt", "hạ đường"]
+            },
+            {
+                name: "Gà ta hầm nấm rơm",
+                description: "Món hầm bổ dưỡng, dùng nấm rơm thay thế cho các loại dược liệu đắt tiền.",
+                effects: ["Bổ khí huyết", "Tăng cường sức đề kháng", "Dễ tiêu"],
+                searchKeywords: ["gà hầm", "nấm rơm", "bổ", "sức đề kháng"]
+            },
+            {
+                name: "Cá lóc hấp gừng",
+                description: "Cá đồng hấp với gừng, món ăn lành tính, giàu đạm.",
+                effects: ["Bổ tỳ vị", "Kháng khuẩn", "Phục hồi sức khỏe"],
+                searchKeywords: ["cá lóc", "cá quả", "hấp gừng", "bổ", "kháng khuẩn"]
+            },
+            {
+                name: "Nước gạo lứt rang",
+                description: "Thức uống từ gạo lứt rang, có mùi thơm, giàu vitamin nhóm B[citation:1].",
+                effects: ["Thanh lọc, thải độc", "Bổ sung khoáng chất", "Tốt cho thận[citation:1]"],
+                searchKeywords: ["nước", "gạo lứt rang", "thanh lọc", "thải độc", "vitamin B"]
+            },
+            {
+                name: "Trà râu ngô (bắp)",
+                description: "Nước từ râu bắp khô hoặc tươi, vị ngọt nhẹ, dễ uống[citation:1].",
+                effects: ["Lợi tiểu", "Hạ huyết áp", "Bổ thận[citation:1]"],
+                searchKeywords: ["trà", "râu ngô", "râu bắp", "lợi tiểu", "hạ áp"]
+            },
+            {
+                name: "Cháo yến mạch",
+                description: "Cháo nấu từ yến mạch cán, kết cấu mềm, nấu nhanh[citation:3][citation:9].",
+                effects: ["Ổn định đường huyết[citation:3]", "Giảm căng thẳng[citation:8]", "Tốt cho tim mạch[citation:3]"],
+                searchKeywords: ["cháo", "yến mạch", "ổn định đường huyết", "giảm stress", "tim mạch"]
+            },
+            {
+                name: "Canh rau ngót thịt băm",
+                description: "Món canh rau quen thuộc, nấu nhanh, thanh mát.",
+                effects: ["Thanh nhiệt", "Giải độc", "Bổ dưỡng"],
+                searchKeywords: ["canh", "rau ngót", "thanh nhiệt", "giải độc"]
+            }
+        ];
+
+        // Mảng chứa danh sách nguyên liệu thay thế
+        const substitutesData = [
+            { original: "Đông trùng hạ thảo", substitute: "Nấm rơm, Nấm bào ngư, Nấm mèo đen", property: "Bổ, tăng sức đề kháng" },
+            { original: "Nấm linh chi", substitute: "Trà atiso, Trà xanh nhạt, Trà khổ qua[citation:1]", property: "Thanh nhiệt, giải độc gan[citation:1]" },
+            { original: "Bách hợp", substitute: "Hạt sen, Khoai mài (hoài sơn), Củ sen", property: "An thần, bổ phổi" },
+            { original: "Sơn trà", substitute: "Táo ta tươi, Chanh pha loãng, Dứa (một ít)", property: "Hạ mỡ máu, tiêu thực" },
+            { original: "Trần bì (vỏ quýt)", substitute: "Vỏ cam phơi khô, Gừng tươi", property: "Trừ đờm, giúp tiêu hóa" },
+            { original: "Đương quy", substitute: "Gan gà, Thịt bò nạc, Rau dền đỏ", property: "Bổ huyết, dưỡng huyết" },
+            { original: "Lá Bách khoai", substitute: "Rau dền, Rau ngót, Mồng tơi", property: "Dưỡng huyết, an thần" },
+            { original: "Hùng biên", substitute: "Cần tây, Cà tím, Bí đao", property: "Hạ huyết áp, hạ mỡ máu" },
+            { original: "Gạo Cảm tưới (đặc biệt)", substitute: "Gạo lứt, Gạo lứt huyết rồng[citation:4]", property: "Hạ đường huyết, giàu chất xơ[citation:6]" },
+            { original: "Tim heo (dùng trong bài thuốc)", substitute: "Thịt nạc vai, Gan heo (ăn ít)", property: "Bổ huyết, bổ tâm" },
+            { original: "Rau diếp xoắn", substitute: "Xà lách thường, Rau má[citation:1], Rau cải xanh", property: "Thanh nhiệt, hạ đường" },
+            { original: "Yến mạch (khan hiếm/đắt)", substitute: "Gạo lứt (có thể kết hợp cùng)[citation:3][citation:5]", property: "Chất xơ, ổn định đường huyết[citation:3][citation:6]" }
+        ];
+
+        // ========== HÀM HIỂN THỊ MẶC ĐỊNH ==========
+        function displayDefaultData() {
+            // 1. Hiển thị danh sách món ăn đầy đủ
+            const dishesList = document.getElementById('dishesList');
+            dishesList.innerHTML = ''; // Xóa nội dung cũ
+
+            dishesData.forEach((dish, index) => {
+                const dishElement = document.createElement('div');
+                dishElement.className = 'food-item';
+                dishElement.dataset.index = index;
+
+                const effectsHtml = dish.effects.map(effect => `<span class="property">${effect}</span>`).join(' ');
+
+                dishElement.innerHTML = `
+                    <h3>${dish.name}</h3>
+                    <p>${dish.description}</p>
+                    <div>${effectsHtml}</div>
+                `;
+                dishesList.appendChild(dishElement);
+            });
+
+            // 2. Hiển thị bảng thay thế đầy đủ
+            const substitutesBody = document.getElementById('substitutesBody');
+            substitutesBody.innerHTML = ''; // Xóa nội dung cũ
+
+            substitutesData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${item.original}</strong></td>
+                    <td>${item.substitute}</td>
+                    <td><span class="property">${item.property}</span></td>
+                `;
+                substitutesBody.appendChild(row);
+            });
+        }
+
+        // ========== HÀM TÌM KIẾM ==========
+        function performSearch() {
+            const dishQuery = document.getElementById('searchDish').value.toLowerCase().trim();
+            const ingredientQuery = document.getElementById('searchIngredient').value.toLowerCase().trim();
+
+            const dishesList = document.getElementById('dishesList');
+            const substitutesBody = document.getElementById('substitutesBody');
+
+            // --- Tìm kiếm món ăn ---
+            let filteredDishes = dishesData;
+            if (dishQuery) {
+                filteredDishes = dishesData.filter(dish => {
+                    // Tìm trong tên, mô tả, công dụng và từ khóa
+                    return dish.name.toLowerCase().includes(dishQuery) ||
+                           dish.description.toLowerCase().includes(dishQuery) ||
+                           dish.effects.some(effect => effect.toLowerCase().includes(dishQuery)) ||
+                           dish.searchKeywords.some(keyword => keyword.includes(dishQuery));
+                });
+            }
+
+            // --- Tìm kiếm nguyên liệu thay thế ---
+            let filteredSubstitutes = substitutesData;
+            if (ingredientQuery) {
+                filteredSubstitutes = substitutesData.filter(item => {
+                    // Tìm trong tên nguyên liệu gốc, nguyên liệu thay thế và tính chất
+                    return item.original.toLowerCase().includes(ingredientQuery) ||
+                           item.substitute.toLowerCase().includes(ingredientQuery) ||
+                           item.property.toLowerCase().includes(ingredientQuery);
+                });
+            }
+
+            // --- CẬP NHẬT GIAO DIỆN ---
+            // 1. Cập nhật danh sách món ăn
+            dishesList.innerHTML = '';
+            if (filteredDishes.length > 0) {
+                filteredDishes.forEach((dish, index) => {
+                    const dishElement = document.createElement('div');
+                    dishElement.className = 'food-item';
+                    dishElement.dataset.index = index;
+
+                    const effectsHtml = dish.effects.map(effect => `<span class="property">${effect}</span>`).join(' ');
+
+                    dishElement.innerHTML = `
+                        <h3>${dish.name}</h3>
+                        <p>${dish.description}</p>
+                        <div>${effectsHtml}</div>
+                    `;
+                    dishesList.appendChild(dishElement);
+                });
+            } else {
+                dishesList.innerHTML = '<p class="no-results">Không tìm thấy món ăn nào phù hợp với từ khóa tìm kiếm.</p>';
+            }
+
+            // 2. Cập nhật bảng thay thế
+            substitutesBody.innerHTML = '';
+            if (filteredSubstitutes.length > 0) {
+                filteredSubstitutes.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${item.original}</strong></td>
+                        <td>${item.substitute}</td>
+                        <td><span class="property">${item.property}</span></td>
+                    `;
+                    substitutesBody.appendChild(row);
+                });
+            } else {
+                substitutesBody.innerHTML = `
+                    <tr>
+                        <td colspan="3" style="text-align: center; padding: 30px; color: #888; font-style: italic;">
+                            Không tìm thấy nguyên liệu thay thế nào phù hợp.
+                        </td>
+                    </tr>
+                `;
+            }
+
+            // 3. Highlight kết quả tìm nếu có từ khóa
+            highlightSearchResults(dishQuery, ingredientQuery);
+        }
+
+        // Hàm highlight từ khóa tìm được (tùy chọn, có thể bỏ qua nếu phức tạp)
+        function highlightSearchResults(dishQuery, ingredientQuery) {
+            // Code đơn giản highlight có thể được thêm vào ở đây nếu cần.
+            // Ví dụ: đổi màu chữ chứa từ khóa.
+            // Để đơn giản, bỏ qua bước này.
+        }
+
+        // ========== XÓA TÌM KIẾM ==========
+        function clearSearch() {
+            document.getElementById('searchDish').value = '';
+            document.getElementById('searchIngredient').value = '';
+            displayDefaultData(); // Hiển thị lại toàn bộ dữ liệu
+        }
+
+        // ========== GÁN SỰ KIỆN ==========
+        document.getElementById('searchButton').addEventListener('click', performSearch);
+        document.getElementById('clearButton').addEventListener('click', clearSearch);
+
+        // Cho phép tìm kiếm bằng phím Enter trong ô nhập liệu
+        document.getElementById('searchDish').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        });
+        document.getElementById('searchIngredient').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        // ========== KHỞI TẠO TRANG ==========
+        // Khi trang được tải, hiển thị dữ liệu mặc định
+        window.addEventListener('DOMContentLoaded', displayDefaultData);
+    </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

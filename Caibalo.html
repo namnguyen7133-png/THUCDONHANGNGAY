@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đại Chiến Quân Lương - Bài Toán Cái Ba Lô</title>
+    <style>
+        :root {
+            --primary: #8b0000;
+            --secondary: #d4af37;
+            --bg: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text: #f4f4f4;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            font-size: 18px; /* Tăng cỡ chữ toàn trang */
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            border: 2px solid var(--secondary);
+        }
+        h2 {
+            text-align: center;
+            color: var(--secondary);
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            font-size: 26px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        label {
+            flex: 1.2;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        input, textarea {
+            flex: 2;
+            padding: 12px 15px;
+            background: #3d3d3d;
+            border: 1px solid #777;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 18px; /* Tăng chữ trong ô nhập */
+        }
+        textarea {
+            line-height: 1.5;
+        }
+        button {
+            background: var(--primary);
+            color: white;
+            border: 2px solid var(--secondary);
+            padding: 14px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            width: 100%;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #a30000;
+            box-shadow: 0 0 12px var(--secondary);
+        }
+        .chat-box {
+            margin-top: 35px;
+            border-top: 2px dashed #555;
+            padding-top: 25px;
+        }
+        .dialogue {
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            border-radius: 8px;
+            animation: fadeIn 0.5s ease-in-out;
+            font-size: 18px; /* Tăng chữ khung hội thoại */
+            line-height: 1.6;
+        }
+        .role-commander {
+            background: rgba(139, 0, 0, 0.3);
+            border-left: 6px solid var(--primary);
+        }
+        .role-accountant {
+            background: rgba(0, 0, 139, 0.3);
+            border-left: 6px solid #4169e1;
+        }
+        .role-general {
+            background: rgba(212, 175, 55, 0.25);
+            border-left: 6px solid var(--secondary);
+        }
+        .name {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--secondary);
+            font-size: 20px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Trận Đánh Quân Lương: Bài Toán Cái Ba Lô</h2>
+    
+    <div class="input-group">
+        <label>Sức chứa tối đa của kho lương (W):</label>
+        <input type="number" id="capacity" value="50">
+    </div>
+    <div class="input-group" style="align-items: flex-start;">
+        <label>Danh sách kiện hàng<br><span style="font-size: 14px; color: #aaa;">(Mỗi dòng: Tên, Trọng lượng, Giá trị)</span>:</label>
+        <textarea id="itemsInput" rows="6">Vũ khí, 10, 60
+Giáp trụ, 20, 100
+Lương khô, 30, 120
+Thuốc men, 15, 70
+Ngựa chiến, 25, 110</textarea>
+    </div>
+    
+    <button onclick="solveKnapsack()">Triển khai chiến thuật</button>
+
+    <div class="chat-box" id="chatBox">
+        <!-- Hội thoại sẽ hiển thị ở đây -->
+    </div>
+</div>
+
+<script>
+function solveKnapsack() {
+    const capacity = parseInt(document.getElementById('capacity').value);
+    const rawInput = document.getElementById('itemsInput').value.trim().split('\n');
+    
+    let items = [];
+    for (let line of rawInput) {
+        if (line.trim() === "") continue;
+        let parts = line.split(',');
+        if (parts.length >= 3) {
+            items.push({
+                name: parts[0].trim(),
+                weight: parseInt(parts[1].trim()),
+                value: parseInt(parts[2].trim())
+            });
+        }
+    }
+
+    let chatBox = document.getElementById('chatBox');
+    chatBox.innerHTML = '';
+
+    // 1. Người hỏi lệnh
+    setTimeout(() => {
+        appendChat('role-commander', 'Người hỏi lệnh (Quân sư)', 
+            `Bẩm Đại Tướng quân, kho lương dã chiến đợt này chỉ chứa được tối đa <b>${capacity}</b> đơn vị tải trọng. Xin ngài hạ lệnh chọn lọc các kiện hàng tối ưu nhất!`);
+    }, 200);
+
+    // 2. Người báo cáo số dư
+    setTimeout(() => {
+        let reportText = "Danh sách các kiện hàng cấp báo từ kho tiền phương:<br>";
+        items.forEach((item) => {
+            reportText += `• ${item.name}: Nặng <b>${item.weight}</b>, Giá trị <b>${item.value}</b><br>`;
+        });
+        appendChat('role-accountant', 'Người báo cáo số dư (Hậu lương quan)', reportText);
+    }, 1200);
+
+    // Tính toán thuật toán Cái ba lô (0/1 Knapsack)
+    setTimeout(() => {
+        let n = items.length;
+        let dp = Array(n + 1).fill(0).map(() => Array(capacity + 1).fill(0));
+
+        for (let i = 1; i <= n; i++) {
+            for (let w = 0; w <= capacity; w++) {
+                if (items[i - 1].weight <= w) {
+                    dp[i][w] = Math.max(
+                        dp[i - 1][w],
+                        dp[i - 1][w - items[i - 1].weight] + items[i - 1].value
+                    );
+                } else {
+                    dp[i][w] = dp[i - 1][w];
+                }
+            }
+        }
+
+        // Truy vết tìm đồ vật
+        let w = capacity;
+        let selectedItems = [];
+        let totalValue = dp[n][capacity];
+        let totalWeight = 0;
+
+        for (let i = n; i > 0 && totalValue > 0; i--) {
+            if (dp[i][w] !== dp[i - 1][w]) {
+                selectedItems.push(items[i - 1]);
+                totalWeight += items[i - 1].weight;
+                w -= items[i - 1].weight;
+            }
+        }
+
+        // 3. Đại tướng quân chốt hạ
+        let itemsListStr = selectedItems.map(i => `+ ${i.name} (Nặng: ${i.weight}, Giá trị: ${i.value})`).reverse().join('<br>');
+        
+        appendChat('role-general', 'Đại tướng quân (Chốt hạ)', 
+            `Ta đã định đoạt! Với sức chứa tối đa ${capacity}, các lực lượng mang theo:<br>${itemsListStr}<br><br>👉 <b>Tổng giá trị đạt đỉnh: ${totalValue} | Tổng trọng lượng: ${totalWeight}</b>. Xuất quân!`);
+    }, 2200);
+}
+
+function appendChat(className, sender, message) {
+    let chatBox = document.getElementById('chatBox');
+    let div = document.createElement('div');
+    div.className = `dialogue ${className}`;
+    div.innerHTML = `<div class="name">${sender}</div><div>${message}</div>`;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+</script>
+
+</body>
+</html>

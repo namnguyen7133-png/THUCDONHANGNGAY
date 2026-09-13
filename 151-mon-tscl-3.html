@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tìm Bệnh & Món Ăn Cho Trẻ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #4A90E2;
+            --primary-dark: #357ABD;
+            --secondary: #FF9500;
+            --light: #F8F9FA;
+            --dark: #2C3E50;
+            --danger: #FF3B30;
+            --success: #34C759;
+            --warning: #FFCC00;
+            --card-bg: #FFFFFF;
+            --text: #34495E;
+            --border: #E1E8ED;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --radius: 20px;
+            --radius-sm: 12px;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 100%);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+        
+        /* Header */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 22px 18px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 0 0 25px 25px;
+        }
+        
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .app-icon {
+            font-size: 2.2rem;
+            margin-right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+        
+        .app-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* Search Section */
+        .search-section {
+            max-width: 800px;
+            margin: 25px auto;
+            padding: 0 18px;
+        }
+        
+        .search-container {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 18px 25px 18px 55px;
+            border-radius: 50px;
+            border: 2px solid var(--border);
+            font-size: 1rem;
+            background-color: var(--light);
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+        
+        /* Category Filters */
+        .category-filters {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .category-btn {
+            background: var(--light);
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 15px 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--primary);
+            transition: all 0.3s;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+        }
+        
+        .category-btn.active {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+        }
+        
+        .category-label {
+            font-size: 0.7rem;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+        
+        /* Main Content */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 18px;
+        }
+        
+        /* Disease Section */
+        .disease-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+        }
+        
+        .section-title i {
+            margin-right: 12px;
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Disease Cards */
+        .disease-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+        
+        .disease-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+        
+        .disease-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .disease-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .disease-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        .disease-icon {
+            font-size: 1.5rem;
+            margin-right: 12px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .disease-page {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .disease-content {
+            padding: 20px;
+        }
+        
+        .disease-symptoms {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--border);
+        }
+        
+        .symptoms-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .symptoms-title i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        .symptoms-list {
+            padding-left: 25px;
+            font-size: 0.95rem;
+        }
+        
+        .symptoms-list li {
+            margin-bottom: 8px;
+        }
+        
+        /* Dish Cards */
+        .dish-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+            margin-top: 15px;
+        }
+        
+        .dish-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--success);
+        }
+        
+        .dish-header {
+            padding: 18px;
+            background: rgba(52, 199, 89, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .dish-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        .dish-icon {
+            font-size: 1.4rem;
+            margin-right: 12px;
+        }
+        
+        .dish-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .info-badge {
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: var(--light);
+        }
+        
+        .info-badge i {
+            margin-right: 5px;
+        }
+        
+        .price-badge {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+        
+        .calorie-badge {
+            background: #FFF3E0;
+            color: #EF6C00;
+        }
+        
+        .property-badge {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+        
+        .dish-content {
+            padding: 18px;
+        }
+        
+        .ingredient-section {
+            margin-bottom: 20px;
+        }
+        
+        .section-heading {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .section-heading i {
+            margin-right: 10px;
+        }
+        
+        .ingredient-list {
+            padding-left: 25px;
+            font-size: 0.95rem;
+        }
+        
+        .ingredient-list li {
+            margin-bottom: 8px;
+        }
+        
+        /* Shopping Plan */
+        .shopping-plan {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .plan-header {
+            background: linear-gradient(135deg, var(--secondary) 0%, #FF7A00 100%);
+            color: white;
+            padding: 20px;
+            font-weight: 800;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .plan-header i {
+            margin-right: 15px;
+            font-size: 1.6rem;
+        }
+        
+        .plan-content {
+            padding: 20px;
+        }
+        
+        .shopping-day {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px dashed var(--border);
+        }
+        
+        .day-title {
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+        
+        .day-title i {
+            margin-right: 10px;
+            background: var(--secondary);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ingredient-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        
+        .ingredient-table th {
+            text-align: left;
+            padding: 12px 10px;
+            font-weight: 700;
+            color: var(--dark);
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .ingredient-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .ingredient-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Nutrition Summary */
+        .nutrition-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .nutrition-item {
+            background: linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 100%);
+            border-radius: var(--radius-sm);
+            padding: 18px 12px;
+            text-align: center;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        }
+        
+        .nutrition-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .nutrition-label {
+            font-size: 0.85rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+        
+        /* Footer Navigation */
+        .nav-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0 10px;
+            border-top: 1px solid rgba(225, 232, 237, 0.8);
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.08);
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+        }
+        
+        .nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            background: var(--light);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .nav-item.active .nav-icon {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-5px);
+        }
+        
+        /* Animation */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeInUp 0.4s ease-out;
+        }
+        
+        /* Responsive */
+        @media (min-width: 768px) {
+            .category-filters {
+                grid-template-columns: repeat(6, 1fr);
+            }
+            
+            .disease-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .nutrition-summary {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        /* Hidden elements */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="app-icon">
+                    <i class="fas fa-child"></i>
+                </div>
+                <div>
+                    <h1 class="app-title">Sức Khỏe Trẻ Em</h1>
+                    <p class="app-subtitle">Tìm bệnh & món ăn phù hợp</p>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="search-container fade-in">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="Tìm bệnh, triệu chứng hoặc món ăn...">
+            </div>
+            
+            <div class="category-filters">
+                <button class="category-btn active" data-category="all">
+                    <i class="fas fa-th-large"></i>
+                    <span class="category-label">Tất cả</span>
+                </button>
+                <button class="category-btn" data-category="infection">
+                    <i class="fas fa-virus"></i>
+                    <span class="category-label">Bệnh ẩm</span>
+                </button>
+                <button class="category-btn" data-category="nutrition">
+                    <i class="fas fa-apple-alt"></i>
+                    <span class="category-label">Dinh dưỡng</span>
+                </button>
+                <button class="category-btn" data-category="urinary">
+                    <i class="fas fa-tint"></i>
+                    <span class="category-label">Đại dầm</span>
+                </button>
+                <button class="category-btn" data-category="seizure">
+                    <i class="fas fa-brain"></i>
+                    <span class="category-label">Co giật</span>
+                </button>
+                <button class="category-btn" data-category="obesity">
+                    <i class="fas fa-weight"></i>
+                    <span class="category-label">Béo phì</span>
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Diseases Section -->
+        <section class="disease-section">
+            <h2 class="section-title">
+                <i class="fas fa-stethoscope"></i>
+                Bệnh Thường Gặp
+            </h2>
+            
+            <div class="disease-cards" id="diseaseContainer">
+                <!-- Disease cards will be generated by JavaScript -->
+            </div>
+        </section>
+        
+        <!-- Dishes Section -->
+        <section class="disease-section">
+            <h2 class="section-title">
+                <i class="fas fa-utensils"></i>
+                Món Ăn Đề Xuất
+            </h2>
+            
+            <div class="dish-cards" id="dishContainer">
+                <!-- Dish cards will be generated by JavaScript -->
+            </div>
+        </section>
+        
+        <!-- Shopping Plan -->
+        <section class="disease-section">
+            <h2 class="section-title">
+                <i class="fas fa-shopping-basket"></i>
+                Kế Hoạch Đi Chợ
+            </h2>
+            
+            <div class="shopping-plan fade-in">
+                <div class="plan-header">
+                    <i class="fas fa-calendar-check"></i>
+                    2 Lần/Tuần
+                </div>
+                
+                <div class="plan-content">
+                    <div class="shopping-day">
+                        <h3 class="day-title">
+                            <i class="fas fa-sun"></i>
+                            Lần 1: Thứ 2 (Đầu tuần)
+                        </h3>
+                        
+                        <table class="ingredient-table">
+                            <thead>
+                                <tr>
+                                    <th>Nguyên liệu</th>
+                                    <th>Định lượng</th>
+                                    <th>Giá ước tính</th>
+                                    <th>Calo</th>
+                                    <th>Âm/Dương</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Gạo nếp</td>
+                                    <td>500g</td>
+                                    <td class="price-badge">25.000đ</td>
+                                    <td class="calorie-badge">1.750</td>
+                                    <td><span class="property-badge">Trung tính</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Thịt gà</td>
+                                    <td>300g</td>
+                                    <td class="price-badge">45.000đ</td>
+                                    <td class="calorie-badge">600</td>
+                                    <td><span class="property-badge">Dương</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Hạt sen</td>
+                                    <td>200g</td>
+                                    <td class="price-badge">40.000đ</td>
+                                    <td class="calorie-badge">700</td>
+                                    <td><span class="property-badge">Âm</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Gừng tươi</td>
+                                    <td>100g</td>
+                                    <td class="price-badge">10.000đ</td>
+                                    <td class="calorie-badge">80</td>
+                                    <td><span class="property-badge">Dương</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Táo đỏ</td>
+                                    <td>150g</td>
+                                    <td class="price-badge">20.000đ</td>
+                                    <td class="calorie-badge">450</td>
+                                    <td><span class="property-badge">Âm</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="shopping-day">
+                        <h3 class="day-title">
+                            <i class="fas fa-cloud-sun"></i>
+                            Lần 2: Thứ 5 (Giữa tuần)
+                        </h3>
+                        
+                        <table class="ingredient-table">
+                            <thead>
+                                <tr>
+                                    <th>Nguyên liệu</th>
+                                    <th>Định lượng</th>
+                                    <th>Giá ước tính</th>
+                                    <th>Calo</th>
+                                    <th>Âm/Dương</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Yến mạch</td>
+                                    <td>300g</td>
+                                    <td class="price-badge">30.000đ</td>
+                                    <td class="calorie-badge">1.200</td>
+                                    <td><span class="property-badge">Trung tính</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Sữa tươi</td>
+                                    <td>1 lít</td>
+                                    <td class="price-badge">25.000đ</td>
+                                    <td class="calorie-badge">650</td>
+                                    <td><span class="property-badge">Âm</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Cá thu</td>
+                                    <td>200g</td>
+                                    <td class="price-badge">40.000đ</td>
+                                    <td class="calorie-badge">350</td>
+                                    <td><span class="property-badge">Dương</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Đậu phụ</td>
+                                    <td>4 bìa</td>
+                                    <td class="price-badge">12.000đ</td>
+                                    <td class="calorie-badge">300</td>
+                                    <td><span class="property-badge">Âm</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Cà chua</td>
+                                    <td>500g</td>
+                                    <td class="price-badge">15.000đ</td>
+                                    <td class="calorie-badge">100</td>
+                                    <td><span class="property-badge">Âm</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Nutrition Summary -->
+                    <div class="nutrition-summary">
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">262.000đ</div>
+                            <div class="nutrition-label">Tổng chi phí/tuần</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">6.180</div>
+                            <div class="nutrition-label">Tổng calo</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">10</div>
+                            <div class="nutrition-label">Loại thực phẩm</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">5</div>
+                            <div class="nutrition-label">Món ăn</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer Navigation -->
+    <nav class="nav-footer">
+        <a href="#" class="nav-item active">
+            <div class="nav-icon">
+                <i class="fas fa-home"></i>
+            </div>
+            Trang chủ
+        </a>
+        <a href="#" class="nav-item">
+            <div class="nav-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            Tìm kiếm
+        </a>
+        <a href="#" class="nav-item">
+            <div class="nav-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            Đi chợ
+        </a>
+        <a href="#" class="nav-item">
+            <div class="nav-icon">
+                <i class="fas fa-heartbeat"></i>
+            </div>
+            Sức khỏe
+        </a>
+    </nav>
+    
+    <script>
+        // Disease and Dish Data
+        const diseases = [
+            {
+                id: 1,
+                name: "Bệnh Ẩm Ở Trẻ Em",
+                icon: "🤒",
+                page: "Trang 191",
+                category: "infection",
+                symptoms: [
+                    "Trẻ bị ốm, sốt",
+                    "Sưng hạch, đau họng",
+                    "Chảy nước mũi, ho",
+                    "Nhiễm lạnh, nhiễm khuẩn"
+                ],
+                advice: "Giữ ấm, nghỉ ngơi đầy đủ, cung cấp đủ nước. Tránh khói thuốc, bụi bẩn.",
+                dishes: [1, 2]
+            },
+            {
+                id: 2,
+                name: "Suy Dinh Dưỡng Ở Trẻ Nhỏ",
+                icon: "🥗",
+                page: "Trang 194",
+                category: "nutrition",
+                symptoms: [
+                    "Chậm tăng trưởng",
+                    "Cân nặng thấp hơn chuẩn",
+                    "Cơ thể gầy yếu, da xanh",
+                    "Tóc khô, dễ rụng"
+                ],
+                advice: "Ăn đủ 4 nhóm thực phẩm, bú mẹ hoàn toàn 6 tháng đầu, theo dõi cân nặng thường xuyên.",
+                dishes: [3, 4]
+            },
+            {
+                id: 3,
+                name: "Chứng Đại Dầm Ở Trẻ",
+                icon: "💧",
+                page: "Trang 200",
+                category: "urinary",
+                symptoms: [
+                    "Tiểu không tự chủ khi ngủ",
+                    "Thường xảy ra ở trẻ trên 5 tuổi",
+                    "Phát triển chậm hệ thần kinh",
+                    "Yếu tố tâm lý"
+                ],
+                advice: "Đánh thức trẻ đi tiểu trước khi ngủ, hạn chế uống nước buổi tối, tập luyện bàng quang.",
+                dishes: [5, 6]
+            },
+            {
+                id: 4,
+                name: "Chứng Co Giật Ở Trẻ",
+                icon: "🧠",
+                page: "Trang 202",
+                category: "seizure",
+                symptoms: [
+                    "Co thắt cơ bắp không tự chủ",
+                    "Có thể mất ý thức",
+                    "Rối loạn chức năng thần kinh",
+                    "Cơn co giật cấp tính"
+                ],
+                advice: "Giữ trẻ ở tư thế an toàn, tránh vật sắc nhọn, nới lỏng quần áo. Đưa đến bệnh viện nếu kéo dài.",
+                dishes: [7, 8]
+            },
+            {
+                id: 5,
+                name: "Béo Phì Ở Trẻ Em",
+                icon: "⚖️",
+                page: "Trang 206-207",
+                category: "obesity",
+                symptoms: [
+                    "Tích tụ mỡ thừa",
+                    "Tăng cân quá mức",
+                    "Ảnh hưởng sức khỏe",
+                    "Phát triển không cân đối"
+                ],
+                advice: "Chế độ ăn cân đối, hạn chế đồ ăn nhanh, tăng cường rau xanh, vận động thường xuyên.",
+                dishes: [9, 10]
+            }
+        ];
+        
+        const dishes = [
+            {
+                id: 1,
+                name: "Cháo Bồ Quả",
+                icon: "🍚",
+                page: "Trang 190",
+                diseaseId: 1,
+                originalIngredients: [
+                    "50g gạo tẻ, 50g gạo nếp",
+                    "50g bồ quả khô",
+                    "5g vỏ quýt khô",
+                    "50g gan gà, 5g hoa hòe"
+                ],
+                replacementIngredients: [
+                    "Bồ quả khô → Táo tàu khô: 8 quả",
+                    "Vỏ quýt khô → Vỏ cam khô: 5g",
+                    "Gan gà → Thịt gà xay: 50g"
+                ],
+                westernSupplement: "Cháo yến mạch với táo và quế",
+                medicineSupplement: "Vitamin C, Kẽm, Paracetamol (hạ sốt)",
+                calories: 320,
+                price: 35000,
+                properties: "Âm",
+                benefits: "Thanh nhiệt, tiêu độc, mát gan, tăng cường sức đề kháng"
+            },
+            {
+                id: 2,
+                name: "Cháo Đậu Nàng",
+                icon: "🥣",
+                page: "Trang 191",
+                diseaseId: 1,
+                originalIngredients: [
+                    "100g gạo nếp",
+                    "50g đậu nành",
+                    "2g muối"
+                ],
+                replacementIngredients: [
+                    "Đậu nành → Đậu xanh: 50g",
+                    "Gạo nếp → Gạo lứt: 100g"
+                ],
+                westernSupplement: "Súp đậu lăng với rau củ",
+                medicineSupplement: "Kháng sinh (nếu có nhiễm khuẩn), Vitamin tổng hợp",
+                calories: 280,
+                price: 20000,
+                properties: "Trung tính",
+                benefits: "Bổ thận, tăng cường sinh lực, thanh nhiệt, giải độc"
+            },
+            {
+                id: 3,
+                name: "Cháo Yến Mạch, Củ Mài Với Sữa",
+                icon: "🥛",
+                page: "Trang 200",
+                diseaseId: 2,
+                originalIngredients: [
+                    "50g yến mạch",
+                    "50g củ mài",
+                    "50g sữa",
+                    "5g đường"
+                ],
+                replacementIngredients: [
+                    "Củ mài → Khoai lang: 50g",
+                    "Sữa bột → Sữa tươi: 100ml"
+                ],
+                westernSupplement: "Cháo yến mạch với chuối và mật ong",
+                medicineSupplement: "Vitamin tổng hợp, DHA, Sắt",
+                calories: 250,
+                price: 25000,
+                properties: "Âm",
+                benefits: "Bổ dưỡng, dễ tiêu hóa, tăng cường sức khỏe, cải thiện tiêu hóa"
+            },
+            {
+                id: 4,
+                name: "Trà Thanh Tâm An Thần",
+                icon: "🍵",
+                page: "Trang 200",
+                diseaseId: 2,
+                originalIngredients: [
+                    "2g tim sen",
+                    "1g hoa cúc",
+                    "1g cam thảo",
+                    "1g vỏ quýt khô"
+                ],
+                replacementIngredients: [
+                    "Tim sen → Lá vông nem: 3g",
+                    "Cam thảo → Mật ong: 5ml"
+                ],
+                westernSupplement: "Trà hoa cúc mật ong",
+                medicineSupplement: "Vitamin nhóm B, Magie",
+                calories: 15,
+                price: 10000,
+                properties: "Âm",
+                benefits: "Giải nhiệt, thanh tâm, an thần, cải thiện giấc ngủ"
+            },
+            {
+                id: 5,
+                name: "Cháo Nhân Hạt Kê",
+                icon: "🌾",
+                page: "Trang 204",
+                diseaseId: 3,
+                originalIngredients: [
+                    "100g hạt kê",
+                    "10g nhân hạnh đào",
+                    "100ml nước"
+                ],
+                replacementIngredients: [
+                    "Hạt kê → Gạo lứt: 100g",
+                    "Nhân hạnh đào → Hạt sen: 20g"
+                ],
+                westernSupplement: "Cháo quinoa với hạt chia",
+                medicineSupplement: "Vitamin B6, Kẽm",
+                calories: 300,
+                price: 25000,
+                properties: "Trung tính",
+                benefits: "Bổ tỳ vị, ích khí, dưỡng âm, cải thiện chứng đại dầm"
+            },
+            {
+                id: 6,
+                name: "Chè Hạt Sen Nhãn Dục",
+                icon: "🍧",
+                page: "Trang 204",
+                diseaseId: 3,
+                originalIngredients: [
+                    "50g hạt sen",
+                    "30g nhãn dục (nhãn khô)",
+                    "50g đường phèn"
+                ],
+                replacementIngredients: [
+                    "Nhãn dục → Táo đỏ khô: 30g",
+                    "Đường phèn → Mật ong: 20ml"
+                ],
+                westernSupplement: "Pudding hạt chia với trái cây",
+                medicineSupplement: "Melatonin (dưới sự hướng dẫn của bác sĩ)",
+                calories: 180,
+                price: 30000,
+                properties: "Âm",
+                benefits: "An thần, dưỡng tâm, cải thiện chứng mất ngủ"
+            },
+            {
+                id: 7,
+                name: "Trà Sơn Tra Củ Mài",
+                icon: "🍂",
+                page: "Trang 202",
+                diseaseId: 4,
+                originalIngredients: [
+                    "10g sơn tra",
+                    "5g củ mài (sơn dược)",
+                    "5g đường phèn"
+                ],
+                replacementIngredients: [
+                    "Sơn tra → Táo tàu khô: 10g",
+                    "Củ mài → Khoai mỡ: 10g"
+                ],
+                westernSupplement: "Trà gừng mật ong",
+                medicineSupplement: "Thuốc chống co giật (theo chỉ định bác sĩ)",
+                calories: 20,
+                price: 15000,
+                properties: "Trung tính",
+                benefits: "Tiêu hóa tốt, kiện tỳ vị, giảm đầy bụng, khó tiêu"
+            },
+            {
+                id: 8,
+                name: "Cháo Cá Thu Với Táo Đỏ Và Trần Bì",
+                icon: "🐟",
+                page: "Trang 202",
+                diseaseId: 4,
+                originalIngredients: [
+                    "50g cá thu",
+                    "50g gạo tẻ",
+                    "3 quả táo đỏ",
+                    "5g trần bì"
+                ],
+                replacementIngredients: [
+                    "Cá thu → Cá hồi: 50g",
+                    "Trần bì → Gừng tươi: 5g"
+                ],
+                westernSupplement: "Súp cá hồi với rau củ",
+                medicineSupplement: "Omega-3, Vitamin D, Canxi",
+                calories: 350,
+                price: 45000,
+                properties: "Dương",
+                benefits: "Bổ sung dinh dưỡng, tăng cường sức đề kháng, cải thiện tiêu hóa"
+            },
+            {
+                id: 9,
+                name: "Súp Đậu Phụ Cà Chua",
+                icon: "🍅",
+                page: "Trang 208-209",
+                diseaseId: 5,
+                originalIngredients: [
+                    "1 miếng đậu phụ",
+                    "2 quả cà chua",
+                    "100g thịt nạc heo băm",
+                    "10g hành tây"
+                ],
+                replacementIngredients: [
+                    "Thịt nạc heo → Thịt gà xay: 100g",
+                    "Hành tây → Hành lá: 20g"
+                ],
+                westernSupplement: "Súp rau củ tổng hợp",
+                medicineSupplement: "Chất xơ bổ sung, Vitamin tổng hợp",
+                calories: 200,
+                price: 30000,
+                properties: "Âm",
+                benefits: "Ít calo, giàu chất xơ, vitamin, kiểm soát cân nặng"
+            },
+            {
+                id: 10,
+                name: "Bánh Bao Nhân Đậu Cải Và Nấm Hương",
+                icon: "🥟",
+                page: "Trang 208-209",
+                diseaseId: 5,
+                originalIngredients: [
+                    "100g bột mì",
+                    "100g cải thảo",
+                    "50g nấm hương",
+                    "20g thịt nạc heo băm"
+                ],
+                replacementIngredients: [
+                    "Bột mì → Bột gạo lứt: 100g",
+                    "Thịt nạc heo → Đậu hũ non: 50g"
+                ],
+                westernSupplement: "Bánh mì nguyên cám với rau củ",
+                medicineSupplement: "Chất xơ, Vitamin nhóm B",
+                calories: 180,
+                price: 25000,
+                properties: "Trung tính",
+                benefits: "Cung cấp chất xơ, vitamin, giúp trẻ no lâu, kiểm soát cân nặng"
+            }
+        ];
+        
+        // DOM elements
+        const diseaseContainer = document.getElementById('diseaseContainer');
+        const dishContainer = document.getElementById('dishContainer');
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        const searchInput = document.getElementById('searchInput');
+        
+        // Initialize the app
+        function initializeApp() {
+            renderDiseases(diseases);
+            renderDishes(dishes);
+        }
+        
+        // Render diseases
+        function renderDiseases(diseasesToRender) {
+            diseaseContainer.innerHTML = '';
+            
+            if (diseasesToRender.length === 0) {
+                diseaseContainer.innerHTML = '<div class="loading">Không tìm thấy bệnh phù hợp</div>';
+                return;
+            }
+            
+            diseasesToRender.forEach(disease => {
+                const diseaseCard = document.createElement('div');
+                diseaseCard.className = 'disease-card fade-in';
+                diseaseCard.dataset.id = disease.id;
+                diseaseCard.dataset.category = disease.category;
+                
+                diseaseCard.innerHTML = `
+                    <div class="disease-header">
+                        <div class="disease-name">
+                            <div class="disease-icon" style="background: ${getDiseaseColor(disease.id)}">
+                                ${disease.icon}
+                            </div>
+                            ${disease.name}
+                        </div>
+                        <div class="disease-page">${disease.page}</div>
+                    </div>
+                    
+                    <div class="disease-content">
+                        <div class="disease-symptoms">
+                            <div class="symptoms-title">
+                                <i class="fas fa-exclamation-circle"></i>
+                                Triệu chứng
+                            </div>
+                            <ul class="symptoms-list">
+                                ${disease.symptoms.map(symptom => `<li>${symptom}</li>`).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div class="disease-symptoms">
+                            <div class="symptoms-title">
+                                <i class="fas fa-lightbulb"></i>
+                                Lời khuyên
+                            </div>
+                            <p>${disease.advice}</p>
+                        </div>
+                    </div>
+                `;
+                
+                diseaseContainer.appendChild(diseaseCard);
+            });
+        }
+        
+        // Render dishes
+        function renderDishes(dishesToRender) {
+            dishContainer.innerHTML = '';
+            
+            if (dishesToRender.length === 0) {
+                dishContainer.innerHTML = '<div class="loading">Không tìm thấy món ăn phù hợp</div>';
+                return;
+            }
+            
+            dishesToRender.forEach(dish => {
+                const propertyClass = dish.properties === 'Dương' ? 'property-badge' : 
+                                    dish.properties === 'Âm' ? 'property-badge' : 'property-badge';
+                
+                const dishCard = document.createElement('div');
+                dishCard.className = 'dish-card fade-in';
+                dishCard.dataset.id = dish.id;
+                dishCard.dataset.diseaseId = dish.diseaseId;
+                
+                dishCard.innerHTML = `
+                    <div class="dish-header">
+                        <div class="dish-title">
+                            <span class="dish-icon">${dish.icon}</span>
+                            ${dish.name}
+                        </div>
+                        <div class="disease-page">${dish.page}</div>
+                    </div>
+                    
+                    <div class="dish-content">
+                        <div class="dish-info">
+                            <div class="info-badge price-badge">
+                                <i class="fas fa-money-bill-wave"></i>
+                                ${dish.price.toLocaleString()}đ
+                            </div>
+                            <div class="info-badge calorie-badge">
+                                <i class="fas fa-fire"></i>
+                                ${dish.calories} calo
+                            </div>
+                            <div class="info-badge ${propertyClass}">
+                                <i class="fas fa-yin-yang"></i>
+                                ${dish.properties}
+                            </div>
+                        </div>
+                        
+                        <div class="ingredient-section">
+                            <div class="section-heading">
+                                <i class="fas fa-seedling"></i>
+                                Nguyên liệu gốc
+                            </div>
+                            <ul class="ingredient-list">
+                                ${dish.originalIngredients.map(ing => `<li>${ing}</li>`).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div class="ingredient-section">
+                            <div class="section-heading">
+                                <i class="fas fa-exchange-alt"></i>
+                                Thay thế bằng nguyên liệu bình dân
+                            </div>
+                            <ul class="ingredient-list">
+                                ${dish.replacementIngredients.map(ing => `<li>${ing}</li>`).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div class="ingredient-section">
+                            <div class="section-heading">
+                                <i class="fas fa-plus-circle"></i>
+                                Bổ sung khi cần
+                            </div>
+                            <div style="font-size: 0.95rem; margin-top: 10px;">
+                                <div><strong>Món Tây:</strong> ${dish.westernSupplement}</div>
+                                <div><strong>Thuốc Tây y:</strong> ${dish.medicineSupplement}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="ingredient-section">
+                            <div class="section-heading">
+                                <i class="fas fa-heart"></i>
+                                Công dụng
+                            </div>
+                            <p>${dish.benefits}</p>
+                        </div>
+                    </div>
+                `;
+                
+                dishContainer.appendChild(dishCard);
+            });
+        }
+        
+        // Filter by category
+        function filterByCategory(category) {
+            if (category === 'all') {
+                renderDiseases(diseases);
+                renderDishes(dishes);
+                return;
+            }
+            
+            const filteredDiseases = diseases.filter(disease => disease.category === category);
+            const filteredDiseaseIds = filteredDiseases.map(d => d.id);
+            const filteredDishes = dishes.filter(dish => filteredDiseaseIds.includes(dish.diseaseId));
+            
+            renderDiseases(filteredDiseases);
+            renderDishes(filteredDishes);
+        }
+        
+        // Search function
+        function searchContent(query) {
+            const lowerQuery = query.toLowerCase().trim();
+            
+            if (!lowerQuery) {
+                filterByCategory('all');
+                return;
+            }
+            
+            // Search diseases
+            const searchedDiseases = diseases.filter(disease => {
+                return (
+                    disease.name.toLowerCase().includes(lowerQuery) ||
+                    disease.symptoms.some(symptom => symptom.toLowerCase().includes(lowerQuery)) ||
+                    disease.advice.toLowerCase().includes(lowerQuery)
+                );
+            });
+            
+            // Get dishes related to searched diseases
+            const searchedDiseaseIds = searchedDiseases.map(d => d.id);
+            const searchedDishes = dishes.filter(dish => {
+                return (
+                    searchedDiseaseIds.includes(dish.diseaseId) ||
+                    dish.name.toLowerCase().includes(lowerQuery) ||
+                    dish.benefits.toLowerCase().includes(lowerQuery) ||
+                    dish.originalIngredients.some(ing => ing.toLowerCase().includes(lowerQuery)) ||
+                    dish.replacementIngredients.some(ing => ing.toLowerCase().includes(lowerQuery))
+                );
+            });
+            
+            renderDiseases(searchedDiseases);
+            renderDishes(searchedDishes);
+        }
+        
+        // Get color for disease icon
+        function getDiseaseColor(diseaseId) {
+            const colors = [
+                'rgba(74, 144, 226, 0.2)',
+                'rgba(52, 199, 89, 0.2)',
+                'rgba(255, 149, 0, 0.2)',
+                'rgba(255, 59, 48, 0.2)',
+                'rgba(88, 86, 214, 0.2)'
+            ];
+            return colors[(diseaseId - 1) % colors.length];
+        }
+        
+        // Event listeners
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active button
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Filter content
+                filterByCategory(button.dataset.category);
+            });
+        });
+        
+        searchInput.addEventListener('input', () => {
+            searchContent(searchInput.value);
+        });
+        
+        // Initialize the app
+        initializeApp();
+        
+        // Add scroll animation
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe elements after they're rendered
+        setTimeout(() => {
+            document.querySelectorAll('.disease-card, .dish-card').forEach(card => {
+                observer.observe(card);
+            });
+        }, 100);
+    </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

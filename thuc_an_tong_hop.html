@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Liên kết Sức Khỏe</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; max-width: 800px; margin: 0 auto; background-color: #f4f4f9; }
+        .input-section { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        input { width: 35%; padding: 8px; margin-right: 10px; margin-bottom: 10px; }
+        button { padding: 8px 15px; cursor: pointer; background: #27ae60; color: white; border: none; border-radius: 4px; }
+        .link-list { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        a { color: #2980b9; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        li { margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .delete-btn { background: #e74c3c; color: white; border: none; padding: 3px 8px; border-radius: 3px; cursor: pointer; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <div class="input-section">
+        <h3>Thêm liên kết mới</h3>
+        <input type="text" id="linkName" placeholder="Nhập tên hiển thị (Ví dụ: Tính gạo)...">
+        <input type="text" id="newLink" placeholder="Dán link hoặc đường dẫn file (VD: file:///E:/HTML/...)...">
+        <button onclick="addLink()">Thêm & Lưu</button>
+    </div>
+
+    <div class="link-list">
+        <h2>Danh sách liên kết</h2>
+        <ul id="list">
+            <!-- Dữ liệu sẽ được tải tự động từ localStorage -->
+        </ul>
+    </div>
+
+    <script>
+        // Mặc định ban đầu nếu chưa có gì trong localStorage
+        const defaultLinks = [
+            { name: "Calo bữa ăn", url: "https://docs.google.com/spreadsheets/d/1Rbu_OmsZD0u0et1lzUsDLa4TVekYs1Dk3za1A8MD9Iw/edit?gid=0#gid=0" },
+            { name: "Tập tiêu hao calo", url: "https://docs.google.com/spreadsheets/d/1Ajzf8I4NKzHcipFQC_b36dko-0YvXvg063yt_fPSDdQ/edit?gid=0#gid=0" }
+        ];
+
+        // Tải danh sách khi mở trang
+        function loadLinks() {
+            let links = JSON.parse(localStorage.getItem("health_links"));
+            if (!links) {
+                links = defaultLinks;
+                localStorage.setItem("health_links", JSON.stringify(links));
+            }
+            renderLinks(links);
+        }
+
+        // Hiển thị danh sách ra HTML
+        function renderLinks(links) {
+            var ul = document.getElementById("list");
+            ul.innerHTML = "";
+            links.forEach(function(item, index) {
+                var li = document.createElement("li");
+                li.innerHTML = '<span><a href="' + item.url + '" target="_blank">' + item.name + '</a></span> <button class="delete-btn" onclick="removeLink(' + index + ')">Xóa</button>';
+                ul.appendChild(li);
+            });
+        }
+
+        // Thêm liên kết mới và lưu vào bộ nhớ trình duyệt
+        function addLink() {
+            var name = document.getElementById("linkName").value.trim();
+            var url = document.getElementById("newLink").value.trim();
+            
+            if (url && name) {
+                let links = JSON.parse(localStorage.getItem("health_links")) || [];
+                links.push({ name: name, url: url });
+                localStorage.setItem("health_links", JSON.stringify(links));
+                
+                renderLinks(links);
+                
+                document.getElementById("linkName").value = "";
+                document.getElementById("newLink").value = "";
+                
+                alert("Đã thêm và tự động lưu vào trình duyệt!");
+            } else {
+                alert("Vui lòng nhập đầy đủ Tên hiển thị và Link.");
+            }
+        }
+
+        // Xóa liên kết và cập nhật lại bộ nhớ
+        function removeLink(index) {
+            let links = JSON.parse(localStorage.getItem("health_links")) || [];
+            links.splice(index, 1);
+            localStorage.setItem("health_links", JSON.stringify(links));
+            renderLinks(links);
+            alert("Đã xóa thành công!");
+        }
+
+        // Chạy hàm tải dữ liệu khi vừa mở trang
+        window.onload = loadLinks;
+    </script>
+</body>
+</html>

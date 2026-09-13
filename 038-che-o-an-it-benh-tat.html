@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MealMatch — 2 ngày/mùa (Mobile) — Định lượng & Âm/Dương</title>
+  <style>
+    :root{--bg:#071028;--card:#0b1220;--muted:#9fb0c8;--accent:#06b6d4;--accent2:#10b981}
+    *{box-sizing:border-box;font-family:Inter,system-ui,Arial,sans-serif}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#031026 0%, #05223a 70%);color:#e6eef6}
+    .phone{width:360px;margin:20px auto;border-radius:28px;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 20px 60px rgba(2,6,23,0.7);border:1px solid rgba(255,255,255,0.03)}
+    header{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:space-between}
+    h1{font-size:16px;margin:0}
+    .sub{font-size:12px;color:var(--muted)}
+    .content{padding:12px}
+    .row{display:flex;gap:10px;align-items:center}
+    select,input,button{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:8px;border-radius:10px}
+    button.primary{background:linear-gradient(90deg,var(--accent2),var(--accent));color:#012;font-weight:700;border:none}
+    .panel{background:rgba(255,255,255,0.02);padding:10px;border-radius:12px;margin-top:12px}
+    .meal{display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.01);margin-bottom:8px}
+    .time{min-width:52px;font-weight:700}
+    .meal-list{flex:1}
+    .food{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,0.02);font-size:14px}
+    .muted{color:var(--muted);font-size:12px}
+    .summary{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+    .shop-list{margin-top:8px}
+    .shop-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.02)}
+    .yin{color:#60a5fa} .yang{color:#fb7185} .neutral{color:#f59e0b}
+    footer{padding:10px;text-align:center;color:var(--muted);font-size:12px}
+    .tabs{display:flex;gap:8px;margin-top:8px}
+    .tab{flex:1;text-align:center;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);cursor:pointer}
+    .tab.active{background:linear-gradient(90deg,var(--accent2),var(--accent));color:#012;font-weight:700}
+    .small{font-size:12px;color:var(--muted)}
+    .controls-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+    .badge{padding:4px 8px;border-radius:999px;background:rgba(255,255,255,0.02);font-size:12px}
+    .totals{margin-top:8px;border-top:1px dashed rgba(255,255,255,0.03);padding-top:8px}
+    @media (min-width:900px){.phone{width:420px}}
+  </style>
+</head>
+<body>
+  <div class="phone" role="application" aria-label="Kế hoạch ăn theo mùa 2 ngày">
+    <header>
+      <div>
+        <h1>MealMatch — 2 ngày/mùa</h1>
+        <div class="sub">Mỗi mùa có 2 ngày khác nhau — 3 bữa/ngày: 08:00 • 12:00 • 16:00</div>
+      </div>
+      <div>
+        <select id="season">
+          <option value="spring">🌸 Xuân</option>
+          <option value="summer">☀️ Hè</option>
+          <option value="autumn">🍂 Thu</option>
+          <option value="winter">❄️ Đông</option>
+          <option value="all">🌊 Quanh năm</option>
+        </select>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>Chọn ngày trong mùa</strong>
+          <div class="small">Chọn "Cả 2 ngày" khi muốn tính mua cả hai ngày</div>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Chọn ngày">
+          <div class="tab active" data-day="A">Ngày A</div>
+          <div class="tab" data-day="B">Ngày B</div>
+          <div style="flex:0 0 8px"></div>
+          <select id="mode" aria-label="Chế độ tính">
+            <option value="single">Chỉ ngày đã chọn</option>
+            <option value="both">Tính cả 2 ngày</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="panel" id="mealsPanel">
+        <!-- meals for selected day(s) rendered here -->
+      </div>
+
+      <div class="panel" id="shoppingPanel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>Danh sách mua & Tổng nấu</strong>
+          <button id="calc" class="primary">Tính toán</button>
+        </div>
+        <div id="shopList" class="shop-list small"></div>
+        <div id="shopTotal" class="summary small" style="margin-top:8px;display:none"><div>Tổng ước lượng:</div><div id="totalPrice">0 ₫</div></div>
+        <div id="cookTotals" class="totals small" style="display:none"></div>
+      </div>
+
+      <div class="panel">
+        <div><strong>Ghi chú:</strong></div>
+        <div class="small" style="margin-top:6px">Mỗi món sẽ hiển thị <strong>định lượng trên mỗi bữa</strong> (gram), cùng nhãn <em>Âm/Dương/Trung tính</em>. Phần "Tổng nấu" cho biết tổng lượng nấu cho cả ngày (hoặc cả 2 ngày nếu chọn), và khuyến nghị số kg để mua.</div>
+      </div>
+    </div>
+
+    <footer>Muốn xuất CSV/PDF danh sách mua hay điều chỉnh định lượng từng bữa (ví dụ sáng 120g cơm, trưa 200g...) không? Chỉ mình biết.</footer>
+  </div>
+
+  <script>
+    // Dữ liệu: rau theo mùa
+    const seasonVeg = {
+      spring: ['Cải chíp','Rau cải ngọt','Su hào','Củ cải','Cải xoăn','Rau bina'],
+      summer: ['Mướp đắng','Mồng tơi','Đu đủ','Đậu bắp','Bí xanh'],
+      autumn: ['Bí đỏ','Bí xanh','Khoai lang'],
+      winter: ['Súp lơ','Cà rốt','Su hào','Củ cải','Cải xoăn','Rau bina'],
+      all: ['Rong biển','Tảo biển']
+    };
+
+    // Định lượng gợi ý (gram) mỗi món khi xuất hiện trong 1 bữa — có thể tinh chỉnh
+    const portionDefaults = { rau:150, ngugcoc:180, dau:80, thit:100, giavi:5 };
+
+    // Giá ước tính (VND) trung bình mỗi kg (khi phù hợp)
+    const priceMap = {
+      'Cải chíp':20000,'Rau cải ngọt':18000,'Su hào':16000,'Củ cải':15000,'Cải xoăn':35000,'Rau bina':30000,
+      'Mướp đắng':18000,'Mồng tơi':15000,'Đu đủ':14000,'Đậu bắp':16000,'Bí xanh':12000,
+      'Bí đỏ':20000,'Khoai lang':18000,'Súp lơ':35000,'Cà rốt':22000,'Rong biển':50000,'Tảo biển':60000,
+      'Gạo (cơm)':20000,'Bánh mì':15000,'Mì (noodle)':18000,'Yến mạch':40000,
+      'Đậu xanh':30000,'Đậu nành':25000,'Đậu Hà Lan':35000,'Đậu phụ (tofu)':20000,
+      'Thịt gà':80000,'Thịt lợn':140000,'Cá hồi':300000,'Tôm':220000,
+      'Nước mắm (gia vị)':40000,'Muối & Tiêu':20000,'Tỏi':30000,'Dầu ôliu (gia vị)':80000
+    };
+
+    // Âm/Dương
+    const yinYang = { 'Cải chíp':'yin','Rau cải ngọt':'yin','Su hào':'yang','Củ cải':'yang','Cải xoăn':'yin','Rau bina':'yin',
+      'Mướp đắng':'yin','Mồng tơi':'yin','Đu đủ':'yin','Đậu bắp':'neutral','Bí xanh':'neutral',
+      'Bí đỏ':'yang','Khoai lang':'yang','Súp lơ':'yin','Cà rốt':'yang','Rong biển':'yin','Tảo biển':'yin',
+      'Gạo (cơm)':'neutral','Bánh mì':'neutral','Mì (noodle)':'neutral','Yến mạch':'neutral',
+      'Đậu xanh':'neutral','Đậu nành':'neutral','Đậu Hà Lan':'neutral','Đậu phụ (tofu)':'yin',
+      'Thịt gà':'yang','Thịt lợn':'yang','Cá hồi':'neutral','Tôm':'neutral','Nước mắm (gia vị)':'yang','Muối & Tiêu':'yang','Tỏi':'yang','Dầu ôliu (gia vị)':'yang' };
+
+    const cereals = ['Gạo (cơm)','Bánh mì','Mì (noodle)'];
+    const beans = ['Đậu phụ (tofu)','Đậu xanh','Đậu nành'];
+    const meats = ['Thịt gà','Thịt lợn','Cá hồi','Tôm'];
+    const spices = ['Nước mắm (gia vị)','Muối & Tiêu','Tỏi','Dầu ôliu (gia vị)'];
+    const mealTimes = ['08:00','12:00','16:00'];
+
+    const seasonSel = document.getElementById('season');
+    const tabs = document.querySelectorAll('.tab');
+    const modeSel = document.getElementById('mode');
+    const mealsPanel = document.getElementById('mealsPanel');
+    const calcBtn = document.getElementById('calc');
+    const shopList = document.getElementById('shopList');
+    const shopTotal = document.getElementById('shopTotal');
+    const totalPriceEl = document.getElementById('totalPrice');
+    const cookTotalsEl = document.getElementById('cookTotals');
+
+    function generateSeasonPlans(season){
+      const vegs = (seasonVeg[season]||[]).slice();
+      const extras = seasonVeg['all']||[];
+      while(vegs.length < 4) vegs.push(...extras);
+
+      const dayA = [];
+      for(let i=0;i<3;i++){
+        dayA.push({time:mealTimes[i], veg: vegs[i%vegs.length], cereal: cereals[i%cereals.length], bean: beans[i%beans.length], meat: meats[i%meats.length], spice: spices[i%spices.length]});
+      }
+
+      const dayB = [];
+      for(let i=0;i<3;i++){
+        const v = vegs[(i+2)%vegs.length];
+        dayB.push({time:mealTimes[i], veg: v, cereal: cereals[(i+1)%cereals.length], bean: beans[(i+1)%beans.length], meat: meats[(i+1)%meats.length], spice: spices[(i+1)%spices.length]});
+      }
+
+      return {A:dayA, B:dayB};
+    }
+
+    function renderMeals(){
+      const season = seasonSel.value;
+      const plans = generateSeasonPlans(season);
+      const activeDay = document.querySelector('.tab.active').dataset.day;
+      const mode = modeSel.value;
+      mealsPanel.innerHTML='';
+
+      if(mode === 'single'){
+        const dayPlan = plans[activeDay];
+        const title = document.createElement('div'); title.className='small'; title.textContent = `Phương án: Ngày ${activeDay} — Mùa ${seasonName(season)}`;
+        mealsPanel.appendChild(title);
+        dayPlan.forEach(m => mealsPanel.appendChild(mealNode(m)));
+      } else {
+        const title = document.createElement('div'); title.className='small'; title.textContent = `Phương án: Cả 2 ngày (A + B) — Mùa ${seasonName(season)}`;
+        mealsPanel.appendChild(title);
+        const hA = document.createElement('div'); hA.className='small'; hA.style.marginTop='8px'; hA.textContent='Ngày A:'; mealsPanel.appendChild(hA);
+        plans.A.forEach(m => mealsPanel.appendChild(mealNode(m)));
+        const hB = document.createElement('div'); hB.className='small'; hB.style.marginTop='8px'; hB.textContent='Ngày B:'; mealsPanel.appendChild(hB);
+        plans.B.forEach(m => mealsPanel.appendChild(mealNode(m)));
+      }
+      shopList.innerHTML=''; shopTotal.style.display='none'; cookTotalsEl.style.display='none';
+    }
+
+    function mealNode(m){
+      // attach per-item portion information
+      const vegPort = portionDefaults.rau;
+      const cerealPort = portionDefaults.ngugcoc;
+      const beanPort = portionDefaults.dau;
+      const meatPort = portionDefaults.thit;
+      const spicePort = portionDefaults.giavi;
+
+      const div = document.createElement('div'); div.className='meal';
+      div.innerHTML = `<div class="time">${m.time}</div><div class="meal-list">
+          <div class="food"><div>${m.veg} <span class="muted">(rau)</span><div class="muted">${vegPort} g</div></div><div class="${yinYang[m.veg]||'neutral'}">${labelYY(yinYang[m.veg])}</div></div>
+          <div class="food"><div>${m.cereal} <span class="muted">(ngũ cốc)</span><div class="muted">${cerealPort} g</div></div><div class="${yinYang[m.cereal]||'neutral'}">${labelYY(yinYang[m.cereal])}</div></div>
+          <div class="food"><div>${m.bean} <span class="muted">(đậu)</span><div class="muted">${beanPort} g</div></div><div class="${yinYang[m.bean]||'neutral'}">${labelYY(yinYang[m.bean])}</div></div>
+          <div class="food"><div>${m.meat} <span class="muted">(thịt/hải sản)</span><div class="muted">${meatPort} g</div></div><div class="${yinYang[m.meat]||'neutral'}">${labelYY(yinYang[m.meat])}</div></div>
+          <div class="food"><div>${m.spice} <span class="muted">(gia vị)</span><div class="muted">~${spicePort} g</div></div><div class="${yinYang[m.spice]||'neutral'}">${labelYY(yinYang[m.spice])}</div></div>
+        </div>`;
+      return div;
+    }
+
+    function labelYY(v){ if(!v) return 'Trung tính'; return v==='yin' ? 'Âm' : (v==='yang' ? 'Dương' : 'Trung') }
+    function seasonName(k){ return {'spring':'Xuân','summer':'Hè','autumn':'Thu','winter':'Đông','all':'Quanh năm'}[k]||k }
+
+    tabs.forEach(t => t.addEventListener('click', ()=>{ tabs.forEach(x=>x.classList.remove('active')); t.classList.add('active'); renderMeals(); }));
+    seasonSel.addEventListener('change', renderMeals);
+    modeSel.addEventListener('change', renderMeals);
+
+    // calculate shopping list and cooking totals
+    calcBtn.addEventListener('click', ()=>{
+      const season = seasonSel.value; const plans = generateSeasonPlans(season);
+      const activeDay = document.querySelector('.tab.active').dataset.day; const mode = modeSel.value;
+      const totals = {}; // name -> grams
+
+      function add(name, g){ if(!totals[name]) totals[name]=0; totals[name]+=g; }
+
+      if(mode==='single'){
+        plans[activeDay].forEach(m => {
+          add(m.veg, portionDefaults.rau);
+          add(m.cereal, portionDefaults.ngugcoc);
+          add(m.bean, portionDefaults.dau);
+          add(m.meat, portionDefaults.thit);
+          add(m.spice, portionDefaults.giavi);
+        });
+      } else {
+        ['A','B'].forEach(d => plans[d].forEach(m => {
+          add(m.veg, portionDefaults.rau);
+          add(m.cereal, portionDefaults.ngugcoc);
+          add(m.bean, portionDefaults.dau);
+          add(m.meat, portionDefaults.thit);
+          add(m.spice, portionDefaults.giavi);
+        }));
+      }
+
+      // render shop list
+      shopList.innerHTML=''; let grandTotal=0;
+      Object.keys(totals).forEach(name=>{
+        const grams = totals[name];
+        const pricePerKg = priceMap[name] || 30000; // fallback
+        const qtyKg = Math.ceil((grams/1000)*100)/100; // 0.01kg
+        const cost = Math.round(qtyKg * pricePerKg);
+        grandTotal += cost;
+        const el = document.createElement('div'); el.className='shop-item';
+        el.innerHTML = `<div>${name} — <span class="muted">Tổng nấu:</span> ${grams} g — <span class="muted">Mua</span> ${qtyKg} kg</div><div>${formatVnd(cost)}</div>`;
+        shopList.appendChild(el);
+      });
+
+      // cooking totals (grouped)
+      const grouped = groupByCategory(totals);
+      cookTotalsEl.style.display='block'; cookTotalsEl.innerHTML = '';
+      const heading = document.createElement('div'); heading.innerHTML = '<strong>Tổng nấu / ngày (theo nhóm)</strong>'; cookTotalsEl.appendChild(heading);
+      Object.keys(grouped).forEach(k=>{
+        const v = grouped[k];
+        const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.marginTop='6px';
+        row.innerHTML = `<div>${k}</div><div>${v} g</div>`;
+        cookTotalsEl.appendChild(row);
+      });
+
+      shopTotal.style.display='flex'; totalPriceEl.textContent = formatVnd(grandTotal);
+    });
+
+    function groupByCategory(totals){
+      const groups = { rau:0, ngugcoc:0, dau:0, thit:0, giavi:0 };
+      Object.keys(totals).forEach(name=>{
+        // determine category by membership
+        if(Object.keys(yinYang).includes(name)){
+          // map known names to groups (heuristic)
+          if(['Cải chíp','Rau cải ngọt','Su hào','Củ cải','Cải xoăn','Rau bina','Mướp đắng','Mồng tơi','Đu đủ','Đậu bắp','Bí xanh','Bí đỏ','Khoai lang','Súp lơ','Cà rốt','Rong biển','Tảo biển'].includes(name)) groups.rau += totals[name];
+          else if(['Gạo (cơm)','Bánh mì','Mì (noodle)','Yến mạch'].includes(name)) groups.ngugcoc += totals[name];
+          else if(['Đậu phụ (tofu)','Đậu xanh','Đậu nành','Đậu Hà Lan'].includes(name)) groups.dau += totals[name];
+          else if(['Thịt gà','Thịt lợn','Cá hồi','Tôm'].includes(name)) groups.thit += totals[name];
+          else if(['Nước mắm (gia vị)','Muối & Tiêu','Tỏi','Dầu ôliu (gia vị)','Rong biển','Tảo biển'].includes(name)) groups.giavi += totals[name];
+          else groups.rau += totals[name];
+        } else {
+          groups.rau += totals[name];
+        }
+      });
+      // round
+      Object.keys(groups).forEach(k=> groups[k] = Math.round(groups[k]));
+      return groups;
+    }
+
+    function formatVnd(n){ return n.toLocaleString('vi-VN') + ' ₫'; }
+
+    // init
+    renderMeals();
+  </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

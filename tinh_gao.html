@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính Lượng Gạo Tiêu Thụ Theo Bữa & Cộng Dồn</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 650px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin: auto;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .meal-section {
+            background: #fafafa;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        .meal-section h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .person-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        label {
+            flex: 1;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .result h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .highlight {
+            color: #d9534f;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Tính Toán Lượng Gạo Theo Từng Bữa & Cộng Dồn</h2>
+    <p><em>Quy ước: 1 bơ gạo = 2 bát cơm</em></p>
+
+    <!-- BỮA SÁNG -->
+    <div class="meal-section">
+        <h3>Bữa Sáng</h3>
+        <div class="person-row"><label>Ông (bát):</label><input type="number" id="sang_ong" value="0" min="0"></div>
+        <div class="person-row"><label>Bà (bát):</label><input type="number" id="sang_ba" value="0" min="0"></div>
+        <div class="person-row"><label>Bố (bát):</label><input type="number" id="sang_bo" value="0" min="0"></div>
+        <div class="person-row"><label>Mẹ (bát):</label><input type="number" id="sang_me" value="0" min="0"></div>
+        <div class="person-row"><label>Con gái 1 (bát):</label><input type="number" id="sang_con1" value="0" min="0"></div>
+        <div class="person-row"><label>Con gái 2 (bát):</label><input type="number" id="sang_con2" value="0" min="0"></div>
+        <div class="person-row"><label>Con gái 3 (bát):</label><input type="number" id="sang_con3" value="0" min="0"></div>
+    </div>
+
+    <!-- BỮA TRƯA -->
+    <div class="meal-section">
+        <h3>Bữa Trưa</h3>
+        <div class="person-row"><label>Ông (bát):</label><input type="number" id="trua_ong" value="2" min="0"></div>
+        <div class="person-row"><label>Bà (bát):</label><input type="number" id="trua_ba" value="2" min="0"></div>
+        <div class="person-row"><label>Bố (bát):</label><input type="number" id="trua_bo" value="2" min="0"></div>
+        <div class="person-row"><label>Mẹ (bát):</label><input type="number" id="trua_me" value="2" min="0"></div>
+        <div class="person-row"><label>Con gái 1 (bát):</label><input type="number" id="trua_con1" value="1" min="0"></div>
+        <div class="person-row"><label>Con gái 2 (bát):</label><input type="number" id="trua_con2" value="1" min="0"></div>
+        <div class="person-row"><label>Con gái 3 (bát):</label><input type="number" id="trua_con3" value="2" min="0"></div>
+    </div>
+
+    <!-- BỮA CHIỀU / TỐI -->
+    <div class="meal-section">
+        <h3>Bữa Chiều / Tối</h3>
+        <div class="person-row"><label>Ông (bát):</label><input type="number" id="chieu_ong" value="2" min="0"></div>
+        <div class="person-row"><label>Bà (bát):</label><input type="number" id="chieu_ba" value="2" min="0"></div>
+        <div class="person-row"><label>Bố (bát):</label><input type="number" id="chieu_bo" value="2" min="0"></div>
+        <div class="person-row"><label>Mẹ (bát):</label><input type="number" id="chieu_me" value="2" min="0"></div>
+        <div class="person-row"><label>Con gái 1 (bát):</label><input type="number" id="chieu_con1" value="1" min="0"></div>
+        <div class="person-row"><label>Con gái 2 (bát):</label><input type="number" id="chieu_con2" value="1" min="0"></div>
+        <div class="person-row"><label>Con gái 3 (bát):</label><input type="number" id="chieu_con3" value="2" min="0"></div>
+    </div>
+
+    <button onclick="tinhToanGao()">Tính Lượng Gạo Cần Nấu Theo Buổi</button>
+
+    <!-- KẾT QUẢ -->
+    <div class="result" id="ketQua">
+        <h3>Kết quả tính toán chi tiết:</h3>
+        <p id="chiTietBaoCao"></p>
+    </div>
+</div>
+
+<script>
+    function tinhToanGao() {
+        // Gom dữ liệu Bữa Sáng
+        let batSang = (parseFloat(document.getElementById('sang_ong').value) || 0) + 
+                      (parseFloat(document.getElementById('sang_ba').value) || 0) + 
+                      (parseFloat(document.getElementById('sang_bo').value) || 0) + 
+                      (parseFloat(document.getElementById('sang_me').value) || 0) + 
+                      (parseFloat(document.getElementById('sang_con1').value) || 0) + 
+                      (parseFloat(document.getElementById('sang_con2').value) || 0) + 
+                      (parseFloat(document.getElementById('sang_con3').value) || 0);
+
+        // Gom dữ liệu Bữa Trưa
+        let batTrua = (parseFloat(document.getElementById('trua_ong').value) || 0) + 
+                      (parseFloat(document.getElementById('trua_ba').value) || 0) + 
+                      (parseFloat(document.getElementById('trua_bo').value) || 0) + 
+                      (parseFloat(document.getElementById('trua_me').value) || 0) + 
+                      (parseFloat(document.getElementById('trua_con1').value) || 0) + 
+                      (parseFloat(document.getElementById('trua_con2').value) || 0) + 
+                      (parseFloat(document.getElementById('trua_con3').value) || 0);
+
+        // Gom dữ liệu Bữa Chiều
+        let batChieu = (parseFloat(document.getElementById('chieu_ong').value) || 0) + 
+                       (parseFloat(document.getElementById('chieu_ba').value) || 0) + 
+                       (parseFloat(document.getElementById('chieu_bo').value) || 0) + 
+                       (parseFloat(document.getElementById('chieu_me').value) || 0) + 
+                       (parseFloat(document.getElementById('chieu_con1').value) || 0) + 
+                       (parseFloat(document.getElementById('chieu_con2').value) || 0) + 
+                       (parseFloat(document.getElementById('chieu_con3').value) || 0);
+
+        // Tính số bơ từng bữa (1 bơ = 2 bát)
+        let boSang = batSang / 2;
+        let boTrua = batTrua / 2;
+        let boChieu = batChieu / 2;
+
+        let tongBat = batSang + batTrua + batChieu;
+        let tongBo = tongBat / 2;
+
+        let htmlContent = `
+            - <strong>Bữa Sáng:</strong> ${batSang} bát $\rightarrow$ Nấu <span class="highlight">${boSang} bơ gạo</span><br>
+            - <strong>Bữa Trưa:</strong> ${batTrua} bát $\rightarrow$ Nấu <span class="highlight">${boTrua} bơ gạo</span><br>
+            - <strong>Bữa Chiều/Tối:</strong> ${batChieu} bát $\rightarrow$ Nấu <span class="highlight">${boChieu} bơ gạo</span><br>
+            <hr>
+            - <strong>Tổng số bát cơm cả ngày:</strong> ${tongBat} bát<br>
+            - <strong>Tổng số bơ gạo cả ngày:</strong> <span class="highlight" style="font-size: 18px;">${tongBo} bơ gạo</span>
+        `;
+
+        document.getElementById('chiTietBaoCao').innerHTML = htmlContent;
+        document.getElementById('ketQua').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>

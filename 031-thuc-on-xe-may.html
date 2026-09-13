@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thực đơn 2 ngày — Xe máy (Xoay vòng 5 tuần)</title>
+<style>
+  :root{--bg:#0f172a;--card:#0b1220;--glass:rgba(255,255,255,0.04);--accent:#ff7a59;--muted:#9aa4b2;--accent-2:#60a5fa}
+  *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:#e6eef8}
+  html,body{margin:0;background:linear-gradient(180deg,#071126 0%,#071a2b 60%);min-height:100vh}
+  .wrap{max-width:1200px;margin:18px auto;padding:18px;display:grid;grid-template-columns:1fr 360px;gap:18px}
+  .main,.side{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+  .card{background:var(--glass);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);margin-bottom:12px}
+  .meal{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;margin-bottom:8px}
+  .price{color:var(--accent);font-weight:700}
+  .cal{color:var(--accent-2);font-weight:700}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  td{padding:6px;border-bottom:1px dashed rgba(255,255,255,0.03)}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <main class="main">
+    <h1 id="current-week-title" style="font-size:20px;color:var(--accent)">Đang xác định tuần...</h1>
+    
+    <div id="content-area">
+      <section class="card vehicle-section" id="v-0">
+        <h3>Xe máy (Cơ bản)</h3>
+        <div class="meal"><h4>08:00 — Sáng <span class="cal">~700 kcal</span></h4><p>Phở gà / Bánh mì ốp la • Trà gừng</p></div>
+        <div class="meal"><h4>12:00 — Trưa <span class="cal">~900 kcal</span></h4><p>Cơm 1.5 chén • Thịt gà/heo 150g • Canh rau</p></div>
+        <div class="meal"><h4>16:00 — Chiều <span class="cal">~900 kcal</span></h4><p>Bún, rau sống • Sữa 200ml</p></div>
+      </section>
+
+      <section class="card vehicle-section" id="v-1">
+        <h3>Harley / Touring</h3>
+        <div class="meal"><h4>08:00 — Sáng <span class="cal">~900 kcal</span></h4><p>Bánh mì nguyên cám + trứng • Bơ, chuối</p></div>
+        <div class="meal"><h4>12:00 — Trưa <span class="cal">~1100 kcal</span></h4><p>Cơm + thịt bò/gà 200g • Salad • Khoai lang</p></div>
+        <div class="meal"><h4>16:00 — Chiều <span class="cal">~1000 kcal</span></h4><p>Mì xào + đạm • Sữa chua • Hạt</p></div>
+      </section>
+
+      <section class="card vehicle-section" id="v-2">
+        <h3>Xe thể thao 1000cc</h3>
+        <div class="meal"><h4>08:00 — Sáng <span class="cal">~800 kcal</span></h4><p>Cháo yến mạch + trứng • Trái cây</p></div>
+        <div class="meal"><h4>12:00 — Trưa <span class="cal">~1000 kcal</span></h4><p>Cơm + cá/thịt 180g • Rau xào</p></div>
+        <div class="meal"><h4>16:00 — Chiều <span class="cal">~1000 kcal</span></h4><p>Bún/mì • Nước điện giải • Chuối</p></div>
+      </section>
+
+      <section class="card vehicle-section" id="v-3">
+        <h3>Xe máy điện</h3>
+        <div class="meal"><h4>08:00 — Sáng <span class="cal">~650 kcal</span></h4><p>Bánh mì + phô mai • Trứng luộc • Trà</p></div>
+        <div class="meal"><h4>12:00 — Trưa <span class="cal">~900 kcal</span></h4><p>Cơm 1 chén + cá/gà 150g • Canh rau</p></div>
+        <div class="meal"><h4>16:00 — Chiều <span class="cal">~850 kcal</span></h4><p>Cháo nhẹ • Trái cây</p></div>
+      </section>
+
+      <section class="card vehicle-section" id="v-4">
+        <h3>Xe đạp (Đua/Đường dài)</h3>
+        <div class="meal"><h4>08:00 — Sáng <span class="cal">~1000 kcal</span></h4><p>Bánh mì bơ đậu phộng • Sinh tố chuối yến mạch</p></div>
+        <div class="meal"><h4>12:00 — Trưa <span class="cal">~1100 kcal</span></h4><p>Cơm + cá/gà 200g • Khoai lang • Salad</p></div>
+        <div class="meal"><h4>16:00 — Chiều <span class="cal">~1100 kcal</span></h4><p>Pasta / Mì năng lượng • Sữa chua • Hạt</p></div>
+      </section>
+    </div>
+  </main>
+
+  <aside class="side">
+    <strong style="color:var(--accent)">Chi phí đi chợ 2 ngày</strong>
+    <p style="font-size:13px">Gạo 2kg: <span class="price">50000₫</span></p>
+    <p style="font-size:13px">Thịt gà/bò: <span class="price">250000₫</span></p>
+    <p style="font-size:13px">Trứng 12 quả: <span class="price">36000₫</span></p>
+    <p style="font-size:13px">Rau củ: <span class="price">75000₫</span></p>
+    <hr style="border:0;border-top:1px solid rgba(255,255,255,0.05)">
+    <p><strong>Tổng: <span class="price">~411000₫</span></strong></p>
+  </aside>
+</div>
+
+<script>
+  // Logic tính tuần xoay vòng (0-4)
+  function getCycleIndex() {
+    const now = new Date();
+    const oneJan = new Date(now.getFullYear(), 0, 1);
+    const numberOfDays = Math.floor((now - oneJan) / (24 * 60 * 60 * 1000));
+    const weekNumber = Math.ceil((numberOfDays + oneJan.getDay() + 1) / 7);
+    return (weekNumber - 1) % 5; // Trả về 0, 1, 2, 3, hoặc 4
+  }
+
+  const idx = getCycleIndex();
+  const sections = document.querySelectorAll('.vehicle-section');
+  
+  sections.forEach((s, i) => {
+    if (i !== idx) s.classList.add('hidden');
+    else {
+      const name = s.querySelector('h3').innerText;
+      document.getElementById('current-week-title').innerText = "Thực đơn Tuần này: " + name;
+    }
+  });
+
+  // Tự động gửi Pushbullet nếu là Thứ 2 và đúng giờ
+  window.onload = function() {
+    const now = new Date();
+    const day = now.getDay(); // 1 là Thứ 2
+    const hour = now.getHours();
+    
+    // Chỉ chạy nếu là Thứ 2
+    if (day === 1) {
+      const mealTimes = [8, 12, 16];
+      if (mealTimes.includes(hour)) {
+        const activeSection = sections[idx];
+        const mealContent = activeSection.querySelectorAll('.meal')[mealTimes.indexOf(hour)].innerText;
+        
+        fetch('https://api.pushbullet.com/v2/pushes', {
+          method: 'POST',
+          headers: { 
+            'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 
+            'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify({
+            type: 'note',
+            title: '🍴 THỰC ĐƠN XE: ' + activeSection.querySelector('h3').innerText,
+            body: 'Bữa này: ' + mealContent
+          })
+        });
+      }
+    }
+  };
+</script>
+</body>
+</html>

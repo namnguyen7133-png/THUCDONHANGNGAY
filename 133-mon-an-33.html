@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sổ Tay Thực Hành Cao Huyết Áp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            color: #333;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(to right, #2c3e50, #3498db);
+            color: white;
+            padding: 20px 15px;
+            border-radius: 0 0 25px 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath fill='%23ffffff' fill-opacity='0.05' d='M0 0h40v40H0V0zm40 40h40v40H40V40zm0-40h2l-2 2V0zm0 4l4-4h-4v4zm0 4l8-8h-8v8zm0 4L56 0h-8v8zm0 4L64 0h-8v8zm0 4L72 0h-8v8zm0 4L80 0h-8v8zm-4 0L80 4V0h-4v8zm-4 0L80 8V4h-4v4zm-4 4L80 16v-4h-4v4zm-4 0L80 20v-4h-4v4zm-4 0L80 24v-4h-4v4zm-4 0L80 28v-4h-4v4zm-4 4L80 36v-4h-4v4zm-4 0L80 40v-4h-4v4zm-4 0L80 44v-4h-4v4zm-4 0L80 48v-4h-4v4zM0 40l4-4H0v4zm4 0l4-4H4v4zm4 0l8-8H8v8zm4 0l12-12h-8v8zm4 0l16-16h-8v8zm4 0l20-20h-8v8zm4 0l24-24h-8v8zm4 4l28-28h-8v8zm4 4l32-32h-8v8zM0 80l40-40H0v40zm40 0l40-40H40v40z'/%3E%3C/svg%3E");
+        }
+        
+        .header-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header-icon {
+            font-size: 2.2rem;
+            color: #a8e6cf;
+        }
+        
+        /* Main Navigation - Icon Grid */
+        .main-nav {
+            background: white;
+            border-radius: 20px;
+            padding: 25px 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            margin-bottom: 25px;
+        }
+        
+        .nav-title {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.4rem;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .nav-title i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .icon-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 18px;
+            padding: 25px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .icon-card:hover, .icon-card.active {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-color: #3498db;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        }
+        
+        .icon-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .icon-card:nth-child(1) i { color: #e74c3c; }
+        .icon-card:nth-child(2) i { color: #9b59b6; }
+        .icon-card:nth-child(3) i { color: #3498db; }
+        .icon-card:nth-child(4) i { color: #2ecc71; }
+        .icon-card:nth-child(5) i { color: #f39c12; }
+        .icon-card:nth-child(6) i { color: #1abc9c; }
+        
+        .icon-label {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        /* Content Display */
+        .content-display {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            margin-bottom: 25px;
+            display: none;
+        }
+        
+        .content-display.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .content-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .content-icon {
+            font-size: 2.5rem;
+            margin-right: 20px;
+            width: 70px;
+            height: 70px;
+            line-height: 70px;
+            text-align: center;
+            border-radius: 50%;
+        }
+        
+        #high-blood-pressure .content-icon { background-color: rgba(231, 76, 60, 0.1); color: #e74c3c; }
+        #insomnia .content-icon { background-color: rgba(155, 89, 182, 0.1); color: #9b59b6; }
+        #constipation .content-icon { background-color: rgba(52, 152, 219, 0.1); color: #3498db; }
+        #liver-heat .content-icon { background-color: rgba(46, 204, 113, 0.1); color: #2ecc71; }
+        #yin-deficiency .content-icon { background-color: rgba(243, 156, 18, 0.1); color: #f39c12; }
+        #food-replacement .content-icon { background-color: rgba(26, 188, 156, 0.1); color: #1abc9c; }
+        
+        .content-title {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.6rem;
+            color: #2c3e50;
+        }
+        
+        /* Food Menu Grid */
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .food-card {
+            background: #f8f9fa;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .food-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .food-image {
+            height: 150px;
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: white;
+        }
+        
+        .food-info {
+            padding: 20px;
+        }
+        
+        .food-name {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .food-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .food-detail {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .food-detail i {
+            margin-right: 8px;
+            color: #3498db;
+        }
+        
+        .food-ingredients {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+        
+        .food-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .food-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        /* Replacement Table */
+        .replacement-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .replacement-table th {
+            background-color: #f1f8e9;
+            padding: 15px;
+            text-align: left;
+            font-family: 'Quicksand', sans-serif;
+            color: #2c3e50;
+            font-size: 0.95rem;
+        }
+        
+        .replacement-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .replacement-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .medicine-item {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .medicine-name {
+            font-family: 'Quicksand', sans-serif;
+            color: #e65100;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .medicine-name i {
+            margin-right: 10px;
+        }
+        
+        /* Warning */
+        .warning {
+            background-color: #fff8e1;
+            border-left: 5px solid #ffb300;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .warning i {
+            color: #ff8f00;
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+        
+        /* Shopping */
+        .shopping-section {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            padding: 25px;
+            border-radius: 18px;
+            margin-top: 25px;
+        }
+        
+        .shopping-title {
+            font-family: 'Quicksand', sans-serif;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .shopping-title i {
+            margin-right: 10px;
+            color: #4caf50;
+        }
+        
+        .shopping-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .shopping-item {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .shopping-item i {
+            margin-right: 10px;
+            color: #4caf50;
+            font-size: 1.2rem;
+        }
+        
+        /* Footer Navigation */
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item i {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        
+        .nav-item.active {
+            color: #3498db;
+        }
+        
+        .nav-item:hover {
+            color: #3498db;
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .icon-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .icon-card {
+                padding: 20px 10px;
+            }
+            
+            .icon-card i {
+                font-size: 2rem;
+            }
+            
+            .icon-label {
+                font-size: 1rem;
+            }
+            
+            .food-grid {
+                grid-template-columns: repeat(1, 1fr);
+            }
+            
+            .shopping-grid {
+                grid-template-columns: repeat(1, 1fr);
+            }
+            
+            .content-icon {
+                width: 60px;
+                height: 60px;
+                line-height: 60px;
+                font-size: 2rem;
+            }
+            
+            .content-title {
+                font-size: 1.4rem;
+            }
+        }
+        
+        /* Color classes for food cards */
+        .food-card:nth-child(1) .food-image { background: linear-gradient(135deg, #ff7675, #d63031); }
+        .food-card:nth-child(2) .food-image { background: linear-gradient(135deg, #74b9ff, #0984e3); }
+        .food-card:nth-child(3) .food-image { background: linear-gradient(135deg, #55efc4, #00b894); }
+        .food-card:nth-child(4) .food-image { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-icons">
+                <i class="fas fa-heartbeat header-icon"></i>
+                <i class="fas fa-utensils header-icon"></i>
+                <i class="fas fa-apple-alt header-icon"></i>
+            </div>
+            <h1 style="font-family: 'Quicksand', sans-serif; position: relative; z-index: 1;">Sổ Tay Thực Hành</h1>
+            <p style="position: relative; z-index: 1; opacity: 0.9; font-size: 0.95rem;">Biên soạn từ trang 186-203</p>
+        </header>
+        
+        <!-- Warning -->
+        <div class="warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>Ăn hỗ trợ - Không thay thuốc</strong><br>
+                Luôn tham vấn bác sĩ trước khi thay đổi chế độ ăn
+            </div>
+        </div>
+        
+        <!-- Main Navigation - Icon Grid -->
+        <section class="main-nav">
+            <div class="nav-title">
+                <i class="fas fa-search"></i>
+                <span>Tra Cứu Theo Biểu Tượng</span>
+            </div>
+            
+            <div class="icon-grid">
+                <div class="icon-card active" data-target="high-blood-pressure">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <div class="icon-label">Huyết Áp Cao</div>
+                </div>
+                
+                <div class="icon-card" data-target="insomnia">
+                    <i class="fas fa-bed"></i>
+                    <div class="icon-label">Mất Ngủ</div>
+                </div>
+                
+                <div class="icon-card" data-target="constipation">
+                    <i class="fas fa-poop"></i>
+                    <div class="icon-label">Táo Bón</div>
+                </div>
+                
+                <div class="icon-card" data-target="liver-heat">
+                    <i class="fas fa-fire"></i>
+                    <div class="icon-label">Gan Nóng</div>
+                </div>
+                
+                <div class="icon-card" data-target="yin-deficiency">
+                    <i class="fas fa-leaf"></i>
+                    <div class="icon-label">Âm Hư</div>
+                </div>
+                
+                <div class="icon-card" data-target="food-replacement">
+                    <i class="fas fa-exchange-alt"></i>
+                    <div class="icon-label">Thay Thế</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- High Blood Pressure Content -->
+        <div class="content-display active" id="high-blood-pressure">
+            <div class="content-header">
+                <div class="content-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <div class="content-title">Cao Huyết Áp</div>
+            </div>
+            
+            <div class="food-grid">
+                <div class="food-card">
+                    <div class="food-image">
+                        <i class="fas fa-carrot"></i>
+                    </div>
+                    <div class="food-info">
+                        <div class="food-name">Canh Cải Bắp Đậu Đỏ</div>
+                        <div class="food-ingredients">Cải bắp 300g + Đậu đỏ 50g + Gừng 5g</div>
+                        <div class="food-details">
+                            <div class="food-detail">
+                                <i class="fas fa-yin-yang"></i>
+                                <span>Âm - Mát</span>
+                            </div>
+                            <div class="food-detail">
+                                <i class="fas fa-bolt"></i>
+                                <span>180 kcal</span>
+                            </div>
+                            <div class="food-detail">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>12.000đ</span>
+                            </div>
+                        </div>
+                        <div class="food-tags">
+                            <div class="food-tag">Hạ áp</div>
+                            <div class="food-tag">Lợi tiểu</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="food-card">
+                    <div class="food-image">
+                        <i class="fas fa-fish"></i>
+                    </div>
+                    <div class="food-info">
+                        <div class="food-name">Cá Chép Hấp Gừng</div>
+                        <div class="food-ingredients">Cá chép 200g + Gừng 10g</div>
+                        <div class="food-details">
+                            <div class="food-detail">
+                                <i class="fas fa-yin-yang"></i>
+                                <span>Âm - Bổ huyết</span>
+                            </div>
+                            <div class="food-detail">
+                                <i class="fas fa-bolt"></i>
+                                <span>220 kcal</span>
+                            </div>
+                            <div class="food-detail">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>25.000đ</span>
+                            </div>
+                        </div>
+                        <div class="food-tags">
+                            <div class="food-tag">Bổ âm</div>
+                            <div class="food-tag">Hạ áp</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="food-card">
+                    <div class="food-image">
+                        <i class="fas fa-banana"></i>
+                    </div>
+                    <div class="food-info">
+                        <div class="food-name">Chuối + Yến Mạch</div>
+                        <div class="food-ingredients">Chuối 1 trái + Yến mạch 30g</div>
+                        <div class="food-details">
+                            <div class="food-detail">
+                                <i class="fas fa-yin-yang"></i>
+                                <span>Âm - An thần</span>
+                            </div>
+                            <div class="food-detail">
+                                <i class="fas fa-bolt"></i>
+                                <span>200 kcal</span>
+                            </div>
+                            <div class="food-detail">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>7.000đ</span>
+                            </div>
+                        </div>
+                        <div class="food-tags">
+                            <div class="food-tag">An thần</div>
+                            <div class="food-tag">Bình can</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="medicine-item">
+                <div class="medicine-name">
+                    <i class="fas fa-pills"></i>
+                    <span>Kiêng với thuốc Tây</span>
+                </div>
+                <p>❌ Không dùng cam thảo khi uống thuốc hạ áp</p>
+                <p>❌ Hạn chế rượu, mặn, đồ chiên</p>
+            </div>
+        </div>
+        
+        <!-- Insomnia Content -->
+        <div class="content-display" id="insomnia">
+            <div class="content-header">
+                <div class="content-icon">
+                    <i class="fas fa-bed"></i>
+                </div>
+                <div class="content-title">Mất Ngủ - Hồi Hộp</div>
+            </div>
+            
+            <div class="food-grid">
+                <div class="food-card">
+                    <div class="food-image">
+                        <i class="fas fa-bowl-food"></i>
+                    </div>
+                    <div class="food-info">
+                        <div class="food-name">Cháo Yến Mạch Mè Đen</div>
+                        <div class="food-ingredients">Yến mạch 40g + Mè đen 10g + Trứng 1 quả</div>
+                        <div class="food-details">
+                            <div class="food-detail">
+                                <i class="fas fa-yin-yang"></i>
+                                <span>Âm</span>
+                            </div>
+                            <div class="food-detail">
+                                <i class="fas fa-bolt"></i>
+                                <span>350 kcal</span>
+                            </div>
+                            <div class="food-detail">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>10.000đ</span>
+                            </div>
+                        </div>
+                        <div class="food-tags">
+                            <div class="food-tag">Ngủ ngon</div>
+                            <div class="food-tag">An thần</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="food-card">
+                    <div class="food-image">
+                        <i class="fas fa-egg"></i>
+                    </div>
+                    <div class="food-info">
+                        <div class="food-name">Trứng Gà Luộc + Rau</div>
+                        <div class="food-ingredients">Trứng gà 2 quả + Rau xanh luộc</div>
+                        <div class="food-details">
+                            <div class="food-detail">
+                                <i class="fas fa-yin-yang"></i>
+                                <span>Trung</span>
+                            </div>
+                            <div class="food-detail">
+                                <i class="fas fa-bolt"></i>
+                                <span>180 kcal</span>
+                            </div>
+                            <div class="food-detail">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>8.000đ</span>
+                            </div>
+                        </div>
+                        <div class="food-tags">
+                            <div class="food-tag">Bổ khí</div>
+                            <div class="food-tag">Dễ tiêu</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="medicine-item">
+                <div class="medicine-name">
+                    <i class="fas fa-pills"></i>
+                    <span>Kiêng với thuốc Tây</span>
+                </div>
+                <p>❌ Không ăn chuối nhiều + rượu khi uống thuốc ngủ</p>
+                <p>❌ Tránh cà phê, trà đặc</p>
+            </div>
+        </div>
+        
+        <!-- Constipation Content -->
+        <div class="content-display" id="constipation">
+            <div class="content-header">
+                <div class="content-icon">
+                    <i class="fas fa-poop"></i>
+                </div>
+                <div class="content-title">Táo Bón - Nóng Trong</div>
+            </div>
+            
+            <div class="food-grid">
+                <div class="food-card">
+                    <div class="food-image">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div class="food-info">
+                        <div class="food-name">Rau Má + Đậu Phụ</div>
+                        <div class="food-ingredients">Rau má 50g + Đậu phụ 100g</div>
+                        <div class="food-details">
+                            <div class="food-detail">
+                                <i class="fas fa-yin-yang"></i>
+                                <span>Hàn - Giải độc</span>
+                            </div>
+                            <div class="food-detail">
+                                <i class="fas fa-bolt"></i>
+                                <span>150 kcal</span>
+                            </div>
+                            <div class="food-detail">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>8.000đ</span>
+                            </div>
+                        </div>
+                        <div class="food-tags">
+                            <div class="food-tag">Thanh nhiệt</div>
+                            <div class="food-tag">Lợi tiểu</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="food-card">
+                    <div class="food-image">
+                        <i class="fas fa-apple-alt"></i>
+                    </div>
+                    <div class="food-info">
+                        <div class="food-name">Khoai Lang + Mè Đen</div>
+                        <div class="food-ingredients">Khoai lang 200g + Mè đen 10g</div>
+                        <div class="food-details">
+                            <div class="food-detail">
+                                <i class="fas fa-yin-yang"></i>
+                                <span>Âm - Nhuận tràng</span>
+                            </div>
+                            <div class="food-detail">
+                                <i class="fas fa-bolt"></i>
+                                <span>250 kcal</span>
+                            </div>
+                            <div class="food-detail">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>6.000đ</span>
+                            </div>
+                        </div>
+                        <div class="food-tags">
+                            <div class="food-tag">Nhuận tràng</div>
+                            <div class="food-tag">Bổ âm</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="medicine-item">
+                <div class="medicine-name">
+                    <i class="fas fa-pills"></i>
+                    <span>Kiêng với thuốc Tây</span>
+                </div>
+                <p>❌ Không dùng rau má quá nhiều với thuốc lợi tiểu</p>
+                <p>❌ Tránh đồ cay, rượu</p>
+            </div>
+        </div>
+        
+        <!-- Food Replacement Content -->
+        <div class="content-display" id="food-replacement">
+            <div class="content-header">
+                <div class="content-icon">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div class="content-title">Nguyên Tắc Thay Thế</div>
+            </div>
+            
+            <table class="replacement-table">
+                <thead>
+                    <tr>
+                        <th>Dược liệu hiếm</th>
+                        <th>Tính chất</th>
+                        <th>Thay bằng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Thiên ma</td>
+                        <td>Bình can, an thần</td>
+                        <td>Chuối, yến mạch, magie B6</td>
+                    </tr>
+                    <tr>
+                        <td>Thạch quyết minh</td>
+                        <td>Hạ áp, sáng mắt</td>
+                        <td>Rau má, cần tây, hạt chia</td>
+                    </tr>
+                    <tr>
+                        <td>Mạch môn</td>
+                        <td>Bổ âm, nhuận phế</td>
+                        <td>Lê, nha đam, sữa đậu nành</td>
+                    </tr>
+                    <tr>
+                        <td>Nhân sâm</td>
+                        <td>Bổ khí</td>
+                        <td>Thịt gà, trứng, đậu lăng</td>
+                    </tr>
+                    <tr>
+                        <td>Rùa, bồ câu</td>
+                        <td>Bổ âm huyết</td>
+                        <td>Cá chép, cá thu, đậu phụ</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="shopping-section">
+                <div class="shopping-title">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Đi Chợ 2 Lần (3-4 ngày)</span>
+                </div>
+                
+                <div class="shopping-grid">
+                    <div class="shopping-item">
+                        <i class="fas fa-fish"></i>
+                        <span>Cá chép/cá thu</span>
+                    </div>
+                    <div class="shopping-item">
+                        <i class="fas fa-egg"></i>
+                        <span>Trứng gà</span>
+                    </div>
+                    <div class="shopping-item">
+                        <i class="fas fa-seedling"></i>
+                        <span>Đậu phụ</span>
+                    </div>
+                    <div class="shopping-item">
+                        <i class="fas fa-carrot"></i>
+                        <span>Cải bắp</span>
+                    </div>
+                    <div class="shopping-item">
+                        <i class="fas fa-leaf"></i>
+                        <span>Rau má</span>
+                    </div>
+                    <div class="shopping-item">
+                        <i class="fas fa-banana"></i>
+                        <span>Chuối</span>
+                    </div>
+                    <div class="shopping-item">
+                        <i class="fas fa-wheat-awn"></i>
+                        <span>Yến mạch</span>
+                    </div>
+                    <div class="shopping-item">
+                        <i class="fas fa-seedling"></i>
+                        <span>Mè đen</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; text-align: center; font-family: 'Quicksand', sans-serif; color: #2c3e50;">
+                    <i class="fas fa-money-bill-wave" style="margin-right: 10px;"></i>
+                    <span>Tổng ước tính: ~200.000đ</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer Navigation -->
+    <nav class="footer-nav">
+        <a href="#" class="nav-item active" data-tab="diseases">
+            <i class="fas fa-heartbeat"></i>
+            <span>Bệnh</span>
+        </a>
+        <a href="#" class="nav-item" data-tab="foods">
+            <i class="fas fa-utensils"></i>
+            <span>Món ăn</span>
+        </a>
+        <a href="#" class="nav-item" data-tab="shopping">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Đi chợ</span>
+        </a>
+        <a href="#" class="nav-item" data-tab="replacement">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Thay thế</span>
+        </a>
+    </nav>
+    
+    <script>
+        // Disease icon selection
+        document.querySelectorAll('.icon-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Remove active class from all cards
+                document.querySelectorAll('.icon-card').forEach(c => {
+                    c.classList.remove('active');
+                });
+                
+                // Add active class to clicked card
+                this.classList.add('active');
+                
+                // Get the target content id
+                const targetId = this.getAttribute('data-target');
+                
+                // Hide all content displays
+                document.querySelectorAll('.content-display').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Show the target content
+                document.getElementById(targetId).classList.add('active');
+                
+                // Scroll to the top of the content
+                document.getElementById(targetId).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+        
+        // Footer navigation
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            nav.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all nav items
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Add active class to clicked nav item
+                this.classList.add('active');
+                
+                const tab = this.getAttribute('data-tab');
+                
+                // Handle tab switching
+                if (tab === 'diseases') {
+                    document.querySelector('.main-nav').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                } else if (tab === 'foods') {
+                    document.querySelector('.content-display.active').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                } else if (tab === 'shopping') {
+                    document.getElementById('food-replacement').classList.add('active');
+                    document.querySelectorAll('.icon-card').forEach(card => {
+                        card.classList.remove('active');
+                    });
+                    document.querySelector('[data-target="food-replacement"]').classList.add('active');
+                    document.querySelector('.shopping-section').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                } else if (tab === 'replacement') {
+                    document.getElementById('food-replacement').classList.add('active');
+                    document.querySelectorAll('.icon-card').forEach(card => {
+                        card.classList.remove('active');
+                    });
+                    document.querySelector('[data-target="food-replacement"]').classList.add('active');
+                    document.getElementById('food-replacement').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Add hover effects to food cards
+        document.querySelectorAll('.food-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // Add click effect to icon cards
+        document.querySelectorAll('.icon-card').forEach(card => {
+            card.addEventListener('mousedown', function() {
+                this.style.transform = 'scale(0.95)';
+            });
+            
+            card.addEventListener('mouseup', function() {
+                this.style.transform = 'scale(1)';
+            });
+            
+            card.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.95)';
+            });
+            
+            card.addEventListener('touchend', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>

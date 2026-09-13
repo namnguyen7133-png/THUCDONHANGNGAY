@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thực đơn 2 ngày — Lãnh đạo, Chỉ huy, Đội trưởng, Quản lý</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #0f172a; color: #f8fafc; }
+        h1, h2 { color: #38bdf8; }
+        .card { background: #1e293b; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1px solid #334155; }
+        .emergency { background: #450a0a; border-left: 6px solid #ef4444; padding: 20px; margin-bottom: 20px; border-radius: 4px; color: #fecaca; }
+        .emergency h3 { color: #f87171; margin-top: 0; }
+        .emergency ul { margin: 10px 0 0 20px; line-height: 1.6; }
+        .grid-2days { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        @media(max-width: 900px) { .grid-2days { grid-template-columns: 1fr; } }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #1e293b; }
+        th, td { border: 1px solid #334155; padding: 12px; text-align: left; vertical-align: top; color: #f8fafc; }
+        th { background-color: #334155; color: #38bdf8; }
+        .system-box { background: #1e293b; color: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #334155; }
+        .system-box h2 { color: #38bdf8; margin-top: 0; }
+        .highlight { color: #f43f5e; font-weight: bold; }
+        .success { color: #10b981; font-weight: bold; }
+        .btn-menu { display: inline-block; background: #334155; color: #f8fafc; padding: 8px 14px; text-decoration: none; border-radius: 4px; font-weight: bold; margin-right: 5px; border: 1px solid #475569; }
+        .btn-menu.active { background: #eab308; color: #0f172a; }
+    </style>
+</head>
+<body>
+
+    <h1>🛡️ Thực đơn 2 ngày — Lãnh đạo, Chỉ huy, Đội trưởng, Quản lý</h1>
+    
+    <!-- Menu điều hướng -->
+    <div style="margin-bottom: 20px;">
+        <a href="file:///E:/HTML/github_data/index.html" class="btn-menu">🏠 Trang Chủ</a>
+        <a href="file:///E:/HTML/github_data/025-thuc-on-i-linh.html" class="btn-menu">Đi lính</a>
+        <a href="file:///E:/HTML/github_data/286-an-benh-tri.html" class="btn-menu">Bệnh trĩ</a>
+        <a href="file:///E:/HTML/github_data/029-thuc-on-cho-oi-truong.html" class="btn-menu active">Đội trưởng</a>
+    </div>
+
+    <!-- BẢNG ĐIỀU KHIỂN ĐA HỆ SỐ -->
+    <div class="system-box">
+        <h2>⚡ BẢNG ĐIỀU KHIỂN ĐA HỆ SỐ TỰ ĐỘNG</h2>
+        <p>Hôm nay: <span id="current-date" style="color: #38bdf8;">Đang cập nhật...</span></p>
+        <hr style="border-color: #334155; margin: 15px 0;">
+        <p><b>1. Hệ Nhị Phân (Trạng thái):</b> <span id="binary-status" class="success">BẬT (1 - Làm việc sâu)</span> 
+           <button onclick="toggleBinary()" style="margin-left: 15px; padding: 4px 10px; background: #38bdf8; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Đổi Bật/Tắt</button>
+        </p>
+        <p><b>2. Hệ 10 Phân (10 Tác Vụ Vận Hành / Công Việc):</b> Ngày <span id="thien-can" class="highlight">---</span> → Tác vụ chủ đạo: <span id="tac-vu-cong-viec" style="color: #fbbf24;">---</span></p>
+        <p><b>3. Hệ 12 Địa Chi (Phân bổ 2 Máy sản xuất theo giờ & 12 Thực đơn ăn uống):</b> Giờ <span id="dia-chi" class="highlight">---</span> → <span id="may-status">Đang tính toán tải...</span></p>
+        <p><b>4. Hệ 9 Cung & 900 Trang Web:</b> Đang chạy tự động qua ma trận thời gian, phân bổ 1440 phút (Công việc, Gia đình vợ con, Học tập, Giải trí).</p>
+    </div>
+
+    <!-- GÓC CẤP CỨU NHANH -->
+    <div class="emergency">
+        <h3>🚨 GÓC CẤP CỨU NHANH: KHI BỊ CẢM LẠNH, MỆT MỎI, ĐẦY BỤNG</h3>
+        <ul>
+            <li><b>Trường hợp Cảm lạnh, Trúng gió, Sốt nhẹ:</b> Nghỉ ngơi hoàn toàn, đắp chăn giữ ấm cơ thể, xoa dầu gió vào lòng bàn chân, thái dương và cổ. Uống ngay một cốc nước gừng tươi pha mật ong ấm, ăn cháo hành tía tô nóng để ra mồ hôi giải độc. Dùng thuốc hạ sốt/giảm đau theo chỉ định nếu cần thiết.</li>
+            <li><b>Trường hợp Đầy bụng, Khó tiêu, Ăn uống kém:</b> Tuyệt đối không nạp thêm đồ dầu mỡ, đồ ngọt hay tinh bột nặng. Dùng nước ấm pha vài lát gừng hoặc trà vỏ quýt/trà tía tô. Xoa bụng nhẹ nhàng theo chiều kim đồng hồ để kích thích tiêu hóa tự nhiên.</li>
+            <li><b>Quy trình tự động hóa Pushbullet:</b> Hệ thống sẽ tự động quét trạng thái và bắn cảnh báo khẩn cấp trước 1 tiếng nếu phát hiện chỉ số thời tiết thay đổi đột ngột hoặc lịch trình lịch sử lặp lại nguy cơ cảm mạo.</li>
+        </ul>
+    </div>
+
+    <!-- KHU VỰC HIỂN THỊ SONG SONG 2 NGÀY -->
+    <div class="card">
+        <h2>📜 KHO THỰC ĐƠN CHI TIẾT (Hiển thị song song 2 ngày)</h2>
+        <div class="grid-2days">
+            <!-- Cột Ngày 1 & 2 -->
+            <div>
+                <div style="background: #334155; padding: 10px 15px; font-weight: bold; border-radius: 6px 6px 0 0; color: #38bdf8;">📅 Ngày 1 — Chi tiết bữa ăn (~2.700 kcal)</div>
+                <div style="border: 1px solid #475569; padding: 15px; margin-bottom: 20px; border-radius: 0 0 6px 6px; background: #0f172a;">
+                    <p><b>08:00 — Sáng (~800 kcal):</b> Bánh mì + trứng ốp la + Trái cây tươi.</p>
+                    <p><b>12:00 — Trưa (~900 kcal):</b> Cơm 1.5 chén + Thịt bò xào hành tây 150g + Canh rau ngót thịt bằm.</p>
+                    <p><b>16:00 — Tối nhẹ (~1000 kcal):</b> Salad cá hồi + Snack hạt dinh dưỡng + Nước khoáng.</p>
+                </div>
+
+                <div style="background: #334155; padding: 10px 15px; font-weight: bold; border-radius: 6px 6px 0 0; color: #38bdf8;">📅 Ngày 2 — Chi tiết bữa ăn (~2.750 kcal)</div>
+                <div style="border: 1px solid #475569; padding: 15px; border-radius: 0 0 6px 6px; background: #0f172a;">
+                    <p><b>08:00 — Sáng (~850 kcal):</b> Hủ tiếu nam vang + Trà gừng ấm.</p>
+                    <p><b>12:00 — Trưa (~950 kcal):</b> Cơm gạo lứt + Gà kho sả ớt + Canh bí đỏ nấu tôm.</p>
+                    <p><b>16:00 — Tối nhẹ (~950 kcal):</b> Cháo yến mạch thịt bằm + Trái cây tráng miệng.</p>
+                </div>
+            </div>
+
+            <!-- Cột Danh sách đi chợ & Y tế -->
+            <div>
+                <div style="background: #1e293b; border: 1px solid #475569; padding: 15px; border-radius: 8px;">
+                    <h3 style="margin-top: 0; color: #38bdf8; font-size: 16px; border-bottom: 2px solid #334155; padding-bottom: 8px;">🛒 Danh sách đi chợ & Y tế</h3>
+                    <p style="margin: 8px 0;">Gạo / Gạo lứt 5kg — <b style="color: #10b981;">110000đ</b></p>
+                    <p style="margin: 8px 0;">Thịt gà / Bò 2kg — <b style="color: #10b981;">220000đ</b></p>
+                    <p style="margin: 8px 0;">Cá hồi / Hải sản 2kg — <b style="color: #10b981;">180000đ</b></p>
+                    <p style="margin: 8px 0;">Trừng gà 20 quả — <b style="color: #10b981;">60000đ</b></p>
+                    <hr style="border: 0; border-top: 1px dashed #334155; margin: 12px 0;">
+                    <p style="margin: 8px 0;"><b>Y tế dự phòng:</b></p>
+                    <p style="margin: 8px 0;">Paracetamol 500mg — <b style="color: #60a5fa;">30000đ</b></p>
+                    <p style="margin: 8px 0;">ORS bù nước — <b style="color: #60a5fa;">45000đ</b></p>
+                    <hr style="border: 0; border-top: 1px solid #334155; margin: 12px 0;">
+                    <p style="font-size: 15px;"><b>TỔNG CỘNG: <span style="color: #f43f5e;">645000đ</span></b></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script tính toán tự động -->
+    <script>
+        const THIEN_CAN_CONG_VIEC = [
+            "Giáp (Tác vụ: Kiểm tra hệ thống Git & Pushbullet)",
+            "Ất (Tác vụ: Đồng bộ cơ sở dữ liệu KHOPHIM.db)",
+            "Bính (Tác vụ: Tự động hóa báo cáo Affiliate 32 shop)",
+            "Đinh (Tác vụ: Quét log hệ thống & Dọn dẹp rác web)",
+            "Mậu (Tác vụ: Cập nhật thông tin thời tiết & Tự động nhắc nhở)",
+            "Kỷ (Tác vụ: Kiểm tra phân bổ ma trận 1440 phút)",
+            "Canh (Tác vụ: Kiểm tra bảo mật & Phân quyền máy chủ)",
+            "Tân (Tác vụ: Sao lưu dữ liệu CSV & Gửi tệp tự động)",
+            "Nhâm (Tác vụ: Xử lý phụ đề & Phân tích văn bản folklore)",
+            "Quý (Tác vụ: Tổng kết hiệu suất vận hành toàn hệ thống)"
+        ];
+        
+        const DIA_CHI = ["Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi"];
+
+        let binaryState = 1;
+        function toggleBinary() {
+            binaryState = binaryState === 1 ? 0 : 1;
+            const el = document.getElementById("binary-status");
+            if(binaryState === 1) {
+                el.className = "success";
+                el.innerText = "BẬT (1 - Làm việc sâu)";
+            } else {
+                el.className = "highlight";
+                el.innerText = "TẮT (0 - Nghỉ ngơi hoàn toàn)";
+            }
+        }
+
+        function runSystem() {
+            const now = new Date();
+            document.getElementById("current-date").innerText = now.toLocaleString('vi-VN');
+
+            const moc0 = new Date(2026, 0, 1);
+            const diffDays = Math.floor((now - moc0) / (1000 * 60 * 60 * 24));
+            
+            const canIndex = Math.abs(diffDays) % 10;
+            const chiIndex = now.getHours() % 12;
+
+            document.getElementById("thien-can").innerText = THIEN_CAN_CONG_VIEC[canIndex].split(" ")[0];
+            document.getElementById("tac-vu-cong-viec").innerText = THIEN_CAN_CONG_VIEC[canIndex];
+            document.getElementById("dia-chi").innerText = DIA_CHI[chiIndex];
+
+            const mayStatus = document.getElementById("may-status");
+            if(["Tý", "Dần", "Thìn", "Ngọ", "Thân", "Tuất"].includes(DIA_CHI[chiIndex])) {
+                mayStatus.innerHTML = "⚡ <b>Máy 1 (Dương):</b> Chạy tác vụ nặng. | 🛡️ <b>Máy 2 (Âm):</b> Quét web/Bảo trì.";
+            } else {
+                mayStatus.innerHTML = "🛡️ <b>Máy 2 (Âm):</b> Chạy ưu tiên. | ⚡ <b>Máy 1 (Dương):</b> Quét tự động.";
+            }
+        }
+        runSystem();
+    </script>
+</body>
+</html>

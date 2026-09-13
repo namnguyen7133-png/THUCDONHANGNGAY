@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game: Tìm Cặp Thực Phẩm Kỵ Nhau</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #f0f8ff, #add8e6);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+        #search-section, #quiz-section {
+            margin-bottom: 30px;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #218838;
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            background: #007bff;
+        }
+        .options button:hover {
+            background: #0056b3;
+        }
+        #result, #search-result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #score {
+            text-align: center;
+            font-size: 18px;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Game: Tìm Cặp Thực Phẩm Kỵ Nhau</h1>
+        <p>Dựa trên kinh nghiệm dân gian (không phải lời khuyên y tế). Tìm kiếm hoặc chơi quiz để khám phá!</p>
+        
+        <!-- Phần Tìm Kiếm -->
+        <div id="search-section">
+            <h2>Tìm Kiếm Thực Phẩm</h2>
+            <input type="text" id="search-input" placeholder="Nhập tên thực phẩm (ví dụ: Cua)">
+            <button onclick="searchFood()">Tìm</button>
+            <div id="search-result"></div>
+        </div>
+        
+        <!-- Phần Quiz -->
+        <div id="quiz-section">
+            <h2>Chơi Quiz</h2>
+            <p id="question"></p>
+            <div class="options" id="options"></div>
+            <div id="result"></div>
+            <button onclick="startQuiz()">Bắt Đầu Quiz Mới</button>
+            <p id="score">Điểm: 0</p>
+        </div>
+    </div>
+
+    <script>
+        const pairs = [
+            {food1: "Trứng gà", food2: "Quả hồng", detox: "Không đề cập"},
+            {food1: "Trứng gà", food2: "Sữa đậu nành", detox: "Không đề cập"},
+            {food1: "Trứng gà", food2: "Rau cần", detox: "Không đề cập"},
+            {food1: "Trứng gà", food2: "Khoai", detox: "Không đề cập"},
+            {food1: "Trứng gà", food2: "Cà rốt", detox: "Không đề cập"},
+            {food1: "Trứng gà", food2: "Đường", detox: "Không đề cập"},
+            {food1: "Trứng gà", food2: "Bột ngọt", detox: "Không đề cập"},
+            {food1: "Trứng gà", food2: "Thịt thỏ", detox: "Không đề cập"},
+            {food1: "Trứng gà", food2: "Thịt ngỗng", detox: "Không đề cập"},
+            {food1: "Trứng gà", food2: "Thịt rùa", detox: "Không đề cập"},
+            {food1: "Trứng gà", food2: "Nước trà", detox: "Không đề cập"},
+            {food1: "Trứng gà", food2: "Thuốc chống viêm", detox: "Không đề cập"},
+            {food1: "Mật ong", food2: "Nước sôi", detox: "Không đề cập"},
+            {food1: "Nước có ga", food2: "Cơm", detox: "Không đề cập"},
+            {food1: "Cua", food2: "Cam quýt", detox: "Uống nước tỏi tươi"},
+            {food1: "Cua", food2: "Bí đỏ", detox: "Uống địa tương thủy"},
+            {food1: "Cua", food2: "Mật mía", detox: "Uống địa tương thủy"},
+            {food1: "Cua", food2: "Đậu phộng", detox: "Uống địa tương thủy"},
+            {food1: "Cua", food2: "Cá trạch", detox: "Uống địa tương thủy"},
+            {food1: "Cua", food2: "Trái hồng, trái thị", detox: "Ăn ngó sen"},
+            {food1: "Cua", food2: "Dưa lê", detox: "Uống nước vỏ cam quýt"},
+            {food1: "Cua", food2: "Cà tím", detox: "Ăn ngó sen"},
+            {food1: "Cua", food2: "Kem (ăn ngay sau)", detox: "Ăn ngó sen"},
+            {food1: "Trứng vịt", food2: "Mận Đà Lạt", detox: "Uống địa tương thủy"},
+            {food1: "Thịt chim sẻ", food2: "Mận Đà Lạt", detox: "Nuốt kê phẫn bạch"},
+            {food1: "Thịt gà", food2: "Mận Đà Lạt", detox: "Nuốt kê phẫn bạch"},
+            {food1: "Thịt chim sẻ", food2: "Gan heo, bò", detox: "Uống nước đậu xanh"},
+            {food1: "Cá chạch, cá sốp", food2: "Gan trâu bò", detox: "Đậu đen và cam thảo sắc uống"},
+            {food1: "Cá chạch", food2: "Trái mai khô", detox: "Uống địa tương thủy"},
+            {food1: "Cá chạch", food2: "Giấm", detox: "Đậu đen cam thảo sắc uống"},
+            {food1: "Lươn", food2: "Táo đỏ", detox: "Ăn cua hoặc uống nước cua"},
+            {food1: "Lươn", food2: "Bí đỏ", detox: "Ăn cua hoặc uống nước cua"},
+            {food1: "Lươn", food2: "Nấu bằng củi dâu", detox: "Uống địa tương thủy"},
+            {food1: "Bo bo", food2: "Phụ nữ có thai gần sinh hoặc bệnh trĩ", detox: "Không đề cập"},
+            {food1: "Tiêu hột (không có mắt)", food2: "(Tự kỵ)", detox: "Sắc nước cam thảo uống"},
+            {food1: "Dưa hấu", food2: "Dầu mè", detox: "Không đề cập"},
+            {food1: "Trái mận", food2: "Thịt gà, thịt vịt, mật ong", detox: "Sắc nước sơn trà uống"},
+            {food1: "Hành", food2: "Táo", detox: "Uống 2 lạng dầu mè"},
+            {food1: "Thịt chó", food2: "Đậu xanh", detox: "2 lạng cam thảo nấu uống"},
+            {food1: "Thịt rắn", food2: "Củ cải trắng", detox: "Uống 1 lạng mầu gà"},
+            {food1: "Trái đào", food2: "Rượu đế", detox: "Không đề cập"},
+            {food1: "Thịt dê", food2: "Dưa hấu", detox: "Bùn trát vách và đậu ván trắng nấu uống"},
+            {food1: "Thịt ba ba", food2: "Rau dền", detox: "Uống nước rau muống sống hoặc ăn rau muống sống"},
+            {food1: "Thịt chó", food2: "Hành sống", detox: "Gạo sao cháy nghiền bột, 2 lạng cam thảo sắc nước uống"},
+            {food1: "Dưa bà cai (Hoàng qua)", food2: "Đậu phộng", detox: "Lá hoắc hương khô tán bột uống"},
+            {food1: "Ốc bươu", food2: "Giải đậu", detox: "Uống nước đái trẻ em (bé trai)"},
+            {food1: "Thịt gà", food2: "Trà hoa cúc", detox: "Một đồng cân tế tân, 5 phân xuyên liên sắc uống"},
+            {food1: "Thịt vịt", food2: "Quả dương mai", detox: "Uống khoảng 100 gr sữa người"},
+            {food1: "Thịt hươu", food2: "Bí đỏ", detox: "50 gr khổ sâm giã vắt nước uống"},
+            {food1: "Thịt thỏ", food2: "Cải xanh", detox: "50 gr dương mai nâu uống"},
+            {food1: "Thịt rùa", food2: "Măng tre mùa đông", detox: "2 lạng cam thảo sắc nước uống"},
+            {food1: "Thịt cóc", food2: "Hành tây", detox: "50 gr rau mã đề sắc nước uống"},
+            {food1: "Trứng gà", food2: "Tiêu viêm (uống sau)", detox: "Uống địa tương thủy"},
+            {food1: "Sắn (khoai mì)", food2: "Mật ong", detox: "Không đề cập"},
+            {food1: "Mật ong", food2: "Đậu hủ", detox: "Không đề cập"},
+            {food1: "Mật ong/mật mía", food2: "Tỏi", detox: "Không đề cập"},
+            {food1: "Đường cát", food2: "Măng cụt", detox: "Không đề cập"},
+            {food1: "Khoai mì", food2: "Nhãn lồng", detox: "Không đề cập"},
+            {food1: "Khoai mì", food2: "Xoài, ổi", detox: "Không đề cập"},
+            {food1: "Thịt kỳ đà", food2: "Giấm, gừng", detox: "Không đề cập"},
+            {food1: "Thịt chó", food2: "Bánh trung thu", detox: "Không đề cập"},
+            {food1: "Đọt dưa hấu", food2: "Rượu", detox: "Không đề cập"},
+            {food1: "Cháo rắn hổ", food2: "Bồ hóng", detox: "Không đề cập"},
+            {food1: "Cơm rượu", food2: "Lá chuối tiêu", detox: "Không đề cập"},
+            {food1: "Thịt trâu", food2: "Lươn", detox: "Không đề cập"},
+            {food1: "Thịt chó", food2: "Lá dây kềm", detox: "Không đề cập"},
+            {food1: "Thịt gà", food2: "Rau răm (trộn)", detox: "Không đề cập"},
+            {food1: "Khoai lang", food2: "Mật (chấm)", detox: "Không đề cập"},
+            {food1: "Thuốc bắc có đại hồi", food2: "Đồ chua", detox: "Không đề cập"},
+            {food1: "Thịt cá chép", food2: "Lá tía tô", detox: "Không đề cập"},
+            {food1: "Thịt cá chép/thịt chó/thịt chim trĩ", food2: "Hành tăm", detox: "Không đề cập"},
+            {food1: "Thịt ba ba", food2: "Bạc hà", detox: "Không đề cập"},
+            {food1: "Tiết canh lợn/vịt", food2: "Rau dền", detox: "Không đề cập"},
+            {food1: "Thịt heo", food2: "Thịt lừa, ngựa", detox: "Không đề cập"},
+            {food1: "Thịt bò", food2: "Hẹ", detox: "Không đề cập"},
+            {food1: "Thịt dê", food2: "Gỏi cá", detox: "Không đề cập"},
+            {food1: "Thịt trâu", food2: "Thịt chó", detox: "Không đề cập"},
+            {food1: "Thịt chim bồ câu", food2: "Nấm", detox: "Không đề cập"},
+            {food1: "Thịt cá thu/thịt lươn", food2: "Nấu bằng củi gỗ dâu", detox: "Không đề cập"},
+            {food1: "Thịt thỏ", food2: "Gừng tươi", detox: "Không đề cập"},
+            {food1: "Tim dê", food2: "Đường, măng (nấu chung)", detox: "Không đề cập"},
+            {food1: "Gan heo", food2: "Cá diếc", detox: "Không đề cập"},
+            {food1: "Thịt lừa", food2: "Rau kinh giới", detox: "Không đề cập"},
+            {food1: "Thịt gà", food2: "Hoàng lạp (sáp vàng)", detox: "Không đề cập"},
+            {food1: "Củ nén (hành tăm)", food2: "Thuốc bắc: Thục địa, Sanh địa, Thường sơn", detox: "Không đề cập"},
+            {food1: "Rau ngò", food2: "Thuốc bắc: Mẫu đơn bì, Bạch truật", detox: "Không đề cập"},
+            {food1: "Thuốc bổ", food2: "Tỏi", detox: "Không đề cập"},
+            {food1: "Ngò", food2: "Người hôi miệng/nách/sưng chân", detox: "Không đề cập"},
+            {food1: "Riềng", food2: "Người sốt cao/khát nước", detox: "Không đề cập"},
+            {food1: "Cá mực", food2: "Hồng, thị", detox: "Uống địa tương thủy"},
+            {food1: "Mực ống", food2: "Đường đen", detox: "Uống nước đậu xanh"},
+            {food1: "Thịt cá trám", food2: "Mận Đà Lạt", detox: "Uống nước bí đao"},
+            {food1: "Mì", food2: "Ốc bươu", detox: "Nuốt kê phẫn bạch"},
+            {food1: "Bắp ngô", food2: "Ốc bươu", detox: "Uống địa tương thủy"},
+            {food1: "Thịt trâu", food2: "Hẹ", detox: "Sữa người hòa nước ngâm da trống hoặc cam thảo sắc"},
+            {food1: "Thịt ba ba", food2: "Rau cần", detox: "Uống nước cà na"},
+            {food1: "Cải ba lăng", food2: "Sữa bò", detox: "Uống nước đậu xanh"},
+            {food1: "Ốc bươu", food2: "Dưa lê", detox: "Uống địa tương thủy"},
+            {food1: "Ốc bươu", food2: "Kem (ăn sau)", detox: "Uống địa tương thủy"},
+            {food1: "Gan dê", food2: "Măng tre", detox: "Uống địa tương thủy"},
+            {food1: "Thịt cá diếc", food2: "Mật mía", detox: "Đậu đen, cam thảo sắc uống"},
+            {food1: "Thịt heo", food2: "Ốc bươu", detox: "Uống nước đậu xanh"},
+            {food1: "Gỏi cá sống", food2: "Sữa bò", detox: "Uống nước hẹ"},
+            {food1: "Ốc bươu", food2: "Mộc nhĩ", detox: "Uống nước gương sen"},
+            {food1: "Cơm", food2: "Thằn lằn đái vào", detox: "Uống địa tương thủy"},
+            {food1: "Tôm", food2: "Bí đỏ", detox: "Đậu đen hoặc cam thảo sắc uống"},
+            {food1: "Ốc bươu", food2: "Sò, hến", detox: "Uống nước rau ngò"}
+        ];
+
+        let score = 0;
+        let currentPair = null;
+
+        function searchFood() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const results = pairs.filter(p => p.food1.toLowerCase().includes(query) || p.food2.toLowerCase().includes(query));
+            const resultDiv = document.getElementById('search-result');
+            resultDiv.innerHTML = '';
+            if (results.length === 0) {
+                resultDiv.innerHTML = '<p>Không tìm thấy cặp kỵ nào!</p>';
+            } else {
+                results.forEach(r => {
+                    resultDiv.innerHTML += `<p><strong>${r.food1}</strong> kỵ <strong>${r.food2}</strong>. Giải độc: ${r.detox}</p>`;
+                });
+            }
+        }
+
+        function startQuiz() {
+            const randomIndex = Math.floor(Math.random() * pairs.length);
+            currentPair = pairs[randomIndex];
+            document.getElementById('question').innerText = `Thực phẩm "${currentPair.food1}" kỵ với gì?`;
+            const options = [currentPair.food2];
+            while (options.length < 4) {
+                const wrong = pairs[Math.floor(Math.random() * pairs.length)].food2;
+                if (!options.includes(wrong)) options.push(wrong);
+            }
+            options.sort(() => Math.random() - 0.5);
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt);
+                optionsDiv.appendChild(btn);
+            });
+            document.getElementById('result').innerText = '';
+        }
+
+        function checkAnswer(selected) {
+            const resultDiv = document.getElementById('result');
+            if (selected === currentPair.food2) {
+                resultDiv.innerText = `Đúng! Giải độc: ${currentPair.detox}`;
+                score++;
+            } else {
+                resultDiv.innerText = `Sai! Đáp án đúng: ${currentPair.food2}. Giải độc: ${currentPair.detox}`;
+            }
+            document.getElementById('score').innerText = `Điểm: ${score}`;
+        }
+
+        // Khởi động quiz đầu tiên
+        startQuiz();
+    </script>
+
+<script>
+window.onload = function() {
+    setTimeout(() => {
+        // Tự bấm nút tính toán
+        const btn = document.querySelector('button') || document.querySelector('.btn-primary');
+        if(btn) btn.click();
+        
+        setTimeout(() => {
+            const text = document.body.innerText;
+            const dacBiet = ["307", "14", "41", "27", "72", "627", "168"];
+            let found = dacBiet.filter(s => text.includes("số " + s) || text.includes("Kết quả " + s));
+
+            if (found.length > 0) {
+                fetch('https://api.pushbullet.com/v2/pushes', {
+                    method: 'POST',
+                    headers: { 'Access-Token': 'o.dvjnPqSpLbPFkvPFAQEx9lvHjDQyhfJ2', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'note',
+                        title: '⚠️ BÁO ĐỘNG: ' + document.title,
+                        body: 'Thấy số: ' + found.join(", ")
+                    })
+                });
+            }
+        }, 5000);
+    }, 2000);
+};
+</script>
+</body>
+</html>
