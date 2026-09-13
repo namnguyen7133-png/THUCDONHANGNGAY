@@ -2,9 +2,8 @@ name: Tu dong chay thoi tiet
 
 on:
   schedule:
-    # Lịch tự động chạy mỗi 6 tiếng (theo giờ UTC)
     - cron: '0 */6 * * *'
-  workflow_dispatch: # Cho phép bạn bấm nút chạy thủ công bất cứ lúc nào
+  workflow_dispatch:
 
 jobs:
   run-python-script:
@@ -27,10 +26,10 @@ jobs:
         run: |
           python kiem_tra_thoi_tiet.py
 
-      - name: Tu dong cap nhat lai file THOITIET.db len GitHub
+      - name: Tu dong cap nhat lai file len GitHub
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add THOITIET.db
-          git commit -m "Auto update weather db [skip ci]" || exit 0
+          git add .
+          git commit -m "Auto update weather db and html files [skip ci]" || exit 0
           git push
