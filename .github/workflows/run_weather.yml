@@ -1,0 +1,36 @@
+name: Tu dong chay thoi tiet
+
+on:
+  schedule:
+    # Lịch tự động chạy mỗi 6 tiếng (theo giờ UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Cho phép bạn bấm nút chạy thủ công bất cứ lúc nào
+
+jobs:
+  run-python-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tai code tu repository ve may ao
+        uses: actions/checkout@v4
+
+      - name: Cai dat Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Cai dat thu vien (neu co file requirements.txt)
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Chay file Python
+        run: |
+          python ten_file_cua_ban.py
+
+      - name: Tu dong cap nhat lai file THOITIET.db len GitHub
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add THOITIET.db
+          git commit -m "Auto update weather db [skip ci]" || exit 0
+          git push
