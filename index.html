@@ -33,19 +33,26 @@
         <span style="color: #ccc;">|</span>
         
         <!-- Menu thả xuống chứa toàn bộ các file chuyên đề khác -->
-        <select onchange="if(this.value) window.location.href=this.value;" style="padding: 6px 10px; border-radius: 4px; border: 1px solid #ccc; font-size: 13px; background: #f8f9fa; cursor: pointer;">
-            <option value="">📁 Kho Thực Đơn & Chuyên Đề Khác...</option>
-            <option value="029-thuc-on-cho-oi-truong.html">Thực đơn Đại đội trưởng</option>
-            <option value="030-thuc-on-cho-phi-cong.html">Thực đơn Phi công</option>
-            <option value="031-thuc-on-xe-may.html">Thực đơn Xe máy</option>
-            <option value="032-thuc-on-lai-tau-cano.html">Thực đơn Lái tàu - Cano</option>
-            <option value="033-thuc-on-cho-lai-xe-o-to.html">Thực đơn Lái xe ô tô</option>
-            <option value="034-thuc-on-xem-chieu.html">Thực đơn Xem chiều</option>
-            <option value="291-chay-cho-an-uong.html">Chạy chợ ăn uống</option>
-            <option value="293-24-tiet-khi.html">24 Tiết khí</option>
-            <option value="297-tiet-khi-mon-an.html">Tiết khí & Món ăn</option>
-            <option value="288-an-uong-am-lich.html">Ăn uống Âm lịch</option>
-        </select>
+        <select id="menuChon" onchange="if(this.value) window.location.href=this.value;" style="padding: 6px 10px; border-radius: 4px; border: 1px solid #ccc; font-size: 13px; background: #f8f9fa; cursor: pointer;">
+    <option value="">📁 Kho Thực Đơn & Chuyên Đề Khác...</option>
+</select>
+
+<script>
+fetch('files.json?v=' + Date.now())
+  .then(res => res.json())
+  .then(data => {
+    const menu = document.getElementById('menuChon');
+    while (menu.options.length > 1) menu.remove(1);
+    data.files.forEach(f => {
+      const opt = document.createElement('option');
+      opt.value = f;
+      opt.textContent = '📄 ' + f.replace('.html', '').replace(/-/g, ' ');
+      menu.appendChild(opt);
+    });
+    console.log('✅ Đã load ' + data.files.length + ' file');
+  })
+  .catch(err => console.error('❌ Lỗi:', err));
+</script>
     </div>
 
     <!-- Mục xử lý khẩn cấp khi bị cảm lạnh / vừa đi ngoài trời về mệt mỏi -->
