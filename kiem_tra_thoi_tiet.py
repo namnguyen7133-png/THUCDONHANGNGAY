@@ -14,100 +14,100 @@ SLACK_WEBHOOK_URL = ""
 
 
 def gui_thong_bao_slack(noi_dung):
-  payload = {"text": noi_dung}
-  try:
-    response = requests.post(SLACK_WEBHOOK_URL, json=payload, timeout=10)
-    if response.status_code == 200:
-      print("Đã gửi tin nhắn lên Slack thành công!")
-    else:
-      print(f"Lỗi khi gửi Slack, mã lỗi: {response.status_code}")
-  except Exception as e:
-    print(f"Không thể kết nối tới Slack: {e}")
+    payload = {"text": noi_dung}
+    try:
+        response = requests.post(SLACK_WEBHOOK_URL, json=payload, timeout=10)
+        if response.status_code == 200:
+            print("Đã gửi tin nhắn lên Slack thành công!")
+        else:
+            print(f"Lỗi khi gửi Slack, mã lỗi: {response.status_code}")
+    except Exception as e:
+        print(f"Không thể kết nối tới Slack: {e}")
 
 
 # Cấu hình đường dẫn module log (chỉ load nếu chạy trên máy có ổ E)
 log_path = r"E:\QUAN_LY_DU_AN"
 if os.path.exists(log_path):
-  sys.path.append(log_path)
+    sys.path.append(log_path)
 try:
-  from nhat_ky_trung_tam import tu_dong_ghi_log
+    from nhat_ky_trung_tam import tu_dong_ghi_log
 except ImportError:
 
-  def tu_dong_ghi_log(func):
-    return func
+    def tu_dong_ghi_log(func):
+        return func
 
 
 # An toàn encoding cho console
 if sys.stdout is not None:
-  try:
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
-  except Exception:
-    pass
+    try:
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+    except Exception:
+        pass
 
 DB_PATH = os.path.join(BASE_DIR, "THOITIET.db")
 
 
 def init_database():
-  """Hàm kiểm tra và bổ sung cột 'rain_hours' vào bảng nếu chưa có"""
-  if not os.path.exists(DB_PATH):
-    return
+    """Hàm kiểm tra và bổ sung cột 'rain_hours' vào bảng nếu chưa có"""
+    if not os.path.exists(DB_PATH):
+        return
 
-  conn = sqlite3.connect(DB_PATH)
-  cur = conn.cursor()
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
 
-  cur.execute("PRAGMA table_info(THOITIET_DINH_DUONG)")
-  columns = [col[1] for col in cur.fetchall()]
+    cur.execute("PRAGMA table_info(THOITIET_DINH_DUONG)")
+    columns = [col[1] for col in cur.fetchall()]
 
-  if "rain_hours" not in columns:
-    try:
-      cur.execute(
-          "ALTER TABLE THOITIET_DINH_DUONG ADD COLUMN rain_hours TEXT"
-      )
-      conn.commit()
-      print("Đã thêm thành công cột 'rain_hours' vào cơ sở dữ liệu!")
-    except Exception as e:
-      print(f"Lỗi khi thêm cột vào DB: {e}")
+    if "rain_hours" not in columns:
+        try:
+            cur.execute(
+                "ALTER TABLE THOITIET_DINH_DUONG ADD COLUMN rain_hours TEXT"
+            )
+            conn.commit()
+            print("Đã thêm thành công cột 'rain_hours' vào cơ sở dữ liệu!")
+        except Exception as e:
+            print(f"Lỗi khi thêm cột vào DB: {e}")
 
-  conn.close()
+    conn.close()
 
 
 def get_week_forecast():
-  url = f"https://api.openweathermap.org/data/2.5/forecast?q=Hanoi&appid={API_KEY}&units=metric&lang=vi"
-  try:
-    r = requests.get(url, timeout=10).json()
-    daily_map = defaultdict(
-        lambda: {"min": 100, "max": -100, "rain": 0, "rain_hours": []}
-    )
-    for item in r["list"]:
-      dt_parts = item["dt_txt"].split(" ")
-      date = dt_parts[0]
-      time_str = dt_parts[1][:5]
+    url = f"https://api.openweathermap.org/data/2.5/forecast?q=Hanoi&appid={API_KEY}&units=metric&lang=vi"
+    try:
+        r = requests.get(url, timeout=10).json()
+        daily_map = defaultdict(
+            lambda: {"min": 100, "max": -100, "rain": 0, "rain_hours": []}
+        )
+        for item in r["list"]:
+            dt_parts = item["dt_txt"].split(" ")
+            date = dt_parts[0]
+            time_str = dt_parts[1][:5]
 
-      daily_map[date]["min"] = min(
-          daily_map[date]["min"], item["main"]["temp_min"]
-      )
-      daily_map[date]["max"] = max(
-          daily_map[date]["max"], item["main"]["temp_max"]
-      )
+            daily_map[date]["min"] = min(
+                daily_map[date]["min"], item["main"]["temp_min"]
+            )
+            daily_map[date]["max"] = max(
+                daily_map[date]["max"], item["main"]["temp_max"]
+            )
 
-      rain_3h = item.get("rain", {}).get("3h", 0)
-      if rain_3h > 0:
-        daily_map[date]["rain"] += rain_3h
-        daily_map[date]["rain_hours"].append(f"{time_str} ({rain_3h}mm)")
+            rain_3h = item.get("rain", {}).get("3h", 0)
+            if rain_3h > 0:
+                daily_map[date]["rain"] += rain_3h
+                daily_map[date]["rain_hours"].append(f"{time_str} ({rain_3h}mm)")
 
-    return daily_map
-  except Exception as e:
-    print(f"Lỗi khi lấy dữ liệu thời tiết: {e}")
-    return {}
+        return daily_map
+    except Exception as e:
+        print(f"Lỗi khi lấy dữ liệu thời tiết: {e}")
+        return {}
 
 
 def get_historical_data_for_date(target_md):
-  if not os.path.exists(DB_PATH):
-    return []
+    if not os.path.exists(DB_PATH):
+        return []
 
-  conn = sqlite3.connect(DB_PATH)
-  cur = conn.cursor()
-  query = """
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    query = """
         SELECT strftime('%Y', time), [temperature_2m_max (°C)], [temperature_2m_min (°C)], [rain_sum (mm)], rain_hours
         FROM THOITIET_DINH_DUONG 
         WHERE strftime('%m-%d', time) = ? 
@@ -115,114 +115,114 @@ def get_historical_data_for_date(target_md):
         AND strftime('%Y', time) != '2026'
         ORDER BY time DESC
     """
-  cur.execute(query, (target_md,))
-  rows = cur.fetchall()
-  conn.close()
-  return rows
+    cur.execute(query, (target_md,))
+    rows = cur.fetchall()
+    conn.close()
+    return rows
 
 
 def save_forecast_to_db(web_data):
-  if not os.path.exists(DB_PATH):
-    return
+    if not os.path.exists(DB_PATH):
+        return
 
-  conn = sqlite3.connect(DB_PATH)
-  cur = conn.cursor()
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
 
-  for date, w in web_data.items():
-    rain_hours_str = (
-        ", ".join(w["rain_hours"]) if w["rain_hours"] else "Không mưa"
-    )
+    for date, w in web_data.items():
+        rain_hours_str = (
+            ", ".join(w["rain_hours"]) if w["rain_hours"] else "Không mưa"
+        )
 
-    update_query = """
+        update_query = """
             UPDATE THOITIET_DINH_DUONG 
             SET rain_hours = ? 
             WHERE date(time) = ?
         """
-    cur.execute(update_query, (rain_hours_str, date))
+        cur.execute(update_query, (rain_hours_str, date))
 
-  conn.commit()
-  conn.close()
+    conn.commit()
+    conn.close()
 
 
 def lay_goi_y_mua_sam(max_temp, rain):
-  if rain > 0:
-    return """--- TRỜI MƯA/ẨM ƯỚT ---
+    if rain > 0:
+        return """--- TRỜI MƯA/ẨM ƯỚT ---
 Mua sắm: Gừng, khoai lang, chuối, sữa ấm, trà gừng.
 Thực đơn: Cháo gừng, khoai luộc, súp nóng, thịt nướng, bún trả, lương khô, ruốc, muối vừng.
 Thuốc phụ trợ: Siro ho thảo dược, Trà gừng, Vitamin C.
 Lưu ý: Người mỏi mệt, lưng mỏi đau: bôi dầu gió, thuốc cảm delcolgel, paracetamon, cảm xuyên hương, cà phê sữa tối."""
-  elif max_temp > 30:
-    return """--- TRỜI NẮNG NÓNG ---
+    elif max_temp > 30:
+        return """--- TRỜI NẮNG NÓNG ---
 Mua sắm: Chanh, dấm, cá, tôm, hến, trai, muối.
 Thực đơn: Canh chua, canh hến, cá hấp, Phở, Bún, Miến, Gà tần, Vịt lộn, đậu phụ.
 Thuốc phụ trợ: Oresol, men vi sinh, thuốc giải nhiệt, nước ép trái cây."""
-  elif max_temp < 18:
-    return """--- TRỜI RÉT ĐẬM ---
+    elif max_temp < 18:
+        return """--- TRỜI RÉT ĐẬM ---
 Mua sắm: Thịt bò, trứng vịt lộn, ngô, bơ, sữa ấm.
 Thực đơn: Thịt kho, lẩu gà/chim, món hầm, ngũ cốc nóng."""
-  elif 18 <= max_temp <= 25:
-    return """--- THỜI TIẾT MÁT MẺ ---
+    elif 18 <= max_temp <= 25:
+        return """--- THỜI TIẾT MÁT MẺ ---
 Mua sắm: Rượu nếp, sữa chua, riềng, mẻ, giấm bỗng."""
-  return "--- TRỜI TIẾT ỔN ĐỊNH --- Ăn uống cân bằng, duy trì tập luyện nhẹ nhàng."
+    return "--- TRỜI TIẾT ỔN ĐỊNH --- Ăn uống cân bằng, duy trì tập luyện nhẹ nhàng."
 
 
 @tu_dong_ghi_log
 def main():
-  init_database()
-  web_data = get_week_forecast()
-  save_forecast_to_db(web_data)
+    init_database()
+    web_data = get_week_forecast()
+    save_forecast_to_db(web_data)
 
-  noi_dung_bao_cao = "🤖 *BÁO CÁO THỜI TIẾT & LỜI KHUYÊN TỰ ĐỘNG* 🤖\n"
-  html_rows = ""
-
-  print(
-      f"{'NGÀY':<12} | {'DỰ BÁO':<10} | {'MƯA':<6} |"
-      f" {'LỊCH SỬ TỪ 2007 (TRUNG BÌNH)'}"
-  )
-  print("-" * 120)
-
-  noi_dung_bao_cao += (
-      "NGÀY          | DỰ BÁO      | MƯA    | LỊCH SỬ TỪ 2007 (TRUNG BÌNH)\n"
-      + "-" * 80
-      + "\n"
-  )
-
-  for date in sorted(web_data.keys()):
-    w = web_data[date]
-    md = "-".join(date.split("-")[1:])
-    history = get_historical_data_for_date(md)
-
-    if history:
-      avg_max = sum(r[1] for r in history if r[1] is not None) / len(history)
-      avg_min = sum(r[2] for r in history if r[2] is not None) / len(history)
-      hist_str = f"TB: {avg_max:.1f}/{avg_min:.1f}°C (từ {len(history)} năm)"
-    else:
-      hist_str = "Chưa có dữ liệu"
-
-    rain_str = f"{w['rain']:.1f}mm" if w["rain"] > 0 else "0mm"
-    gio_mua_txt = (
-        ", ".join(w["rain_hours"])
-        if w["rain_hours"]
-        else "Không có dự báo mưa trong ngày"
-    )
-    goi_y = lay_goi_y_mua_sam(w["max"], w["rain"])
+    noi_dung_bao_cao = "🤖 *BÁO CÁO THỜI TIẾT & LỜI KHUYÊN TỰ ĐỘNG* 🤖\n"
+    html_rows = ""
 
     print(
-        f"{date:<12} | {w['max']:.1f}/{w['min']:.1f}°C | {rain_str:<6} |"
-        f" {hist_str}"
+        f"{'NGÀY':<12} | {'DỰ BÁO':<10} | {'MƯA':<6} |"
+        f" {'LỊCH SỬ TỪ 2007 (TRUNG BÌNH)'}"
     )
-    noi_dung_bao_cao += (
-        f"{date:<12} | {w['max']:.1f}/{w['min']:.1f}°C | {rain_str:<6} |"
-        f" {hist_str}\n"
-    )
-    print(f"--> [WEB] Khung giờ mưa: {gio_mua_txt}")
-    noi_dung_bao_cao += f"--> [WEB] Khung giờ mưa: {gio_mua_txt}\n"
-    print(f"--> {goi_y}")
-    noi_dung_bao_cao += f"--> Gợi ý: {goi_y}\n"
     print("-" * 120)
-    noi_dung_bao_cao += "-" * 80 + "\n"
 
-    html_rows += f"""
+    noi_dung_bao_cao += (
+        "NGÀY         | DỰ BÁO      | MƯA    | LỊCH SỬ TỪ 2007 (TRUNG BÌNH)\n"
+        + "-" * 80
+        + "\n"
+    )
+
+    for date in sorted(web_data.keys()):
+        w = web_data[date]
+        md = "-".join(date.split("-")[1:])
+        history = get_historical_data_for_date(md)
+
+        if history:
+            avg_max = sum(r[1] for r in history if r[1] is not None) / len(history)
+            avg_min = sum(r[2] for r in history if r[2] is not None) / len(history)
+            hist_str = f"TB: {avg_max:.1f}/{avg_min:.1f}°C (từ {len(history)} năm)"
+        else:
+            hist_str = "Chưa có dữ liệu"
+
+        rain_str = f"{w['rain']:.1f}mm" if w["rain"] > 0 else "0mm"
+        gio_mua_txt = (
+            ", ".join(w["rain_hours"])
+            if w["rain_hours"]
+            else "Không có dự báo mưa trong ngày"
+        )
+        goi_y = lay_goi_y_mua_sam(w["max"], w["rain"])
+
+        print(
+            f"{date:<12} | {w['max']:.1f}/{w['min']:.1f}°C | {rain_str:<6} |"
+            f" {hist_str}"
+        )
+        noi_dung_bao_cao += (
+            f"{date:<12} | {w['max']:.1f}/{w['min']:.1f}°C | {rain_str:<6} |"
+            f" {hist_str}\n"
+        )
+        print(f"--> [WEB] Khung giờ mưa: {gio_mua_txt}")
+        noi_dung_bao_cao += f"--> [WEB] Khung giờ mưa: {gio_mua_txt}\n"
+        print(f"--> {goi_y}")
+        noi_dung_bao_cao += f"--> Gợi ý: {goi_y}\n"
+        print("-" * 120)
+        noi_dung_bao_cao += "-" * 80 + "\n"
+
+        html_rows += f"""
         <tr>
             <td><b>{date}</b></td>
             <td>{w['max']:.1f}/{w['min']:.1f}°C</td>
@@ -233,7 +233,7 @@ def main():
         </tr>
         """
 
-  html_content = f"""<!DOCTYPE html>
+    html_content = f"""<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -311,16 +311,17 @@ def main():
 </html>
 """
 
-  html_path = os.path.join(BASE_DIR, "thuc_don_nguoi_linh.html")
-  try:
-    with open(html_path, "w", encoding="utf-8") as f:
-      f.write(html_content)
-    print(f"Đã tạo trang web thành công tại: {html_path}")
-  except Exception as e:
-    print(f"Lỗi khi tạo file HTML: {e}")
+    # ĐÃ SỬA THÀNH INDEX.HTML ĐỂ GHI ĐÈ TRỰC TIẾP LÊN WEB
+    html_path = os.path.join(BASE_DIR, "index.html")
+    try:
+        with open(html_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        print(f"Đã tạo trang web thành công tại: {html_path}")
+    except Exception as e:
+        print(f"Lỗi khi tạo file HTML: {e}")
 
-  gui_thong_bao_slack(noi_dung_bao_cao)
+    gui_thong_bao_slack(noi_dung_bao_cao)
 
 
 if __name__ == "__main__":
-  main()
+    main()
