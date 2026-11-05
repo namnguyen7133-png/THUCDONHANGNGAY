@@ -20,42 +20,12 @@
 
     <h1>🛡️ TRANG THÔNG TIN THỜI TIẾT & THỰC ĐƠN NGƯỜI LÍNH</h1>
     
-    <!-- Thanh Menu Điều Hướng Chuẩn Xác -->
     <div style="background: #ffffff; padding: 12px 15px; margin-bottom: 20px; border: 1px solid #dcdcdc; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-        
-        <!-- Nút về trang chủ -->
         <a href="index.html" style="background: #2c3e50; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 13px;">🏠 Trang Chủ</a>
-        
-        <!-- Các nút truy cập nhanh quan trọng -->
         <a href="025-thuc-on-i-linh.html" style="background: #e9ecef; color: #333; padding: 6px 10px; text-decoration: none; border-radius: 4px; font-size: 13px; border: 1px solid #ccc;">Đi lính</a>
         <a href="286-an-benh-tri.html" style="background: #e9ecef; color: #333; padding: 6px 10px; text-decoration: none; border-radius: 4px; font-size: 13px; border: 1px solid #ccc;">Bệnh trĩ</a>
-
-        <span style="color: #ccc;">|</span>
-        
-        <!-- Menu thả xuống chứa toàn bộ các file chuyên đề khác -->
-        <select id="menuChon" onchange="if(this.value) window.location.href=this.value;" style="padding: 6px 10px; border-radius: 4px; border: 1px solid #ccc; font-size: 13px; background: #f8f9fa; cursor: pointer;">
-    <option value="">📁 Kho Thực Đơn & Chuyên Đề Khác...</option>
-</select>
-
-<script>
-fetch('files.json?v=' + Date.now())
-  .then(res => res.json())
-  .then(data => {
-    const menu = document.getElementById('menuChon');
-    while (menu.options.length > 1) menu.remove(1);
-    data.files.forEach(f => {
-      const opt = document.createElement('option');
-      opt.value = f;
-      opt.textContent = '📄 ' + f.replace('.html', '').replace(/-/g, ' ');
-      menu.appendChild(opt);
-    });
-    console.log('✅ Đã load ' + data.files.length + ' file');
-  })
-  .catch(err => console.error('❌ Lỗi:', err));
-</script>
     </div>
 
-    <!-- Mục xử lý khẩn cấp khi bị cảm lạnh / vừa đi ngoài trời về mệt mỏi -->
     <div class="emergency">
         <h3>🚨 GÓC CẤP CỨU NHANH: KHI BỊ CẢM LẠNH, MỆT MỎI, VỪA ĐI NGOÀI TRỜI VỀ</h3>
         <p><b>Triệu chứng:</b> Người mệt lả không muốn dậy, muốn đi nằm ngay lập tức sau khi vừa đi ngoài trời về.</p>
@@ -65,11 +35,10 @@ fetch('files.json?v=' + Date.now())
             <li><b>Xoa bóp cơ thể:</b> Xoa dầu gió (dầu nóng) vào lòng bàn chân, thái dương, cổ và vùng lưng mỏi đau.</li>
             <li><b>Làm ấm cơ thể từ bên trong:</b> Uống ngay một cốc nước trà gừng ấm hoặc nước gừng mật ong.</li>
             <li><b>Ăn uống bồi bổ:</b> Ăn một bát xôi nóng, cháo gừng nóng hoặc súp nóng để nhanh chóng hồi phục năng lượng.</li>
-            <li><b>Hỗ trợ tiêu hóa / Cảm mạo:</b> Uống bổ sung thuốc theo tình trạng (ví dụ: thuốc cảm, Cảm xuyên hương, hoặc thuốc Beberin nếu có vấn đề về tiêu hóa).</li>
+            <li><b>Hỗ trợ tiêu hóa / Cảm mạo:</b> Uống bổ sung thuốc theo tình trạng (thuốc cảm, Cảm xuyên hương, hoặc thuốc Berberin).</li>
         </ul>
     </div>
 
-    <!-- Bảng dự báo thời tiết và gợi ý tự động -->
     <div class="card">
         <h2>📊 Bảng Dự Báo Thời Tiết & Gợi Ý Dinh Dưỡng Tuần Này</h2>
         <table>
@@ -86,11 +55,11 @@ fetch('files.json?v=' + Date.now())
             <tbody>
                 
         <tr>
-            <td><b>2026-09-13</b></td>
-            <td>30.9/24.2°C</td>
-            <td>4.0mm</td>
-            <td>09:00 (0.15mm), 12:00 (0.1mm), 15:00 (1.4mm), 18:00 (0.95mm), 21:00 (1.4mm)</td>
-            <td>TB: 30.2/24.5°C (từ 19 năm)</td>
+            <td><b>2026-11-05</b></td>
+            <td>29.4/24.8°C</td>
+            <td>3.6mm</td>
+            <td>09:00 (1.08mm), 15:00 (2.52mm)</td>
+            <td>TB: 26.5/19.4°C (từ 19 năm)</td>
             <td><pre style="font-family:inherit; margin:0;">--- TRỜI MƯA/ẨM ƯỚT ---
 Mua sắm: Gừng, khoai lang, chuối, sữa ấm, trà gừng.
 Thực đơn: Cháo gừng, khoai luộc, súp nóng, thịt nướng, bún trả, lương khô, ruốc, muối vừng.
@@ -99,11 +68,11 @@ Lưu ý: Người mỏi mệt, lưng mỏi đau: bôi dầu gió, thuốc cảm 
         </tr>
         
         <tr>
-            <td><b>2026-09-14</b></td>
-            <td>25.4/22.3°C</td>
-            <td>12.9mm</td>
-            <td>00:00 (1.2mm), 03:00 (0.91mm), 06:00 (0.94mm), 09:00 (1.97mm), 12:00 (2.42mm), 15:00 (2.79mm), 18:00 (2mm), 21:00 (0.7mm)</td>
-            <td>TB: 30.1/24.2°C (từ 19 năm)</td>
+            <td><b>2026-11-06</b></td>
+            <td>29.7/23.0°C</td>
+            <td>20.1mm</td>
+            <td>09:00 (6.03mm), 15:00 (14.07mm)</td>
+            <td>TB: 27.1/19.6°C (từ 19 năm)</td>
             <td><pre style="font-family:inherit; margin:0;">--- TRỜI MƯA/ẨM ƯỚT ---
 Mua sắm: Gừng, khoai lang, chuối, sữa ấm, trà gừng.
 Thực đơn: Cháo gừng, khoai luộc, súp nóng, thịt nướng, bún trả, lương khô, ruốc, muối vừng.
@@ -112,11 +81,11 @@ Lưu ý: Người mỏi mệt, lưng mỏi đau: bôi dầu gió, thuốc cảm 
         </tr>
         
         <tr>
-            <td><b>2026-09-15</b></td>
-            <td>24.4/22.6°C</td>
-            <td>5.7mm</td>
-            <td>00:00 (1.43mm), 03:00 (1.07mm), 06:00 (0.2mm), 09:00 (0.94mm), 12:00 (0.59mm), 21:00 (1.43mm)</td>
-            <td>TB: 30.7/24.6°C (từ 19 năm)</td>
+            <td><b>2026-11-07</b></td>
+            <td>29.7/22.8°C</td>
+            <td>3.4mm</td>
+            <td>09:00 (1.02mm), 15:00 (2.38mm)</td>
+            <td>TB: 26.8/20.3°C (từ 19 năm)</td>
             <td><pre style="font-family:inherit; margin:0;">--- TRỜI MƯA/ẨM ƯỚT ---
 Mua sắm: Gừng, khoai lang, chuối, sữa ấm, trà gừng.
 Thực đơn: Cháo gừng, khoai luộc, súp nóng, thịt nướng, bún trả, lương khô, ruốc, muối vừng.
@@ -125,11 +94,11 @@ Lưu ý: Người mỏi mệt, lưng mỏi đau: bôi dầu gió, thuốc cảm 
         </tr>
         
         <tr>
-            <td><b>2026-09-16</b></td>
-            <td>31.0/23.1°C</td>
-            <td>3.5mm</td>
-            <td>00:00 (0.33mm), 09:00 (0.95mm), 12:00 (2.2mm)</td>
-            <td>TB: 30.6/24.5°C (từ 19 năm)</td>
+            <td><b>2026-11-08</b></td>
+            <td>29.9/22.7°C</td>
+            <td>10.3mm</td>
+            <td>09:00 (3.09mm), 15:00 (7.21mm)</td>
+            <td>TB: 26.5/19.2°C (từ 19 năm)</td>
             <td><pre style="font-family:inherit; margin:0;">--- TRỜI MƯA/ẨM ƯỚT ---
 Mua sắm: Gừng, khoai lang, chuối, sữa ấm, trà gừng.
 Thực đơn: Cháo gừng, khoai luộc, súp nóng, thịt nướng, bún trả, lương khô, ruốc, muối vừng.
@@ -138,11 +107,11 @@ Lưu ý: Người mỏi mệt, lưng mỏi đau: bôi dầu gió, thuốc cảm 
         </tr>
         
         <tr>
-            <td><b>2026-09-17</b></td>
-            <td>31.1/23.9°C</td>
-            <td>19.3mm</td>
-            <td>03:00 (2.69mm), 06:00 (2.8mm), 09:00 (5.59mm), 12:00 (3.54mm), 15:00 (2.19mm), 18:00 (2.16mm), 21:00 (0.36mm)</td>
-            <td>TB: 30.6/24.4°C (từ 19 năm)</td>
+            <td><b>2026-11-09</b></td>
+            <td>23.3/17.9°C</td>
+            <td>21.1mm</td>
+            <td>09:00 (6.33mm), 15:00 (14.77mm)</td>
+            <td>TB: 26.0/19.1°C (từ 19 năm)</td>
             <td><pre style="font-family:inherit; margin:0;">--- TRỜI MƯA/ẨM ƯỚT ---
 Mua sắm: Gừng, khoai lang, chuối, sữa ấm, trà gừng.
 Thực đơn: Cháo gừng, khoai luộc, súp nóng, thịt nướng, bún trả, lương khô, ruốc, muối vừng.
@@ -151,16 +120,23 @@ Lưu ý: Người mỏi mệt, lưng mỏi đau: bôi dầu gió, thuốc cảm 
         </tr>
         
         <tr>
-            <td><b>2026-09-18</b></td>
-            <td>25.0/25.0°C</td>
-            <td>1.3mm</td>
-            <td>00:00 (1.26mm)</td>
-            <td>TB: 30.8/24.3°C (từ 19 năm)</td>
-            <td><pre style="font-family:inherit; margin:0;">--- TRỜI MƯA/ẨM ƯỚT ---
-Mua sắm: Gừng, khoai lang, chuối, sữa ấm, trà gừng.
-Thực đơn: Cháo gừng, khoai luộc, súp nóng, thịt nướng, bún trả, lương khô, ruốc, muối vừng.
-Thuốc phụ trợ: Siro ho thảo dược, Trà gừng, Vitamin C.
-Lưu ý: Người mỏi mệt, lưng mỏi đau: bôi dầu gió, thuốc cảm delcolgel, paracetamon, cảm xuyên hương, cà phê sữa tối.</pre></td>
+            <td><b>2026-11-10</b></td>
+            <td>22.6/16.5°C</td>
+            <td>0mm</td>
+            <td>Không mưa</td>
+            <td>TB: 26.2/18.9°C (từ 19 năm)</td>
+            <td><pre style="font-family:inherit; margin:0;">--- THỜI TIẾT MÁT MẺ ---
+Mua sắm: Rượu nếp, sữa chua, riềng, mẻ, giấm bỗng.</pre></td>
+        </tr>
+        
+        <tr>
+            <td><b>2026-11-11</b></td>
+            <td>24.1/15.5°C</td>
+            <td>0mm</td>
+            <td>Không mưa</td>
+            <td>TB: 26.2/18.8°C (từ 19 năm)</td>
+            <td><pre style="font-family:inherit; margin:0;">--- THỜI TIẾT MÁT MẺ ---
+Mua sắm: Rượu nếp, sữa chua, riềng, mẻ, giấm bỗng.</pre></td>
         </tr>
         
             </tbody>
