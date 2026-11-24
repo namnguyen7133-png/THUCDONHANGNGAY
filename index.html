@@ -1,290 +1,92 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📚 Danh Sách Trang - Tổng Hợp</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-            margin: 0; padding: 20px;
-            background: #f4f6f9; color: #333;
-        }
-        .container { max-width: 1200px; margin: 0 auto; }
-        h1 { color: #2c3e50; text-align: center; margin: 0 0 8px; font-size: 28px; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 25px; min-height: 24px; }
-        .subtitle b { color: #2c3e50; }
-        .search-wrap { position: sticky; top: 0; background: #f4f6f9; padding: 10px 0 20px; z-index: 10; }
-        .search {
-            width: 100%; padding: 14px 18px; font-size: 16px;
-            border: 2px solid #d0d7de; border-radius: 10px;
-            outline: none; transition: border-color .2s; background: #fff;
-        }
-        .search:focus { border-color: #2c3e50; }
-        .search:disabled { opacity: .5; cursor: not-allowed; }
-        .folder { margin-bottom: 30px; }
-        .folder-title {
-            color: #2c3e50; font-size: 20px; padding-bottom: 8px;
-            border-bottom: 2px solid #e1e4e8; margin: 0 0 15px;
-        }
-        .count { color: #888; font-weight: normal; font-size: 15px; }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 14px;
-        }
-        .card {
-            display: flex; flex-direction: column; background: #fff;
-            border: 1px solid #e1e4e8; border-radius: 10px;
-            padding: 16px; text-decoration: none; color: inherit;
-            transition: transform .15s, box-shadow .15s, border-color .15s;
-        }
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-            border-color: #2c3e50;
-        }
-        .card-icon { font-size: 28px; margin-bottom: 8px; }
-        .card-title {
-            font-weight: 600; font-size: 15px; color: #2c3e50;
-            margin-bottom: 4px; word-break: break-word;
-        }
-        .card-path {
-            font-size: 11px; color: #aaa; word-break: break-all;
-            font-family: ui-monospace, Consolas, monospace;
-        }
-        .empty, .error {
-            text-align: center; padding: 40px; border-radius: 10px;
-            background: #fff; color: #666;
-        }
-        .error { color: #c0392b; border: 1px solid #f8d7da; background: #fff5f5; text-align: left; }
-        .error h3 { margin-top: 0; color: #c0392b; }
-        .error code { background: #fef0f0; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
-        .spinner {
-            display: inline-block; width: 16px; height: 16px;
-            border: 2px solid #ddd; border-top-color: #2c3e50;
-            border-radius: 50%; animation: spin .8s linear infinite;
-            vertical-align: middle; margin-right: 8px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @media (max-width: 480px) {
-            body { padding: 12px; }
-            h1 { font-size: 22px; }
-            .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-            .card { padding: 12px; }
-            .card-icon { font-size: 22px; }
-            .card-title { font-size: 14px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Danh Sách Trang - Tổng Hợp</title>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    margin: 0; padding: 20px; background: #f4f6f9; color: #333;
+}
+.container { max-width: 1200px; margin: 0 auto; }
+h1 { color: #2c3e50; text-align: center; margin: 0 0 8px; font-size: 28px; }
+.subtitle { text-align: center; color: #666; margin-bottom: 25px; }
+.search-wrap {
+    position: sticky; top: 0; background: #f4f6f9;
+    padding: 10px 0 20px; z-index: 10;
+}
+.search {
+    width: 100%; padding: 14px 18px; font-size: 16px;
+    border: 2px solid #d0d7de; border-radius: 10px;
+    outline: none; transition: border-color .2s; background: #fff;
+}
+.search:focus { border-color: #2c3e50; }
+.folder { margin-bottom: 30px; }
+.folder-title {
+    color: #2c3e50; font-size: 20px; padding-bottom: 8px;
+    border-bottom: 2px solid #e1e4e8; margin: 0 0 15px;
+}
+.count { color: #888; font-weight: normal; font-size: 15px; }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+}
+.card {
+    display: flex; flex-direction: column; background: #fff;
+    border: 1px solid #e1e4e8; border-radius: 10px;
+    padding: 16px; text-decoration: none; color: inherit;
+    transition: transform .15s, box-shadow .15s, border-color .15s;
+}
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+    border-color: #2c3e50;
+}
+.card-icon { font-size: 28px; margin-bottom: 8px; }
+.card-title {
+    font-weight: 600; font-size: 15px; color: #2c3e50;
+    margin-bottom: 4px; word-break: break-word;
+}
+.card-path { font-size: 12px; color: #888; word-break: break-all; }
+.empty { text-align: center; padding: 40px; color: #888; }
+@media (max-width: 480px) {
+    body { padding: 12px; }
+    h1 { font-size: 22px; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+    .card { padding: 12px; }
+    .card-icon { font-size: 22px; }
+    .card-title { font-size: 14px; }
+}
+</style>
 </head>
 <body>
 <div class="container">
     <h1>📚 Danh Sách Trang</h1>
-    <p class="subtitle" id="status">
-        <span class="spinner"></span> Đang tải danh sách từ GitHub...
-    </p>
+    <p class="subtitle">Tổng cộng <b>79</b> trang HTML trong repo</p>
     <div class="search-wrap">
         <input type="text" class="search" id="search"
-               placeholder="🔍 Tìm theo tên hoặc đường dẫn..." disabled>
+               placeholder="🔍 Tìm theo tên hoặc đường dẫn...">
     </div>
-    <div id="sections"></div>
+    <div id="sections"><section class="folder"><h2 class="folder-title">📂 Thư mục gốc <span class="count">(79 trang)</span></h2><div class="grid"><a href="024-gio-ngay-choi.html" class="card" data-search="024-gio-ngay-choi.html"><div class="card-icon">📄</div><div class="card-title">Gio ngay choi</div><div class="card-path">024-gio-ngay-choi.html</div></a><a href="025-thuc-on-i-linh.html" class="card" data-search="025-thuc-on-i-linh.html"><div class="card-icon">📄</div><div class="card-title">Thuc on i linh</div><div class="card-path">025-thuc-on-i-linh.html</div></a><a href="029-thuc-on-cho-oi-truong.html" class="card" data-search="029-thuc-on-cho-oi-truong.html"><div class="card-icon">📄</div><div class="card-title">Thuc on cho oi truong</div><div class="card-path">029-thuc-on-cho-oi-truong.html</div></a><a href="030-thuc-on-cho-phi-cong.html" class="card" data-search="030-thuc-on-cho-phi-cong.html"><div class="card-icon">📄</div><div class="card-title">Thuc on cho phi cong</div><div class="card-path">030-thuc-on-cho-phi-cong.html</div></a><a href="031-thuc-on-xe-may.html" class="card" data-search="031-thuc-on-xe-may.html"><div class="card-icon">📄</div><div class="card-title">Thuc on xe may</div><div class="card-path">031-thuc-on-xe-may.html</div></a><a href="032-thuc-on-lai-tau-cano.html" class="card" data-search="032-thuc-on-lai-tau-cano.html"><div class="card-icon">📄</div><div class="card-title">Thuc on lai tau cano</div><div class="card-path">032-thuc-on-lai-tau-cano.html</div></a><a href="033-thuc-on-cho-lai-xe-o-to.html" class="card" data-search="033-thuc-on-cho-lai-xe-o-to.html"><div class="card-icon">📄</div><div class="card-title">Thuc on cho lai xe o to</div><div class="card-path">033-thuc-on-cho-lai-xe-o-to.html</div></a><a href="034-thuc-on-xem-chieu.html" class="card" data-search="034-thuc-on-xem-chieu.html"><div class="card-icon">📄</div><div class="card-title">Thuc on xem chieu</div><div class="card-path">034-thuc-on-xem-chieu.html</div></a><a href="035-ghep-danh-sach-va-can-chi.html" class="card" data-search="035-ghep-danh-sach-va-can-chi.html"><div class="card-icon">📚</div><div class="card-title">Ghep danh sach va can chi</div><div class="card-path">035-ghep-danh-sach-va-can-chi.html</div></a><a href="036-mon-an-4.html" class="card" data-search="036-mon-an-4.html"><div class="card-icon">⛅</div><div class="card-title">Mon an 4</div><div class="card-path">036-mon-an-4.html</div></a><a href="037-thuc-pham-ky-nhau.html" class="card" data-search="037-thuc-pham-ky-nhau.html"><div class="card-icon">📄</div><div class="card-title">Thuc pham ky nhau</div><div class="card-path">037-thuc-pham-ky-nhau.html</div></a><a href="038-che-o-an-it-benh-tat.html" class="card" data-search="038-che-o-an-it-benh-tat.html"><div class="card-icon">📄</div><div class="card-title">Che o an it benh tat</div><div class="card-path">038-che-o-an-it-benh-tat.html</div></a><a href="039-cap-thuc-pham-ky-nhau.html" class="card" data-search="039-cap-thuc-pham-ky-nhau.html"><div class="card-icon">📄</div><div class="card-title">Cap thuc pham ky nhau</div><div class="card-path">039-cap-thuc-pham-ky-nhau.html</div></a><a href="042-bangsinhtraigai.html" class="card" data-search="042-bangsinhtraigai.html"><div class="card-icon">📄</div><div class="card-title">Bangsinhtraigai</div><div class="card-path">042-bangsinhtraigai.html</div></a><a href="044-lam-thu-linh.html" class="card" data-search="044-lam-thu-linh.html"><div class="card-icon">📄</div><div class="card-title">Lam thu linh</div><div class="card-path">044-lam-thu-linh.html</div></a><a href="047-tinh-trung-tang.html" class="card" data-search="047-tinh-trung-tang.html"><div class="card-icon">📄</div><div class="card-title">Tinh trung tang</div><div class="card-path">047-tinh-trung-tang.html</div></a><a href="057-gio-la-cq-noitang.html" class="card" data-search="057-gio-la-cq-noitang.html"><div class="card-icon">📄</div><div class="card-title">Gio la cq noitang</div><div class="card-path">057-gio-la-cq-noitang.html</div></a><a href="066-mon-an-chua-benh-1.html" class="card" data-search="066-mon-an-chua-benh-1.html"><div class="card-icon">⛅</div><div class="card-title">Mon an chua benh 1</div><div class="card-path">066-mon-an-chua-benh-1.html</div></a><a href="067-mon-an-chua-benh-2.html" class="card" data-search="067-mon-an-chua-benh-2.html"><div class="card-icon">⛅</div><div class="card-title">Mon an chua benh 2</div><div class="card-path">067-mon-an-chua-benh-2.html</div></a><a href="068-mon-an-chua-benh-3.html" class="card" data-search="068-mon-an-chua-benh-3.html"><div class="card-icon">⛅</div><div class="card-title">Mon an chua benh 3</div><div class="card-path">068-mon-an-chua-benh-3.html</div></a><a href="069-mon-an-chua-benh-4.html" class="card" data-search="069-mon-an-chua-benh-4.html"><div class="card-icon">⛅</div><div class="card-title">Mon an chua benh 4</div><div class="card-path">069-mon-an-chua-benh-4.html</div></a><a href="070-mon-an-chua-benh-5.html" class="card" data-search="070-mon-an-chua-benh-5.html"><div class="card-icon">⛅</div><div class="card-title">Mon an chua benh 5</div><div class="card-path">070-mon-an-chua-benh-5.html</div></a><a href="071-mon-an-chua-benh-6.html" class="card" data-search="071-mon-an-chua-benh-6.html"><div class="card-icon">⛅</div><div class="card-title">Mon an chua benh 6</div><div class="card-path">071-mon-an-chua-benh-6.html</div></a><a href="072-mon-an-chua-benh-7.html" class="card" data-search="072-mon-an-chua-benh-7.html"><div class="card-icon">⛅</div><div class="card-title">Mon an chua benh 7</div><div class="card-path">072-mon-an-chua-benh-7.html</div></a><a href="073-mon-an-chua-benh-8.html" class="card" data-search="073-mon-an-chua-benh-8.html"><div class="card-icon">⛅</div><div class="card-title">Mon an chua benh 8</div><div class="card-path">073-mon-an-chua-benh-8.html</div></a><a href="074-mon-an-chua-benh-9.html" class="card" data-search="074-mon-an-chua-benh-9.html"><div class="card-icon">⛅</div><div class="card-title">Mon an chua benh 9</div><div class="card-path">074-mon-an-chua-benh-9.html</div></a><a href="075-mon-an-chua-benh-10.html" class="card" data-search="075-mon-an-chua-benh-10.html"><div class="card-icon">⛅</div><div class="card-title">Mon an chua benh 10</div><div class="card-path">075-mon-an-chua-benh-10.html</div></a><a href="076-mon-an-chua-benh-11.html" class="card" data-search="076-mon-an-chua-benh-11.html"><div class="card-icon">⛅</div><div class="card-title">Mon an chua benh 11</div><div class="card-path">076-mon-an-chua-benh-11.html</div></a><a href="077-mon-an-chua-benh-12.html" class="card" data-search="077-mon-an-chua-benh-12.html"><div class="card-icon">⛅</div><div class="card-title">Mon an chua benh 12</div><div class="card-path">077-mon-an-chua-benh-12.html</div></a><a href="078-mon-an-chua-benh-13.html" class="card" data-search="078-mon-an-chua-benh-13.html"><div class="card-icon">⛅</div><div class="card-title">Mon an chua benh 13</div><div class="card-path">078-mon-an-chua-benh-13.html</div></a><a href="079-mon-an-chua-benh-14.html" class="card" data-search="079-mon-an-chua-benh-14.html"><div class="card-icon">⛅</div><div class="card-title">Mon an chua benh 14</div><div class="card-path">079-mon-an-chua-benh-14.html</div></a><a href="080-mon-an-chua-benh-15.html" class="card" data-search="080-mon-an-chua-benh-15.html"><div class="card-icon">⛅</div><div class="card-title">Mon an chua benh 15</div><div class="card-path">080-mon-an-chua-benh-15.html</div></a><a href="081-game-danh-sach-15-phan.html" class="card" data-search="081-game-danh-sach-15-phan.html"><div class="card-icon">📚</div><div class="card-title">Game danh sach 15 phan</div><div class="card-path">081-game-danh-sach-15-phan.html</div></a><a href="082-mon-an-16.html" class="card" data-search="082-mon-an-16.html"><div class="card-icon">⛅</div><div class="card-title">Mon an 16</div><div class="card-path">082-mon-an-16.html</div></a><a href="085-ngu-hanh-chua-benh.html" class="card" data-search="085-ngu-hanh-chua-benh.html"><div class="card-icon">📄</div><div class="card-title">Ngu hanh chua benh</div><div class="card-path">085-ngu-hanh-chua-benh.html</div></a><a href="089-mon-an-19.html" class="card" data-search="089-mon-an-19.html"><div class="card-icon">⛅</div><div class="card-title">Mon an 19</div><div class="card-path">089-mon-an-19.html</div></a><a href="090-mon-an-13.html" class="card" data-search="090-mon-an-13.html"><div class="card-icon">⛅</div><div class="card-title">Mon an 13</div><div class="card-path">090-mon-an-13.html</div></a><a href="095-kinh-nghiem-buon-ban.html" class="card" data-search="095-kinh-nghiem-buon-ban.html"><div class="card-icon">📄</div><div class="card-title">Kinh nghiem buon ban</div><div class="card-path">095-kinh-nghiem-buon-ban.html</div></a><a href="096-lam-viec-nhom.html" class="card" data-search="096-lam-viec-nhom.html"><div class="card-icon">📄</div><div class="card-title">Lam viec nhom</div><div class="card-path">096-lam-viec-nhom.html</div></a><a href="097-tim-gio-theo-so-nhap-vao.html" class="card" data-search="097-tim-gio-theo-so-nhap-vao.html"><div class="card-icon">📄</div><div class="card-title">Tim gio theo so nhap vao</div><div class="card-path">097-tim-gio-theo-so-nhap-vao.html</div></a><a href="098-xem-nghe-theo-can.html" class="card" data-search="098-xem-nghe-theo-can.html"><div class="card-icon">📄</div><div class="card-title">Xem nghe theo can</div><div class="card-path">098-xem-nghe-theo-can.html</div></a><a href="099-mon-an-10.html" class="card" data-search="099-mon-an-10.html"><div class="card-icon">⛅</div><div class="card-title">Mon an 10</div><div class="card-path">099-mon-an-10.html</div></a><a href="101-mon-an-27.html" class="card" data-search="101-mon-an-27.html"><div class="card-icon">⛅</div><div class="card-title">Mon an 27</div><div class="card-path">101-mon-an-27.html</div></a><a href="102-xem-ngay-gio-sinh.html" class="card" data-search="102-xem-ngay-gio-sinh.html"><div class="card-icon">📄</div><div class="card-title">Xem ngay gio sinh</div><div class="card-path">102-xem-ngay-gio-sinh.html</div></a><a href="107-mon-an-22.html" class="card" data-search="107-mon-an-22.html"><div class="card-icon">⛅</div><div class="card-title">Mon an 22</div><div class="card-path">107-mon-an-22.html</div></a><a href="108-mon-an-25.html" class="card" data-search="108-mon-an-25.html"><div class="card-icon">⛅</div><div class="card-title">Mon an 25</div><div class="card-path">108-mon-an-25.html</div></a><a href="110-suc-khoe-tinh-cam.html" class="card" data-search="110-suc-khoe-tinh-cam.html"><div class="card-icon">💊</div><div class="card-title">Suc khoe tinh cam</div><div class="card-path">110-suc-khoe-tinh-cam.html</div></a><a href="125-mon-an-30.html" class="card" data-search="125-mon-an-30.html"><div class="card-icon">⛅</div><div class="card-title">Mon an 30</div><div class="card-path">125-mon-an-30.html</div></a><a href="127-gio-i-xe-boi-bay-em.html" class="card" data-search="127-gio-i-xe-boi-bay-em.html"><div class="card-icon">📄</div><div class="card-title">Gio i xe boi bay em</div><div class="card-path">127-gio-i-xe-boi-bay-em.html</div></a><a href="128-gio-i-xe-boi-bay-toi.html" class="card" data-search="128-gio-i-xe-boi-bay-toi.html"><div class="card-icon">📄</div><div class="card-title">Gio i xe boi bay toi</div><div class="card-path">128-gio-i-xe-boi-bay-toi.html</div></a><a href="129-gio-i-xe-boi-bay-trua.html" class="card" data-search="129-gio-i-xe-boi-bay-trua.html"><div class="card-icon">📄</div><div class="card-title">Gio i xe boi bay trua</div><div class="card-path">129-gio-i-xe-boi-bay-trua.html</div></a><a href="130-gio-i-xe-boi-bay-chieu.html" class="card" data-search="130-gio-i-xe-boi-bay-chieu.html"><div class="card-icon">📄</div><div class="card-title">Gio i xe boi bay chieu</div><div class="card-path">130-gio-i-xe-boi-bay-chieu.html</div></a><a href="131-gio-i-xe-boi-bay-sang.html" class="card" data-search="131-gio-i-xe-boi-bay-sang.html"><div class="card-icon">📄</div><div class="card-title">Gio i xe boi bay sang</div><div class="card-path">131-gio-i-xe-boi-bay-sang.html</div></a><a href="133-mon-an-33.html" class="card" data-search="133-mon-an-33.html"><div class="card-icon">⛅</div><div class="card-title">Mon an 33</div><div class="card-path">133-mon-an-33.html</div></a><a href="134-mon-an-6.html" class="card" data-search="134-mon-an-6.html"><div class="card-icon">⛅</div><div class="card-title">Mon an 6</div><div class="card-path">134-mon-an-6.html</div></a><a href="135-mon-an-36.html" class="card" data-search="135-mon-an-36.html"><div class="card-icon">⛅</div><div class="card-title">Mon an 36</div><div class="card-path">135-mon-an-36.html</div></a><a href="137-mon-tscl-4.html" class="card" data-search="137-mon-tscl-4.html"><div class="card-icon">📄</div><div class="card-title">Mon tscl 4</div><div class="card-path">137-mon-tscl-4.html</div></a><a href="142-dothicuocdoi.html" class="card" data-search="142-dothicuocdoi.html"><div class="card-icon">📄</div><div class="card-title">Dothicuocdoi</div><div class="card-path">142-dothicuocdoi.html</div></a><a href="151-mon-tscl-3.html" class="card" data-search="151-mon-tscl-3.html"><div class="card-icon">📄</div><div class="card-title">Mon tscl 3</div><div class="card-path">151-mon-tscl-3.html</div></a><a href="181-tinh-ngay-ram-1.html" class="card" data-search="181-tinh-ngay-ram-1.html"><div class="card-icon">📄</div><div class="card-title">Tinh ngay ram 1</div><div class="card-path">181-tinh-ngay-ram-1.html</div></a><a href="195-ngu-hanh-an-uong.html" class="card" data-search="195-ngu-hanh-an-uong.html"><div class="card-icon">🍲</div><div class="card-title">Ngu hanh an uong</div><div class="card-path">195-ngu-hanh-an-uong.html</div></a><a href="286-an-benh-tri.html" class="card" data-search="286-an-benh-tri.html"><div class="card-icon">📄</div><div class="card-title">An benh tri</div><div class="card-path">286-an-benh-tri.html</div></a><a href="297-tiet-khi-mon-an.html" class="card" data-search="297-tiet-khi-mon-an.html"><div class="card-icon">⛅</div><div class="card-title">Tiet khi mon an</div><div class="card-path">297-tiet-khi-mon-an.html</div></a><a href="298-rau-cu-benh.html" class="card" data-search="298-rau-cu-benh.html"><div class="card-icon">📄</div><div class="card-title">Rau cu benh</div><div class="card-path">298-rau-cu-benh.html</div></a><a href="900-uong-i-kinh-doanh.html" class="card" data-search="900-uong-i-kinh-doanh.html"><div class="card-icon">📄</div><div class="card-title">Uong i kinh doanh</div><div class="card-path">900-uong-i-kinh-doanh.html</div></a><a href="Caibalo.html" class="card" data-search="caibalo.html"><div class="card-icon">📄</div><div class="card-title">Caibalo</div><div class="card-path">Caibalo.html</div></a><a href="Hantin_diem_binh.html" class="card" data-search="hantin_diem_binh.html"><div class="card-icon">📄</div><div class="card-title">Hantin diem binh</div><div class="card-path">Hantin_diem_binh.html</div></a><a href="ThuatToanCuocSong.html" class="card" data-search="thuattoancuocsong.html"><div class="card-icon">📄</div><div class="card-title">ThuatToanCuocSong</div><div class="card-path">ThuatToanCuocSong.html</div></a><a href="Triệu chứng thực phẩm .html" class="card" data-search="triệu chứng thực phẩm .html"><div class="card-icon">📄</div><div class="card-title">Triệu chứng thực phẩm</div><div class="card-path">Triệu chứng thực phẩm .html</div></a><a href="ding_luong_an_mot_bua.html" class="card" data-search="ding_luong_an_mot_bua.html"><div class="card-icon">📄</div><div class="card-title">Ding luong an mot bua</div><div class="card-path">ding_luong_an_mot_bua.html</div></a><a href="henhiphan1000chai.html" class="card" data-search="henhiphan1000chai.html"><div class="card-icon">📄</div><div class="card-title">Henhiphan1000chai</div><div class="card-path">henhiphan1000chai.html</div></a><a href="mon-an-thoi-tiet.html" class="card" data-search="mon-an-thoi-tiet.html"><div class="card-icon">⛅</div><div class="card-title">Mon an thoi tiet</div><div class="card-path">mon-an-thoi-tiet.html</div></a><a href="mon_an_thoi_tiet.html" class="card" data-search="mon_an_thoi_tiet.html"><div class="card-icon">📄</div><div class="card-title">Mon an thoi tiet</div><div class="card-path">mon_an_thoi_tiet.html</div></a><a href="report_web.html" class="card" data-search="report_web.html"><div class="card-icon">📄</div><div class="card-title">Report web</div><div class="card-path">report_web.html</div></a><a href="thuc_an_tong_hop.html" class="card" data-search="thuc_an_tong_hop.html"><div class="card-icon">📄</div><div class="card-title">Thuc an tong hop</div><div class="card-path">thuc_an_tong_hop.html</div></a><a href="thuc_don_nguoi_linh.html" class="card" data-search="thuc_don_nguoi_linh.html"><div class="card-icon">📄</div><div class="card-title">Thuc don nguoi linh</div><div class="card-path">thuc_don_nguoi_linh.html</div></a><a href="tinh_gao.html" class="card" data-search="tinh_gao.html"><div class="card-icon">📄</div><div class="card-title">Tinh gao</div><div class="card-path">tinh_gao.html</div></a><a href="webdinhduong.html" class="card" data-search="webdinhduong.html"><div class="card-icon">📄</div><div class="card-title">Webdinhduong</div><div class="card-path">webdinhduong.html</div></a><a href="Ăn_uống_6_hành .html" class="card" data-search="ăn_uống_6_hành .html"><div class="card-icon">📄</div><div class="card-title">Ăn uống 6 hành</div><div class="card-path">Ăn_uống_6_hành .html</div></a></div></section></div>
 </div>
-
 <script>
-(function () {
-    'use strict';
-
-    // ============================================================
-    // ĐÃ SỬA ĐÚNG TÊN TÀI KHOẢN CỦA BẠN (có chữ -png)
-    // ============================================================
-    var CONFIG = {
-        owner: 'namnguyen7133-png',   // Đã sửa lại đúng
-        repo:  'THUCDONHANGNGAY',     // Tên repo
-        branch: 'main',               // Nhánh chứa code
-        subfolder: ''                 
-    };
-
-    var SKIP_PREFIXES = [
-        '.git/', '.github/', 'node_modules/', '__pycache__/',
-        'venv/', '.venv/', 'env/', 'dist/', 'build/',
-        '_site/', 'site-packages/', '.cache/', '.idea/', '.vscode/'
-    ];
-
-    function shouldSkip(path) {
-        if (path.indexOf('.') === 0) return true;
-        if (path.indexOf('/.') !== -1) return true;
-        for (var i = 0; i < SKIP_PREFIXES.length; i++) {
-            if (path.indexOf(SKIP_PREFIXES[i]) === 0) return true;
-        }
-        return false;
-    }
-
-    function escapeHtml(s) {
-        return String(s).replace(/[&<>"']/g, function (c) {
-            return { '&': '&amp;', '<': '&lt;', '>': '&gt;',
-                     '"': '&quot;', "'": '&#39;' }[c];
-        });
-    }
-
-    function pickIcon(stem) {
-        var s = stem.toLowerCase();
-        if (/(thoi-tiet|thoitiet|weather|mon-an)/.test(s)) return '⛅';
-        if (/(thuc-don|food|an-uong)/.test(s))            return '🍲';
-        if (/(suc-khoe|health|y-te)/.test(s))             return '💊';
-        if (/(lich|calendar)/.test(s))                    return '📅';
-        if (/(tin-tuc|news)/.test(s))                     return '📰';
-        if (/(bai-tap|the-duc|gym)/.test(s))              return '🏋️';
-        if (/(hoc|study|sach)/.test(s))                   return '📚';
-        return '📄';
-    }
-
-    function prettyName(stem) {
-        var name = stem.replace(/^\s*\d+[\s\-_.]*/, '');
-        name = name.replace(/[-_]+/g, ' ');
-        name = name.replace(/\s+/g, ' ').trim();
-        if (!name) return stem;
-        return name.replace(/\S+/g, function (w) {
-            return w.charAt(0).toUpperCase() + w.slice(1);
-        });
-    }
-
-    function fetchTree(owner, repo, branch) {
-        var api = 'https://api.github.com/repos/' +
-                  encodeURIComponent(owner) + '/' +
-                  encodeURIComponent(repo) + '/git/trees/' +
-                  encodeURIComponent(branch) + '?recursive=1';
-        return fetch(api, {
-            headers: { 'Accept': 'application/vnd.github+json' }
-        }).then(function (r) {
-            if (r.status === 403) {
-                throw new Error(
-                    'GitHub API từ chối (403) — có thể đã hết rate-limit ' +
-                    '60 req/giờ, chờ vài phút rồi tải lại.'
-                );
-            }
-            if (r.status === 404) {
-                throw new Error('Không tìm thấy repo hoặc branch: ' +
-                                owner + '/' + repo + '@' + branch);
-            }
-            if (!r.ok) throw new Error('HTTP ' + r.status);
-            return r.json();
-        });
-    }
-
-    function render(htmlFiles, owner, repo) {
-        var items = htmlFiles.filter(function (p) {
-            return p !== 'index.html' && p !== './index.html';
-        });
-
-        var groups = {};
-        items.forEach(function (p) {
-            var idx = p.lastIndexOf('/');
-            var folder = idx === -1 ? '' : p.slice(0, idx);
-            (groups[folder] = groups[folder] || []).push(p);
-        });
-
-        var folders = Object.keys(groups).sort(function (a, b) {
-            if (a === '') return -1;
-            if (b === '') return 1;
-            return a.localeCompare(b);
-        });
-
-        var html = '';
-        folders.forEach(function (folder) {
-            var label = folder === ''
-                ? '📂 Thư mục gốc'
-                : '📁 ' + escapeHtml(folder);
-            var cards = groups[folder].sort().map(function (p) {
-                var base = p.slice(p.lastIndexOf('/') + 1);
-                var stem = base.replace(/\.html?$/i, '');
-                var icon = pickIcon(stem);
-                var nice = prettyName(stem);
-                return '<a href="' + escapeHtml(p) + '" class="card" ' +
-                       'data-search="' +
-                       escapeHtml(p.toLowerCase()) + ' ' +
-                       escapeHtml(nice.toLowerCase()) + '">' +
-                       '<div class="card-icon">' + icon + '</div>' +
-                       '<div class="card-title">' +
-                       escapeHtml(nice) + '</div>' +
-                       '<div class="card-path">' +
-                       escapeHtml(p) + '</div>' +
-                       '</a>';
-            }).join('');
-
-            html += '<section class="folder">' +
-                    '<h2 class="folder-title">' + label +
-                    ' <span class="count">(' + groups[folder].length +
-                    ' trang)</span></h2>' +
-                    '<div class="grid">' + cards + '</div></section>';
-        });
-
-        if (!html) {
-            html = '<p class="empty">Chưa có trang HTML nào trong repo.</p>';
-        }
-
-        document.getElementById('sections').innerHTML = html;
-        document.getElementById('status').innerHTML =
-            'Tổng cộng <b>' + items.length + '</b> trang HTML ' +
-            'trong repo <b>' + escapeHtml(owner) + '/' +
-            escapeHtml(repo) + '</b>';
-
-        var search = document.getElementById('search');
-        search.disabled = false;
-        search.focus();
-    }
-
-    document.getElementById('search').addEventListener('input', function (e) {
-        var q = e.target.value.toLowerCase().trim();
-        document.querySelectorAll('.card').forEach(function (el) {
-            var hay = (el.getAttribute('data-search') || '') +
-                      ' ' + el.textContent.toLowerCase();
-            el.style.display = hay.indexOf(q) !== -1 ? '' : 'none';
-        });
-        document.querySelectorAll('.folder').forEach(function (f) {
-            var has = Array.prototype.some.call(
-                f.querySelectorAll('.card'),
-                function (c) { return c.style.display !== 'none'; }
-            );
-            f.style.display = has ? '' : 'none';
-        });
+document.getElementById('search').addEventListener('input', function (e) {
+    var q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.card').forEach(function (el) {
+        var hay = (el.getAttribute('data-search') || '') + ' ' + el.textContent.toLowerCase();
+        el.style.display = (hay.indexOf(q) !== -1) ? '' : 'none';
     });
-
-    function showError(msg) {
-        document.getElementById('status').innerHTML = '';
-        document.getElementById('sections').innerHTML =
-            '<div class="error">' +
-            '<h3>⚠️ Không thể tải danh sách trang</h3>' +
-            '<p>' + msg + '</p>' +
-            '<p style="font-size:13px;color:#666">' +
-            'Kiểm tra lại <code>CONFIG.owner</code> và ' +
-            '<code>CONFIG.repo</code> trong mã nguồn.' +
-            '</p></div>';
-    }
-
-    function init() {
-        fetchTree(CONFIG.owner, CONFIG.repo, CONFIG.branch)
-            .then(function (data) {
-                var files = (data.tree || [])
-                    .filter(function (it) {
-                        return it.type === 'blob' &&
-                               /\.html?$/i.test(it.path) &&
-                               !shouldSkip(it.path);
-                    })
-                    .map(function (it) { return it.path; });
-                render(files, CONFIG.owner, CONFIG.repo);
-            })
-            .catch(function (err) {
-                showError(escapeHtml(err.message));
-            });
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
-})();
+    document.querySelectorAll('.folder').forEach(function (f) {
+        var has = Array.prototype.some.call(
+            f.querySelectorAll('.card'),
+            function (c) { return c.style.display !== 'none'; }
+        );
+        f.style.display = has ? '' : 'none';
+    });
+});
 </script>
 </body>
 </html>
