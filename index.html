@@ -13,8 +13,12 @@ body {
 }
 .container { max-width: 1200px; margin: 0 auto; }
 h1 { color: #2c3e50; text-align: center; margin: 0 0 8px; font-size: 28px; }
-.subtitle { text-align: center; color: #666; margin-bottom: 25px; min-height: 24px; }
+.subtitle { text-align: center; color: #666; margin-bottom: 6px; min-height: 24px; }
 .subtitle b { color: #2c3e50; }
+.hint {
+    text-align: center; color: #999; font-size: 12px;
+    margin-bottom: 20px; font-style: italic;
+}
 .search-wrap { position: sticky; top: 0; background: #f4f6f9; padding: 10px 0 20px; z-index: 10; }
 .search {
     width: 100%; padding: 14px 18px; font-size: 16px;
@@ -46,8 +50,14 @@ h1 { color: #2c3e50; text-align: center; margin: 0 0 8px; font-size: 28px; }
     border-color: #2c3e50;
 }
 .card-icon { font-size: 28px; margin-bottom: 8px; }
-.card-title { font-weight: 600; font-size: 15px; color: #2c3e50; margin-bottom: 4px; word-break: break-word; }
-.card-path { font-size: 12px; color: #888; word-break: break-all; }
+.card-title {
+    font-weight: 600; font-size: 15px; color: #2c3e50;
+    margin-bottom: 4px; word-break: break-word;
+}
+.card-path {
+    font-size: 11px; color: #aaa; word-break: break-all;
+    font-family: ui-monospace, Consolas, monospace;
+}
 .empty, .error {
     text-align: center; padding: 40px; border-radius: 10px;
     background: #fff; color: #666;
@@ -78,6 +88,10 @@ h1 { color: #2c3e50; text-align: center; margin: 0 0 8px; font-size: 28px; }
     <p class="subtitle" id="status">
         <span class="spinner"></span> Đang tải danh sách từ GitHub...
     </p>
+    <p class="hint" id="hint" style="display:none">
+        Tên hiển thị đã chuẩn hóa: bỏ số thứ tự ở đầu, thay “-” và “_” bằng khoảng trắng.
+        Đường dẫn gốc hiện nhỏ bên dưới mỗi thẻ.
+    </p>
     <div class="search-wrap">
         <input type="text" class="search" id="search"
                placeholder="🔍 Tìm theo tên hoặc đường dẫn..." disabled>
@@ -90,17 +104,18 @@ h1 { color: #2c3e50; text-align: center; margin: 0 0 8px; font-size: 28px; }
     'use strict';
 
     // ============================================================
-    // CẤU HÌNH — để trống hết nếu deploy trên GitHub Pages
-    // (script tự dò owner/repo từ URL).
+    // CẤU HÌNH — để trống nếu deploy trên GitHub Pages.
     // Chỉ điền khi chạy custom domain hoặc localhost.
     // ============================================================
     var CONFIG = {
-        owner:    '',   // vd: 'nguyenvana'
-        repo:     '',   // vd: 'thoi-tiet'
-        branch:   '',   // '' = thử main → master → gh-pages
-        subfolder: ''   // '' = Pages phục vụ từ root;
-                        // 'docs/' nếu Pages phục vụ từ /docs/
+        owner:     '',
+        repo:      '',
+        branch:    '',       // '' = thử main → master → gh-pages
+        subfolder: ''        // 'docs/' nếu Pages phục vụ từ /docs/
     };
+
+    // Bật/tắt chuẩn hóa tên. Đặt false nếu muốn giữ nguyên tên file.
+    var NORMALIZE_NAMES = true;
 
     // ============================================================
     // BỘ LỌC THƯ MỤC KHÔNG CẦN THIẾT
@@ -132,20 +147,46 @@ h1 { color: #2c3e50; text-align: center; margin: 0 0 8px; font-size: 28px; }
 
     function pickIcon(stem) {
         var s = stem.toLowerCase();
-        if (/(thoi-tiet|thoitiet|weather|mon-an)/.test(s)) return '⛅';
-        if (/(thuc-don|food|an-uong)/.test(s))            return '🍲';
-        if (/(suc-khoe|health|y-te)/.test(s))             return '💊';
-        if (/(lich|calendar)/.test(s))                    return '📅';
-        if (/(tin-tuc|news)/.test(s))                     return '📰';
-        if (/(bai-tap|the-duc|gym)/.test(s))              return '🏋️';
-        if (/(hoc|study|sach)/.test(s))                   return '📚';
+        if (/(thoi-tiet|thoitiet|weather|mon-an|an-thoi-tiet)/.test(s)) return '⛅';
+        if (/(thuc-don|food|an-uong|mon-an)/.test(s))                   return '🍲';
+        if (/(suc-khoe|health|y-te)/.test(s))                           return '💊';
+        if (/(lich|calendar)/.test(s))                                  return '📅';
+        if (/(tin-tuc|news)/.test(s))                                   return '📰';
+        if (/(bai-tap|the-duc|gym)/.test(s))                            return '🏋️';
+        if (/(hoc|study|sach|tailieu)/.test(s))                         return '📚';
+        if (/(bao-cao|report|thong-ke)/.test(s))                        return '📊';
         return '📄';
     }
 
+    // ============================================================
+    // CHUẨN HÓA TÊN FILE ĐỂ HIỂN THỊ
+    //   1. Bỏ số thứ tự ở đầu (kèm dấu phân cách: - _ . khoảng trắng)
+    //   2. Thay mọi dấu "-" và "_" bằng khoảng trắng
+    //   3. Gộp khoảng trắng thừa
+    //   4. Viết hoa chữ cái đầu mỗi từ (Title Case)
+    //   5. Nếu kết quả rỗng (vd "123.html") → giữ nguyên tên gốc
+    // ============================================================
     function prettyName(stem) {
-        var name = stem.replace(/[-_]/g, ' ').trim();
-        name = name.replace(/^\d+[\s\-_]*/, '');
-        return name ? name.charAt(0).toUpperCase() + name.slice(1) : stem;
+        if (!NORMALIZE_NAMES) return stem;
+
+        var raw = stem;
+
+        // 1. Bỏ số thứ tự ở đầu (kèm mọi dấu phân cách)
+        var name = stem.replace(/^\s*\d+[\s\-_.]*/, '');
+
+        // 2. Thay - _ bằng khoảng trắng
+        name = name.replace(/[-_]+/g, ' ');
+
+        // 3. Chuẩn hóa khoảng trắng
+        name = name.replace(/\s+/g, ' ').trim();
+
+        // 5. Nếu rỗng → fallback
+        if (!name) return raw;
+
+        // 4. Title Case
+        return name.replace(/\S+/g, function (w) {
+            return w.charAt(0).toUpperCase() + w.slice(1);
+        });
     }
 
     // ============================================================
@@ -249,7 +290,8 @@ h1 { color: #2c3e50; text-align: center; margin: 0 0 8px; font-size: 28px; }
                 var nice = prettyName(stem);
                 return '<a href="' + escapeHtml(p) + '" class="card" ' +
                        'data-search="' +
-                       escapeHtml(p.toLowerCase()) + '">' +
+                       escapeHtml(p.toLowerCase()) + ' ' +
+                       escapeHtml(nice.toLowerCase()) + '">' +
                        '<div class="card-icon">' + icon + '</div>' +
                        '<div class="card-title">' +
                        escapeHtml(nice) + '</div>' +
@@ -274,6 +316,8 @@ h1 { color: #2c3e50; text-align: center; margin: 0 0 8px; font-size: 28px; }
             'Tổng cộng <b>' + items.length + '</b> trang HTML ' +
             'trong repo <b>' + escapeHtml(owner) + '/' +
             escapeHtml(repo) + '</b>';
+        document.getElementById('hint').style.display =
+            NORMALIZE_NAMES ? '' : 'none';
 
         var search = document.getElementById('search');
         search.disabled = false;
