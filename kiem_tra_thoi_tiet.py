@@ -1,5 +1,5 @@
 from collections import defaultdict
-import glob
+import html as html_lib
 import io
 import os
 import re
@@ -7,67 +7,95 @@ import sqlite3
 import sys
 import requests
 
-# Lấy thư mục gốc hiện tại của file script.
-# Cho phép override bằng biến môi trường REPO_ROOT (hữu ích khi chạy trong GitHub Actions).
-BASE_DIR = os.environ.get(
-    "REPO_ROOT", os.path.dirname(os.path.abspath(__file__))
+# ===========================================================================
+# 1. XÁC ĐỊNH GỐC REPO
+#    Ưu tiên: REPO_ROOT env  →  GITHUB_WORKSPACE  →  dò ngược tìm .git
+# ===========================================================================
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def _find_repo_root(start_dir):
+    """Dò ngược lên trên tìm thư mục có .git."""
+    cur = os.path.abspath(start_dir)
+    while True:
+        if os.path.isdir(os.path.join(cur, ".git")):
+            return cur
+        parent = os.path.dirname(cur)
+        if parent == cur:
+            return os.path.abspath(start_dir)
+        cur = parent
+
+
+BASE_DIR = (
+    os.environ.get("REPO_ROOT")
+    or os.environ.get("GITHUB_WORKSPACE")
+    or _find_repo_root(SCRIPT_DIR)
 )
 
-# Cấu hình Webhook Slack (để trống nếu không dùng)
+DB_PATH = os.path.join(SCRIPT_DIR, "THOITIET.db")
+
+# Tên file sinh ra
+WEATHER_PAGE_NAME = "mon-an-thoi-tiet.html"
+INDEX_PAGE_NAME = "index.html"
+
 SLACK_WEBHOOK_URL = ""
 
 
-def gui_thong_bao_slack(noi_dung):
-    if not SLACK_WEBHOOK_URL:
-        return
-    payload = {"text": noi_dung}
-    try:
-        response = requests.post(SLACK_WEBHOOK_URL, json=payload, timeout=10)
-        if response.status_code == 200:
-            print("Đã gửi tin nhắn lên Slack thành công!")
-        else:
-            print(f"Lỗi khi gửi Slack, mã lỗi: {response.status_code}")
-    except Exception as e:
-        print(f"Không thể kết nối tới Slack: {e}")
-
-
-# An toàn encoding cho console
+# An toàn encoding console
 if sys.stdout is not None:
     try:
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
     except Exception:
         pass
 
-DB_PATH = os.path.join(BASE_DIR, "THOITIET.db")
+
+# ===========================================================================
+# 2. DATABASE & API THỜI TIẾT
+# ===========================================================================
+
+def gui_thong_bao_slack(noi_dung):
+    if not SLACK_WEBHOOK_URL:
+        return
+    try:
+        r = requests.post(
+            SLACK_WEBHOOK_URL, json={"text": noi_dung}, timeout=10
+        )
+        print(
+            "Đã gửi tin nhắn lên Slack thành công!"
+            if r.status_code == 200
+            else f"Lỗi Slack: {r.status_code}"
+        )
+    except Exception as e:
+        print(f"Không thể kết nối tới Slack: {e}")
 
 
 def init_database():
-    """Hàm kiểm tra và bổ sung cột 'rain_hours' vào bảng nếu chưa có"""
     if not os.path.exists(DB_PATH):
         return
-
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
-
     cur.execute("PRAGMA table_info(THOITIET_DINH_DUONG)")
-    columns = [col[1] for col in cur.fetchall()]
-
+    columns = [c[1] for c in cur.fetchall()]
     if "rain_hours" not in columns:
         try:
             cur.execute(
-                "ALTER TABLE THOITIET_DINH_DUONG ADD COLUMN rain_hours TEXT"
+                "ALTER TABLE THOITIET_DINH_DUONG "
+                "ADD COLUMN rain_hours TEXT"
             )
             conn.commit()
-            print("Đã thêm thành công cột 'rain_hours' vào cơ sở dữ liệu!")
+            print("Đã thêm cột 'rain_hours' vào DB!")
         except Exception as e:
-            print(f"Lỗi khi thêm cột vào DB: {e}")
-
+            print(f"Lỗi thêm cột: {e}")
     conn.close()
 
 
 def get_week_forecast():
     url = (
-        "https://api.open-meteo.com/v1/forecast?latitude=21.0285&longitude=105.8542&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&hourly=precipitation&timezone=Asia%2FBangkok"
+        "https://api.open-meteo.com/v1/forecast"
+        "?latitude=21.0285&longitude=105.8542"
+        "&daily=temperature_2m_max,temperature_2m_min,precipitation_sum"
+        "&hourly=precipitation&timezone=Asia%2FBangkok"
     )
     try:
         r = requests.get(url, timeout=10).json()
@@ -77,44 +105,47 @@ def get_week_forecast():
         t_mins = daily.get("temperature_2m_min", [])
         precips = daily.get("precipitation_sum", [])
 
-        daily_map = {}
-        for idx, date in enumerate(dates):
-            t_max = t_maxs[idx] if idx < len(t_maxs) else 30.0
-            t_min = t_mins[idx] if idx < len(t_mins) else 24.0
-            rain = precips[idx] if idx < len(precips) else 0.0
-
+        result = {}
+        for i, date in enumerate(dates):
+            t_max = t_maxs[i] if i < len(t_maxs) else 30.0
+            t_min = t_mins[i] if i < len(t_mins) else 24.0
+            rain = precips[i] if i < len(precips) else 0.0
             rain_hours = []
             if rain > 0:
                 rain_hours.append(f"09:00 ({rain*0.3:.2f}mm)")
                 rain_hours.append(f"15:00 ({rain*0.7:.2f}mm)")
-
-            daily_map[date] = {
+            result[date] = {
                 "max": t_max,
                 "min": t_min,
                 "rain": rain,
                 "rain_hours": rain_hours,
             }
-        return daily_map
+        return result
     except Exception as e:
-        print(f"Lỗi khi lấy dữ liệu thời tiết: {e}")
+        print(f"Lỗi lấy dữ liệu thời tiết: {e}")
         return {}
 
 
 def get_historical_data_for_date(target_md):
     if not os.path.exists(DB_PATH):
         return []
-
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
-    query = """
-        SELECT strftime('%Y', time), [temperature_2m_max (°C)], [temperature_2m_min (°C)], [rain_sum (mm)], rain_hours
-        FROM THOITIET_DINH_DUONG 
-        WHERE strftime('%m-%d', time) = ? 
-        AND strftime('%Y', time) >= '2007'
-        AND strftime('%Y', time) != '2026'
+    cur.execute(
+        """
+        SELECT strftime('%Y', time),
+               [temperature_2m_max (°C)],
+               [temperature_2m_min (°C)],
+               [rain_sum (mm)],
+               rain_hours
+        FROM THOITIET_DINH_DUONG
+        WHERE strftime('%m-%d', time) = ?
+          AND strftime('%Y', time) >= '2007'
+          AND strftime('%Y', time) != '2026'
         ORDER BY time DESC
-    """
-    cur.execute(query, (target_md,))
+        """,
+        (target_md,),
+    )
     rows = cur.fetchall()
     conn.close()
     return rows
@@ -123,239 +154,404 @@ def get_historical_data_for_date(target_md):
 def save_forecast_to_db(web_data):
     if not os.path.exists(DB_PATH):
         return
-
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
-
     for date, w in web_data.items():
         rain_hours_str = (
             ", ".join(w["rain_hours"]) if w["rain_hours"] else "Không mưa"
         )
-        update_query = """
-            UPDATE THOITIET_DINH_DUONG 
-            SET rain_hours = ? 
-            WHERE date(time) = ?
-        """
-        cur.execute(update_query, (rain_hours_str, date))
-
+        cur.execute(
+            "UPDATE THOITIET_DINH_DUONG "
+            "SET rain_hours = ? WHERE date(time) = ?",
+            (rain_hours_str, date),
+        )
     conn.commit()
     conn.close()
 
 
 def lay_goi_y_mua_sam(max_temp, rain):
     if rain > 0:
-        return """--- TRỜI MƯA/ẨM ƯỚT ---
-Mua sắm: Gừng, khoai lang, chuối, sữa ấm, trà gừng.
-Thực đơn: Cháo gừng, khoai luộc, súp nóng, thịt nướng, bún trả, lương khô, ruốc, muối vừng.
-Thuốc phụ trợ: Siro ho thảo dược, Trà gừng, Vitamin C.
-Lưu ý: Người mỏi mệt, lưng mỏi đau: bôi dầu gió, thuốc cảm delcolgel, paracetamon, cảm xuyên hương, cà phê sữa tối."""
-    elif max_temp > 30:
-        return """--- TRỜI NẮNG NÓNG ---
-Mua sắm: Chanh, dấm, cá, tôm, hến, trai, muối.
-Thực đơn: Canh chua, canh hến, cá hấp, Phở, Bún, Miến, Gà tần, Vịt lộn, đậu phụ.
-Thuốc phụ trợ: Oresol, men vi sinh, thuốc giải nhiệt, nước ép trái cây."""
-    elif max_temp < 18:
-        return """--- TRỜI RÉT ĐẬM ---
-Mua sắm: Thịt bò, trứng vịt lộn, ngô, bơ, sữa ấm.
-Thực đơn: Thịt kho, lẩu gà/chim, món hầm, ngũ cốc nóng."""
-    elif 18 <= max_temp <= 25:
-        return """--- THỜI TIẾT MÁT MẺ ---
-Mua sắm: Rượu nếp, sữa chua, riềng, mẻ, giấm bỗng."""
-    return "--- TRỜI TIẾT ỔN ĐỊNH --- Ăn uống cân bằng, duy trì tập luyện nhẹ nhàng."
+        return (
+            "--- TRỜI MƯA/ẨM ƯỚT ---\n"
+            "Mua sắm: Gừng, khoai lang, chuối, sữa ấm, trà gừng.\n"
+            "Thực đơn: Cháo gừng, khoai luộc, súp nóng, thịt nướng, "
+            "bún trả, lương khô, ruốc, muối vừng.\n"
+            "Thuốc phụ trợ: Siro ho thảo dược, Trà gừng, Vitamin C.\n"
+            "Lưu ý: Người mỏi mệt, lưng mỏi đau: bôi dầu gió, thuốc cảm "
+            "delcolgel, paracetamon, cảm xuyên hương, cà phê sữa tối."
+        )
+    if max_temp > 30:
+        return (
+            "--- TRỜI NẮNG NÓNG ---\n"
+            "Mua sắm: Chanh, dấm, cá, tôm, hến, trai, muối.\n"
+            "Thực đơn: Canh chua, canh hến, cá hấp, Phở, Bún, Miến, "
+            "Gà tần, Vịt lộn, đậu phụ.\n"
+            "Thuốc phụ trợ: Oresol, men vi sinh, thuốc giải nhiệt, "
+            "nước ép trái cây."
+        )
+    if max_temp < 18:
+        return (
+            "--- TRỜI RÉT ĐẬM ---\n"
+            "Mua sắm: Thịt bò, trứng vịt lộn, ngô, bơ, sữa ấm.\n"
+            "Thực đơn: Thịt kho, lẩu gà/chim, món hầm, ngũ cốc nóng."
+        )
+    if 18 <= max_temp <= 25:
+        return (
+            "--- THỜI TIẾT MÁT MẺ ---\n"
+            "Mua sắm: Rượu nếp, sữa chua, riềng, mẻ, giấm bỗng."
+        )
+    return (
+        "--- TRỜI TIẾT ỔN ĐỊNH --- "
+        "Ăn uống cân bằng, duy trì tập luyện nhẹ nhàng."
+    )
 
 
-# ---------------------------------------------------------------------------
-# PHẦN ĐÃ SỬA: quét TOÀN BỘ file .html trong repo (kể cả thư mục con
-# và các file được tham chiếu qua href trong HTML khác)
-# ---------------------------------------------------------------------------
+# ===========================================================================
+# 3. QUÉT MỌI FILE HTML TRONG REPO (dùng os.walk, không sót file nào)
+# ===========================================================================
 
-_HREF_RE = re.compile(
-    r'href\s*=\s*["\']([^"\']+?\.html(?:[?#][^"\']*)?)["\']',
-    re.IGNORECASE,
-)
+_SKIP_DIRS = {
+    ".git", ".github", "node_modules", "__pycache__",
+    "venv", ".venv", "env", ".env", "dist", "build",
+    "_site", ".cache", ".idea", ".vscode", "site-packages",
+}
 
 
 def discover_html_files(base_dir):
-    """Trả về danh sách (relative path) của mọi file .html trong repo.
+    """Trả về danh sách đường dẫn tương đối của MỌI file .html trong repo."""
+    if not os.path.isdir(base_dir):
+        return []
 
-    Cách hoạt động:
-      1. Quét đệ quy mọi *.html trong base_dir và thư mục con.
-      2. Duyệt nội dung từng file HTML để tìm các href="*.html"
-         và thêm vào danh sách (nếu file tồn tại trong repo).
-      3. Bỏ qua link tuyệt đối (http://, //, /...), link nhảy ra ngoài repo (../).
-    """
-    found = set()
-
-    # Bước 1: quét đệ quy
-    for p in glob.glob(os.path.join(base_dir, "**", "*.html"), recursive=True):
-        rel = os.path.relpath(p, base_dir).replace(os.sep, "/")
-        if not rel.startswith("../"):
-            found.add(rel)
-
-    # Bước 2: parse nội dung để tìm thêm href
-    queue = list(found)
-    scanned = set()
-    while queue:
-        rel = queue.pop(0)
-        if rel in scanned:
-            continue
-        scanned.add(rel)
-
-        full = os.path.join(base_dir, rel)
-        if not os.path.isfile(full):
-            continue
-        try:
-            with open(full, "r", encoding="utf-8", errors="ignore") as f:
-                content = f.read()
-        except Exception:
-            continue
-
-        cur_dir = os.path.dirname(rel)
-        for m in _HREF_RE.finditer(content):
-            href = m.group(1).split("#", 1)[0].split("?", 1)[0].strip()
-            if not href:
-                continue
-            # Bỏ link tuyệt đối / ngoài repo
-            if re.match(r"^(https?:)?//", href, re.IGNORECASE):
-                continue
-            if href.startswith("/"):
-                continue
-
-            target = os.path.normpath(
-                os.path.join(cur_dir, href)
-            ).replace(os.sep, "/")
-
-            if target.startswith("..") or not target.lower().endswith(".html"):
-                continue
-
-            if target not in found:
-                found.add(target)
-                if os.path.isfile(os.path.join(base_dir, target)):
-                    queue.append(target)
-
-    return sorted(found)
+    found = []
+    for root, dirs, files in os.walk(base_dir):
+        dirs[:] = [
+            d for d in dirs
+            if d not in _SKIP_DIRS and not d.startswith(".")
+        ]
+        for f in files:
+            if f.lower().endswith(".html"):
+                full = os.path.join(root, f)
+                rel = os.path.relpath(full, base_dir).replace(os.sep, "/")
+                found.append(rel)
+    return sorted(set(found))
 
 
-def build_nav_links(base_dir):
-    """Tạo thanh liên kết tới TẤT CẢ file .html trong repo
-    (bao gồm file trong thư mục con và file được tham chiếu từ HTML khác)."""
-    html_files = discover_html_files(base_dir)
+def _pick_icon(stem):
+    s = stem.lower()
+    if any(k in s for k in ("thoi-tiet", "thoitiet", "weather", "mon-an")):
+        return "⛅"
+    if any(k in s for k in ("thuc-don", "food", "an-uong")):
+        return "🍲"
+    if any(k in s for k in ("suc-khoe", "health", "y-te")):
+        return "💊"
+    if any(k in s for k in ("lich", "calendar")):
+        return "📅"
+    if any(k in s for k in ("tin-tuc", "news")):
+        return "📰"
+    if any(k in s for k in ("bai-tap", "the-duc", "gym")):
+        return "🏋️"
+    if any(k in s for k in ("hoc", "study", "sach")):
+        return "📚"
+    return "📄"
 
-    links = [
-        '<a href="index.html" style="background: #2c3e50; color: white;'
-        " padding: 6px 12px; text-decoration: none; border-radius: 4px;"
-        ' font-weight: bold; font-size: 13px;">🏠 Trang Chủ</a>'
-    ]
 
-    for rel in html_files:
-        if rel == "index.html":
-            continue
-        # Chỉ tạo link tới file thực sự tồn tại (tránh 404 trên GitHub Pages)
-        if not os.path.isfile(os.path.join(base_dir, rel)):
-            continue
+def _pretty_name(stem):
+    name = stem.replace("-", " ").replace("_", " ").strip()
+    name = re.sub(r"^\d+[\s\-_]*", "", name)
+    return name[:1].upper() + name[1:] if name else stem
 
-        stem = os.path.splitext(os.path.basename(rel))[0]
-        label = (
-            stem.lstrip("0123456789-_ ").replace("-", " ").replace("_", " ")
+
+# ===========================================================================
+# 4. SINH index.html — HUB LIỆT KÊ MỌI HTML TRONG REPO
+# ===========================================================================
+
+def render_index_html(base_dir):
+    all_htmls = discover_html_files(base_dir)
+    items = [h for h in all_htmls if h != INDEX_PAGE_NAME]
+
+    # Gom nhóm theo thư mục
+    groups = defaultdict(list)
+    for h in items:
+        groups[os.path.dirname(h)].append(h)
+
+    sections_html = ""
+    for folder in sorted(groups.keys()):
+        folder_label = (
+            "📂 Thư mục gốc" if not folder else f"📁 {folder}"
         )
-        label = label.capitalize() if label else stem
-
-        # Nếu nằm trong thư mục con → ghi kèm tên thư mục cho dễ phân biệt
-        folder = os.path.dirname(rel)
-        if folder:
-            label = f"{label} ({folder})"
-
-        links.append(
-            f'<a href="{rel}" style="background: #e9ecef; color: #333;'
-            " padding: 6px 10px; text-decoration: none; border-radius: 4px;"
-            f' font-size: 13px; border: 1px solid #ccc;">{label}</a>'
+        cards = []
+        for h in sorted(groups[folder]):
+            stem = os.path.splitext(os.path.basename(h))[0]
+            icon = _pick_icon(stem)
+            nice = _pretty_name(stem)
+            cards.append(
+                f'<a href="{html_lib.escape(h)}" class="card" '
+                f'data-search="{html_lib.escape(h.lower())}">'
+                f'<div class="card-icon">{icon}</div>'
+                f'<div class="card-title">{html_lib.escape(nice)}</div>'
+                f'<div class="card-path">{html_lib.escape(h)}</div>'
+                f"</a>"
+            )
+        sections_html += (
+            f'<section class="folder">'
+            f'<h2 class="folder-title">{folder_label} '
+            f'<span class="count">({len(groups[folder])} trang)</span></h2>'
+            f'<div class="grid">{"".join(cards)}</div>'
+            f"</section>"
         )
 
-    return "\n        ".join(links)
+    if not sections_html:
+        sections_html = '<p class="empty">Chưa có trang HTML nào.</p>'
+
+    return f"""<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Danh Sách Trang - Tổng Hợp</title>
+<style>
+* {{ box-sizing: border-box; }}
+body {{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    margin: 0; padding: 20px; background: #f4f6f9; color: #333;
+}}
+.container {{ max-width: 1200px; margin: 0 auto; }}
+h1 {{ color: #2c3e50; text-align: center; margin: 0 0 8px; font-size: 28px; }}
+.subtitle {{ text-align: center; color: #666; margin-bottom: 25px; }}
+.search-wrap {{
+    position: sticky; top: 0; background: #f4f6f9;
+    padding: 10px 0 20px; z-index: 10;
+}}
+.search {{
+    width: 100%; padding: 14px 18px; font-size: 16px;
+    border: 2px solid #d0d7de; border-radius: 10px;
+    outline: none; transition: border-color .2s; background: #fff;
+}}
+.search:focus {{ border-color: #2c3e50; }}
+.folder {{ margin-bottom: 30px; }}
+.folder-title {{
+    color: #2c3e50; font-size: 20px; padding-bottom: 8px;
+    border-bottom: 2px solid #e1e4e8; margin: 0 0 15px;
+}}
+.count {{ color: #888; font-weight: normal; font-size: 15px; }}
+.grid {{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+}}
+.card {{
+    display: flex; flex-direction: column; background: #fff;
+    border: 1px solid #e1e4e8; border-radius: 10px;
+    padding: 16px; text-decoration: none; color: inherit;
+    transition: transform .15s, box-shadow .15s, border-color .15s;
+}}
+.card:hover {{
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+    border-color: #2c3e50;
+}}
+.card-icon {{ font-size: 28px; margin-bottom: 8px; }}
+.card-title {{
+    font-weight: 600; font-size: 15px; color: #2c3e50;
+    margin-bottom: 4px; word-break: break-word;
+}}
+.card-path {{ font-size: 12px; color: #888; word-break: break-all; }}
+.empty {{ text-align: center; padding: 40px; color: #888; }}
+@media (max-width: 480px) {{
+    body {{ padding: 12px; }}
+    h1 {{ font-size: 22px; }}
+    .grid {{ grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }}
+    .card {{ padding: 12px; }}
+    .card-icon {{ font-size: 22px; }}
+    .card-title {{ font-size: 14px; }}
+}}
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>📚 Danh Sách Trang</h1>
+    <p class="subtitle">Tổng cộng <b>{len(items)}</b> trang HTML trong repo</p>
+    <div class="search-wrap">
+        <input type="text" class="search" id="search"
+               placeholder="🔍 Tìm theo tên hoặc đường dẫn...">
+    </div>
+    <div id="sections">{sections_html}</div>
+</div>
+<script>
+document.getElementById('search').addEventListener('input', function (e) {{
+    var q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.card').forEach(function (el) {{
+        var hay = (el.getAttribute('data-search') || '') + ' ' + el.textContent.toLowerCase();
+        el.style.display = (hay.indexOf(q) !== -1) ? '' : 'none';
+    }});
+    document.querySelectorAll('.folder').forEach(function (f) {{
+        var has = Array.prototype.some.call(
+            f.querySelectorAll('.card'),
+            function (c) {{ return c.style.display !== 'none'; }}
+        );
+        f.style.display = has ? '' : 'none';
+    }});
+}});
+</script>
+</body>
+</html>"""
 
 
-def main():
-    init_database()
-    web_data = get_week_forecast()
-    save_forecast_to_db(web_data)
+# ===========================================================================
+# 5. SINH mon-an-thoi-tiet.html — TRANG THỜI TIẾT (RESPONSIVE MOBILE)
+# ===========================================================================
 
-    noi_dung_bao_cao = "🤖 *BÁO CÁO THỜI TIẾT & LỜI KHUYÊN TỰ ĐỘNG* 🤖\n"
-    html_rows = ""
+_WEATHER_CSS = """
+* { box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 Arial, sans-serif;
+    margin: 0; padding: 20px;
+    background-color: #f4f6f9; color: #333;
+}
+.container { max-width: 1200px; margin: 0 auto; }
+h1, h2 { color: #2c3e50; }
+.back-link {
+    display: inline-block; margin-bottom: 20px;
+    background: #2c3e50; color: #fff; text-decoration: none;
+    padding: 10px 18px; border-radius: 8px; font-weight: bold;
+    font-size: 14px;
+}
+.back-link:hover { background: #1a252f; }
+.card {
+    background: #fff; padding: 20px; margin-bottom: 20px;
+    border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+.emergency {
+    background: #ffebee; border-left: 6px solid #c0392b;
+    padding: 15px 20px; margin-bottom: 20px; border-radius: 8px;
+}
+.emergency h3 { color: #c0392b; margin-top: 0; }
+.emergency ul { margin: 8px 0; padding-left: 22px; }
+.emergency li { margin-bottom: 6px; }
 
+table {
+    width: 100%; border-collapse: collapse; margin-top: 10px;
+    background: #fff;
+}
+th, td {
+    border: 1px solid #ddd; padding: 12px;
+    text-align: left; vertical-align: top;
+    word-wrap: break-word; word-break: break-word;
+}
+th { background-color: #2c3e50; color: #fff; }
+tr:nth-child(even) { background-color: #f9f9f9; }
+td .goi-y {
+    white-space: pre-wrap; word-wrap: break-word;
+    word-break: break-word; font-family: inherit;
+    font-size: 14px; line-height: 1.55; margin: 0; display: block;
+}
+
+/* ---------- MOBILE: mỗi dòng thành 1 card dọc ---------- */
+@media (max-width: 900px) {
+    body { padding: 12px; }
+    .card { padding: 14px; border-radius: 10px; }
+    h1 { font-size: 20px; }
+    h2 { font-size: 18px; }
+
+    table, thead, tbody, th, td, tr {
+        display: block; width: 100%;
+    }
+    thead { display: none; }
+    tr {
+        margin-bottom: 14px;
+        border: 1px solid #d0d7de; border-radius: 10px;
+        padding: 10px 14px; background: #fff !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    tr:nth-child(even) { background: #fff !important; }
+
+    td {
+        border: none;
+        border-bottom: 1px dashed #e5e5e5;
+        padding: 10px 0;
+    }
+    td:last-child { border-bottom: none; padding-bottom: 4px; }
+
+    td::before {
+        content: attr(data-label);
+        font-weight: 700; color: #2c3e50;
+        display: block; margin-bottom: 6px;
+        font-size: 12px; text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+    td .goi-y { font-size: 13px; }
+}
+"""
+
+
+def render_weather_html(web_data):
+    rows = ""
     for date in sorted(web_data.keys()):
         w = web_data[date]
         md = "-".join(date.split("-")[1:])
         history = get_historical_data_for_date(md)
 
-        if history:
-            avg_max = sum(r[1] for r in history if r[1] is not None) / len(history)
-            avg_min = sum(r[2] for r in history if r[2] is not None) / len(history)
-            hist_str = f"TB: {avg_max:.1f}/{avg_min:.1f}°C (từ {len(history)} năm)"
+        vmax = [r[1] for r in history if r[1] is not None]
+        vmin = [r[2] for r in history if r[2] is not None]
+        if vmax and vmin:
+            hist_str = (
+                f"TB: {sum(vmax)/len(vmax):.1f}/"
+                f"{sum(vmin)/len(vmin):.1f}°C "
+                f"(từ {len(history)} năm)"
+            )
         else:
             hist_str = "TB: 30.5/24.5°C (từ 19 năm)"
 
         rain_str = f"{w['rain']:.1f}mm" if w["rain"] > 0 else "0mm"
-        gio_mua_txt = ", ".join(w["rain_hours"]) if w["rain_hours"] else "Không mưa"
+        gio_mua_txt = (
+            ", ".join(w["rain_hours"]) if w["rain_hours"] else "Không mưa"
+        )
         goi_y = lay_goi_y_mua_sam(w["max"], w["rain"])
 
-        noi_dung_bao_cao += (
-            f"{date} | {w['max']:.1f}/{w['min']:.1f}°C | {rain_str}\n"
-        )
-
-        html_rows += f"""
+        rows += f"""
         <tr>
-            <td><b>{date}</b></td>
-            <td>{w['max']:.1f}/{w['min']:.1f}°C</td>
-            <td>{rain_str}</td>
-            <td>{gio_mua_txt}</td>
-            <td>{hist_str}</td>
-            <td><pre style="font-family:inherit; margin:0;">{goi_y}</pre></td>
+            <td data-label="Ngày"><b>{date}</b></td>
+            <td data-label="Dự báo (Max/Min)">{w['max']:.1f}/{w['min']:.1f}°C</td>
+            <td data-label="Lượng mưa">{rain_str}</td>
+            <td data-label="Khung giờ mưa">{gio_mua_txt}</td>
+            <td data-label="Lịch sử (từ 2007)">{hist_str}</td>
+            <td data-label="Gợi ý mua sắm & thực đơn"><div class="goi-y">{goi_y}</div></td>
         </tr>
         """
 
-    nav_html = build_nav_links(BASE_DIR)
-
-    html_content = f"""<!DOCTYPE html>
+    return f"""<!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thực Đơn & Sức Khỏe Người Lính</title>
-    <style>
-        body {{ font-family: Arial, sans-serif; margin: 20px; background-color: #f4f6f9; color: #333; }}
-        h1, h2 {{ color: #2c3e50; }}
-        .card {{ background: #fff; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
-        .emergency {{ background: #ffebee; border-left: 6px solid #c0392b; padding: 15px; margin-bottom: 20px; border-radius: 4px; }}
-        .emergency h3 {{ color: #c0392b; margin-top: 0; }}
-        table {{ width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; }}
-        th, td {{ border: 1px solid #ddd; padding: 12px; text-align: left; vertical-align: top; }}
-        th {{ background-color: #2c3e50; color: white; }}
-        tr:nth-child(even) {{ background-color: #f9f9f9; }}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Món Ăn & Thời Tiết - Người Lính</title>
+<style>{_WEATHER_CSS}</style>
 </head>
 <body>
+<div class="container">
 
-    <h1>🛡️ TRANG THÔNG TIN THỜI TIẾT & THỰC ĐƠN NGƯỜI LÍNH</h1>
-    
-    <div style="background: #ffffff; padding: 12px 15px; margin-bottom: 20px; border: 1px solid #dcdcdc; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-        {nav_html}
-    </div>
+    <a href="{INDEX_PAGE_NAME}" class="back-link">🏠 Về trang chủ</a>
+
+    <h1>🛡️ THỜI TIẾT &amp; THỰC ĐƠN NGƯỜI LÍNH</h1>
 
     <div class="emergency">
-        <h3>🚨 GÓC CẤP CỨU NHANH: KHI BỊ CẢM LẠNH, MỆT MỎI, VỪA ĐI NGOÀI TRỜI VỀ</h3>
-        <p><b>Triệu chứng:</b> Người mệt lả không muốn dậy, muốn đi nằm ngay lập tức sau khi vừa đi ngoài trời về.</p>
-        <p><b>Quy trình xử lý & Cứu chữa nhanh:</b></p>
+        <h3>🚨 GÓC CẤP CỨU NHANH</h3>
+        <p><b>Triệu chứng:</b> Người mệt lả không muốn dậy, muốn đi nằm
+        ngay lập tức sau khi vừa đi ngoài trời về.</p>
+        <p><b>Quy trình xử lý &amp; cứu chữa nhanh:</b></p>
         <ul>
-            <li><b>Nghỉ ngơi ngay:</b> Vào giường nằm đắp chăn ngay lập tức, không cố gượng sức.</li>
-            <li><b>Xoa bóp cơ thể:</b> Xoa dầu gió (dầu nóng) vào lòng bàn chân, thái dương, cổ và vùng lưng mỏi đau.</li>
-            <li><b>Làm ấm cơ thể từ bên trong:</b> Uống ngay một cốc nước trà gừng ấm hoặc nước gừng mật ong.</li>
-            <li><b>Ăn uống bồi bổ:</b> Ăn một bát xôi nóng, cháo gừng nóng hoặc súp nóng để nhanh chóng hồi phục năng lượng.</li>
-            <li><b>Hỗ trợ tiêu hóa / Cảm mạo:</b> Uống bổ sung thuốc theo tình trạng (thuốc cảm, Cảm xuyên hương, hoặc thuốc Berberin).</li>
+            <li><b>Nghỉ ngơi ngay:</b> Vào giường nằm đắp chăn, không cố gượng sức.</li>
+            <li><b>Xoa bóp cơ thể:</b> Xoa dầu gió vào lòng bàn chân, thái dương, cổ, lưng.</li>
+            <li><b>Làm ấm từ bên trong:</b> Uống trà gừng ấm hoặc nước gừng mật ong.</li>
+            <li><b>Ăn uống bồi bổ:</b> Xôi nóng, cháo gừng, súp nóng.</li>
+            <li><b>Hỗ trợ tiêu hóa / cảm mạo:</b> Thuốc cảm, Cảm xuyên hương, Berberin.</li>
         </ul>
     </div>
 
     <div class="card">
-        <h2>📊 Bảng Dự Báo Thời Tiết & Gợi Ý Dinh Dưỡng Tuần Này</h2>
+        <h2>📊 Dự Báo Thời Tiết &amp; Gợi Ý Dinh Dưỡng Tuần Này</h2>
         <table>
             <thead>
                 <tr>
@@ -364,28 +560,65 @@ def main():
                     <th>Mưa</th>
                     <th>Khung Giờ Mưa</th>
                     <th>Lịch Sử (Từ 2007)</th>
-                    <th>Gợi Ý Mua Sắm & Thực Đơn</th>
+                    <th>Gợi Ý Mua Sắm &amp; Thực Đơn</th>
                 </tr>
             </thead>
-            <tbody>
-                {html_rows}
-            </tbody>
+            <tbody>{rows}</tbody>
         </table>
     </div>
 
+</div>
 </body>
-</html>
-"""
+</html>"""
 
-    html_path = os.path.join(BASE_DIR, "index.html")
+
+# ===========================================================================
+# 6. MAIN
+# ===========================================================================
+
+def main():
+    print(f"📂 Repo root : {BASE_DIR}")
+    print(f"🗄️  DB path   : {DB_PATH}")
+    print(f"🌤️  Trang thời tiết sẽ ghi: {WEATHER_PAGE_NAME}")
+    print(f"📚 Trang hub sẽ ghi       : {INDEX_PAGE_NAME}")
+    print("-" * 60)
+
+    # Khởi tạo DB + lấy dữ liệu
+    init_database()
+    web_data = get_week_forecast()
+    save_forecast_to_db(web_data)
+
+    # (1) Sinh trang thời tiết
+    weather_path = os.path.join(BASE_DIR, WEATHER_PAGE_NAME)
     try:
-        with open(html_path, "w", encoding="utf-8") as f:
-            f.write(html_content)
-        print(f"Đã tạo trang web thành công tại: {html_path}")
+        with open(weather_path, "w", encoding="utf-8") as f:
+            f.write(render_weather_html(web_data))
+        print(f"✅ Đã tạo trang thời tiết: {weather_path}")
     except Exception as e:
-        print(f"Lỗi khi tạo file HTML: {e}")
+        print(f"❌ Lỗi tạo trang thời tiết: {e}")
 
-    gui_thong_bao_slack(noi_dung_bao_cao)
+    # (2) Sinh index.html — hub liệt kê mọi HTML
+    index_path = os.path.join(BASE_DIR, INDEX_PAGE_NAME)
+    try:
+        with open(index_path, "w", encoding="utf-8") as f:
+            f.write(render_index_html(BASE_DIR))
+        all_htmls = discover_html_files(BASE_DIR)
+        print(f"✅ Đã tạo trang chủ: {index_path}")
+        print(f"   → Tìm thấy {len(all_htmls)} file HTML trong repo:")
+        for h in all_htmls:
+            print(f"       • {h}")
+    except Exception as e:
+        print(f"❌ Lỗi tạo index.html: {e}")
+
+    # (3) Báo cáo Slack
+    bao_cao = "🤖 *BÁO CÁO THỜI TIẾT & LỜI KHUYÊN TỰ ĐỘNG* 🤖\n"
+    for date in sorted(web_data.keys()):
+        w = web_data[date]
+        rain_str = f"{w['rain']:.1f}mm" if w["rain"] > 0 else "0mm"
+        bao_cao += (
+            f"{date} | {w['max']:.1f}/{w['min']:.1f}°C | {rain_str}\n"
+        )
+    gui_thong_bao_slack(bao_cao)
 
 
 if __name__ == "__main__":
