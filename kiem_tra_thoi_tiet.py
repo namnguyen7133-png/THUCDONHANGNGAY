@@ -2,107 +2,111 @@ from collections import defaultdict
 import glob
 import io
 import os
+import re
 import sqlite3
 import sys
 import requests
 
-# Lấy thư mục gốc hiện tại của file script
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Lấy thư mục gốc hiện tại của file script.
+# Cho phép override bằng biến môi trường REPO_ROOT (hữu ích khi chạy trong GitHub Actions).
+BASE_DIR = os.environ.get(
+    "REPO_ROOT", os.path.dirname(os.path.abspath(__file__))
+)
 
 # Cấu hình Webhook Slack (để trống nếu không dùng)
 SLACK_WEBHOOK_URL = ""
 
 
 def gui_thong_bao_slack(noi_dung):
-  if not SLACK_WEBHOOK_URL:
-    return
-  payload = {"text": noi_dung}
-  try:
-    response = requests.post(SLACK_WEBHOOK_URL, json=payload, timeout=10)
-    if response.status_code == 200:
-      print("Đã gửi tin nhắn lên Slack thành công!")
-    else:
-      print(f"Lỗi khi gửi Slack, mã lỗi: {response.status_code}")
-  except Exception as e:
-    print(f"Không thể kết nối tới Slack: {e}")
+    if not SLACK_WEBHOOK_URL:
+        return
+    payload = {"text": noi_dung}
+    try:
+        response = requests.post(SLACK_WEBHOOK_URL, json=payload, timeout=10)
+        if response.status_code == 200:
+            print("Đã gửi tin nhắn lên Slack thành công!")
+        else:
+            print(f"Lỗi khi gửi Slack, mã lỗi: {response.status_code}")
+    except Exception as e:
+        print(f"Không thể kết nối tới Slack: {e}")
 
 
 # An toàn encoding cho console
 if sys.stdout is not None:
-  try:
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
-  except Exception:
-    pass
+    try:
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+    except Exception:
+        pass
 
 DB_PATH = os.path.join(BASE_DIR, "THOITIET.db")
 
 
 def init_database():
-  """Hàm kiểm tra và bổ sung cột 'rain_hours' vào bảng nếu chưa có"""
-  if not os.path.exists(DB_PATH):
-    return
+    """Hàm kiểm tra và bổ sung cột 'rain_hours' vào bảng nếu chưa có"""
+    if not os.path.exists(DB_PATH):
+        return
 
-  conn = sqlite3.connect(DB_PATH)
-  cur = conn.cursor()
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
 
-  cur.execute("PRAGMA table_info(THOITIET_DINH_DUONG)")
-  columns = [col[1] for col in cur.fetchall()]
+    cur.execute("PRAGMA table_info(THOITIET_DINH_DUONG)")
+    columns = [col[1] for col in cur.fetchall()]
 
-  if "rain_hours" not in columns:
-    try:
-      cur.execute(
-          "ALTER TABLE THOITIET_DINH_DUONG ADD COLUMN rain_hours TEXT"
-      )
-      conn.commit()
-      print("Đã thêm thành công cột 'rain_hours' vào cơ sở dữ liệu!")
-    except Exception as e:
-      print(f"Lỗi khi thêm cột vào DB: {e}")
+    if "rain_hours" not in columns:
+        try:
+            cur.execute(
+                "ALTER TABLE THOITIET_DINH_DUONG ADD COLUMN rain_hours TEXT"
+            )
+            conn.commit()
+            print("Đã thêm thành công cột 'rain_hours' vào cơ sở dữ liệu!")
+        except Exception as e:
+            print(f"Lỗi khi thêm cột vào DB: {e}")
 
-  conn.close()
+    conn.close()
 
 
 def get_week_forecast():
-  url = (
-      "https://api.open-meteo.com/v1/forecast?latitude=21.0285&longitude=105.8542&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&hourly=precipitation&timezone=Asia%2FBangkok"
-  )
-  try:
-    r = requests.get(url, timeout=10).json()
-    daily = r.get("daily", {})
-    dates = daily.get("time", [])
-    t_maxs = daily.get("temperature_2m_max", [])
-    t_mins = daily.get("temperature_2m_min", [])
-    precips = daily.get("precipitation_sum", [])
+    url = (
+        "https://api.open-meteo.com/v1/forecast?latitude=21.0285&longitude=105.8542&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&hourly=precipitation&timezone=Asia%2FBangkok"
+    )
+    try:
+        r = requests.get(url, timeout=10).json()
+        daily = r.get("daily", {})
+        dates = daily.get("time", [])
+        t_maxs = daily.get("temperature_2m_max", [])
+        t_mins = daily.get("temperature_2m_min", [])
+        precips = daily.get("precipitation_sum", [])
 
-    daily_map = {}
-    for idx, date in enumerate(dates):
-      t_max = t_maxs[idx] if idx < len(t_maxs) else 30.0
-      t_min = t_mins[idx] if idx < len(t_mins) else 24.0
-      rain = precips[idx] if idx < len(precips) else 0.0
+        daily_map = {}
+        for idx, date in enumerate(dates):
+            t_max = t_maxs[idx] if idx < len(t_maxs) else 30.0
+            t_min = t_mins[idx] if idx < len(t_mins) else 24.0
+            rain = precips[idx] if idx < len(precips) else 0.0
 
-      rain_hours = []
-      if rain > 0:
-        rain_hours.append(f"09:00 ({rain*0.3:.2f}mm)")
-        rain_hours.append(f"15:00 ({rain*0.7:.2f}mm)")
+            rain_hours = []
+            if rain > 0:
+                rain_hours.append(f"09:00 ({rain*0.3:.2f}mm)")
+                rain_hours.append(f"15:00 ({rain*0.7:.2f}mm)")
 
-      daily_map[date] = {
-          "max": t_max,
-          "min": t_min,
-          "rain": rain,
-          "rain_hours": rain_hours,
-      }
-    return daily_map
-  except Exception as e:
-    print(f"Lỗi khi lấy dữ liệu thời tiết: {e}")
-    return {}
+            daily_map[date] = {
+                "max": t_max,
+                "min": t_min,
+                "rain": rain,
+                "rain_hours": rain_hours,
+            }
+        return daily_map
+    except Exception as e:
+        print(f"Lỗi khi lấy dữ liệu thời tiết: {e}")
+        return {}
 
 
 def get_historical_data_for_date(target_md):
-  if not os.path.exists(DB_PATH):
-    return []
+    if not os.path.exists(DB_PATH):
+        return []
 
-  conn = sqlite3.connect(DB_PATH)
-  cur = conn.cursor()
-  query = """
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    query = """
         SELECT strftime('%Y', time), [temperature_2m_max (°C)], [temperature_2m_min (°C)], [rain_sum (mm)], rain_hours
         FROM THOITIET_DINH_DUONG 
         WHERE strftime('%m-%d', time) = ? 
@@ -110,109 +114,195 @@ def get_historical_data_for_date(target_md):
         AND strftime('%Y', time) != '2026'
         ORDER BY time DESC
     """
-  cur.execute(query, (target_md,))
-  rows = cur.fetchall()
-  conn.close()
-  return rows
+    cur.execute(query, (target_md,))
+    rows = cur.fetchall()
+    conn.close()
+    return rows
 
 
 def save_forecast_to_db(web_data):
-  if not os.path.exists(DB_PATH):
-    return
+    if not os.path.exists(DB_PATH):
+        return
 
-  conn = sqlite3.connect(DB_PATH)
-  cur = conn.cursor()
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
 
-  for date, w in web_data.items():
-    rain_hours_str = (
-        ", ".join(w["rain_hours"]) if w["rain_hours"] else "Không mưa"
-    )
-    update_query = """
+    for date, w in web_data.items():
+        rain_hours_str = (
+            ", ".join(w["rain_hours"]) if w["rain_hours"] else "Không mưa"
+        )
+        update_query = """
             UPDATE THOITIET_DINH_DUONG 
             SET rain_hours = ? 
             WHERE date(time) = ?
         """
-    cur.execute(update_query, (rain_hours_str, date))
+        cur.execute(update_query, (rain_hours_str, date))
 
-  conn.commit()
-  conn.close()
+    conn.commit()
+    conn.close()
 
 
 def lay_goi_y_mua_sam(max_temp, rain):
-  if rain > 0:
-    return """--- TRỜI MƯA/ẨM ƯỚT ---
+    if rain > 0:
+        return """--- TRỜI MƯA/ẨM ƯỚT ---
 Mua sắm: Gừng, khoai lang, chuối, sữa ấm, trà gừng.
 Thực đơn: Cháo gừng, khoai luộc, súp nóng, thịt nướng, bún trả, lương khô, ruốc, muối vừng.
 Thuốc phụ trợ: Siro ho thảo dược, Trà gừng, Vitamin C.
 Lưu ý: Người mỏi mệt, lưng mỏi đau: bôi dầu gió, thuốc cảm delcolgel, paracetamon, cảm xuyên hương, cà phê sữa tối."""
-  elif max_temp > 30:
-    return """--- TRỜI NẮNG NÓNG ---
+    elif max_temp > 30:
+        return """--- TRỜI NẮNG NÓNG ---
 Mua sắm: Chanh, dấm, cá, tôm, hến, trai, muối.
 Thực đơn: Canh chua, canh hến, cá hấp, Phở, Bún, Miến, Gà tần, Vịt lộn, đậu phụ.
 Thuốc phụ trợ: Oresol, men vi sinh, thuốc giải nhiệt, nước ép trái cây."""
-  elif max_temp < 18:
-    return """--- TRỜI RÉT ĐẬM ---
+    elif max_temp < 18:
+        return """--- TRỜI RÉT ĐẬM ---
 Mua sắm: Thịt bò, trứng vịt lộn, ngô, bơ, sữa ấm.
 Thực đơn: Thịt kho, lẩu gà/chim, món hầm, ngũ cốc nóng."""
-  elif 18 <= max_temp <= 25:
-    return """--- THỜI TIẾT MÁT MẺ ---
+    elif 18 <= max_temp <= 25:
+        return """--- THỜI TIẾT MÁT MẺ ---
 Mua sắm: Rượu nếp, sữa chua, riềng, mẻ, giấm bỗng."""
-  return "--- TRỜI TIẾT ỔN ĐỊNH --- Ăn uống cân bằng, duy trì tập luyện nhẹ nhàng."
+    return "--- TRỜI TIẾT ỔN ĐỊNH --- Ăn uống cân bằng, duy trì tập luyện nhẹ nhàng."
+
+
+# ---------------------------------------------------------------------------
+# PHẦN ĐÃ SỬA: quét TOÀN BỘ file .html trong repo (kể cả thư mục con
+# và các file được tham chiếu qua href trong HTML khác)
+# ---------------------------------------------------------------------------
+
+_HREF_RE = re.compile(
+    r'href\s*=\s*["\']([^"\']+?\.html(?:[?#][^"\']*)?)["\']',
+    re.IGNORECASE,
+)
+
+
+def discover_html_files(base_dir):
+    """Trả về danh sách (relative path) của mọi file .html trong repo.
+
+    Cách hoạt động:
+      1. Quét đệ quy mọi *.html trong base_dir và thư mục con.
+      2. Duyệt nội dung từng file HTML để tìm các href="*.html"
+         và thêm vào danh sách (nếu file tồn tại trong repo).
+      3. Bỏ qua link tuyệt đối (http://, //, /...), link nhảy ra ngoài repo (../).
+    """
+    found = set()
+
+    # Bước 1: quét đệ quy
+    for p in glob.glob(os.path.join(base_dir, "**", "*.html"), recursive=True):
+        rel = os.path.relpath(p, base_dir).replace(os.sep, "/")
+        if not rel.startswith("../"):
+            found.add(rel)
+
+    # Bước 2: parse nội dung để tìm thêm href
+    queue = list(found)
+    scanned = set()
+    while queue:
+        rel = queue.pop(0)
+        if rel in scanned:
+            continue
+        scanned.add(rel)
+
+        full = os.path.join(base_dir, rel)
+        if not os.path.isfile(full):
+            continue
+        try:
+            with open(full, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read()
+        except Exception:
+            continue
+
+        cur_dir = os.path.dirname(rel)
+        for m in _HREF_RE.finditer(content):
+            href = m.group(1).split("#", 1)[0].split("?", 1)[0].strip()
+            if not href:
+                continue
+            # Bỏ link tuyệt đối / ngoài repo
+            if re.match(r"^(https?:)?//", href, re.IGNORECASE):
+                continue
+            if href.startswith("/"):
+                continue
+
+            target = os.path.normpath(
+                os.path.join(cur_dir, href)
+            ).replace(os.sep, "/")
+
+            if target.startswith("..") or not target.lower().endswith(".html"):
+                continue
+
+            if target not in found:
+                found.add(target)
+                if os.path.isfile(os.path.join(base_dir, target)):
+                    queue.append(target)
+
+    return sorted(found)
 
 
 def build_nav_links(base_dir):
-  """Quét toàn bộ file .html trong thư mục repo để tạo danh sách liên kết."""
-  html_paths = sorted(glob.glob(os.path.join(base_dir, "*.html")))
-  html_files = [os.path.basename(p) for p in html_paths]
+    """Tạo thanh liên kết tới TẤT CẢ file .html trong repo
+    (bao gồm file trong thư mục con và file được tham chiếu từ HTML khác)."""
+    html_files = discover_html_files(base_dir)
 
-  links = [
-      '<a href="index.html" style="background: #2c3e50; color: white;'
-      " padding: 6px 12px; text-decoration: none; border-radius: 4px;"
-      ' font-weight: bold; font-size: 13px;">🏠 Trang Chủ</a>'
-  ]
+    links = [
+        '<a href="index.html" style="background: #2c3e50; color: white;'
+        " padding: 6px 12px; text-decoration: none; border-radius: 4px;"
+        ' font-weight: bold; font-size: 13px;">🏠 Trang Chủ</a>'
+    ]
 
-  for filename in html_files:
-    if filename == "index.html":
-      continue
-    stem = os.path.splitext(filename)[0]
-    label = stem.lstrip("0123456789-_ ").replace("-", " ").replace("_", " ")
-    label = label.capitalize() if label else stem
-    links.append(
-        f'<a href="{filename}" style="background: #e9ecef; color: #333;'
-        " padding: 6px 10px; text-decoration: none; border-radius: 4px;"
-        f' font-size: 13px; border: 1px solid #ccc;">{label}</a>'
-    )
+    for rel in html_files:
+        if rel == "index.html":
+            continue
+        # Chỉ tạo link tới file thực sự tồn tại (tránh 404 trên GitHub Pages)
+        if not os.path.isfile(os.path.join(base_dir, rel)):
+            continue
 
-  return "\n        ".join(links)
+        stem = os.path.splitext(os.path.basename(rel))[0]
+        label = (
+            stem.lstrip("0123456789-_ ").replace("-", " ").replace("_", " ")
+        )
+        label = label.capitalize() if label else stem
+
+        # Nếu nằm trong thư mục con → ghi kèm tên thư mục cho dễ phân biệt
+        folder = os.path.dirname(rel)
+        if folder:
+            label = f"{label} ({folder})"
+
+        links.append(
+            f'<a href="{rel}" style="background: #e9ecef; color: #333;'
+            " padding: 6px 10px; text-decoration: none; border-radius: 4px;"
+            f' font-size: 13px; border: 1px solid #ccc;">{label}</a>'
+        )
+
+    return "\n        ".join(links)
 
 
 def main():
-  init_database()
-  web_data = get_week_forecast()
-  save_forecast_to_db(web_data)
+    init_database()
+    web_data = get_week_forecast()
+    save_forecast_to_db(web_data)
 
-  noi_dung_bao_cao = "🤖 *BÁO CÁO THỜI TIẾT & LỜI KHUYÊN TỰ ĐỘNG* 🤖\n"
-  html_rows = ""
+    noi_dung_bao_cao = "🤖 *BÁO CÁO THỜI TIẾT & LỜI KHUYÊN TỰ ĐỘNG* 🤖\n"
+    html_rows = ""
 
-  for date in sorted(web_data.keys()):
-    w = web_data[date]
-    md = "-".join(date.split("-")[1:])
-    history = get_historical_data_for_date(md)
+    for date in sorted(web_data.keys()):
+        w = web_data[date]
+        md = "-".join(date.split("-")[1:])
+        history = get_historical_data_for_date(md)
 
-    if history:
-      avg_max = sum(r[1] for r in history if r[1] is not None) / len(history)
-      avg_min = sum(r[2] for r in history if r[2] is not None) / len(history)
-      hist_str = f"TB: {avg_max:.1f}/{avg_min:.1f}°C (từ {len(history)} năm)"
-    else:
-      hist_str = "TB: 30.5/24.5°C (từ 19 năm)"
+        if history:
+            avg_max = sum(r[1] for r in history if r[1] is not None) / len(history)
+            avg_min = sum(r[2] for r in history if r[2] is not None) / len(history)
+            hist_str = f"TB: {avg_max:.1f}/{avg_min:.1f}°C (từ {len(history)} năm)"
+        else:
+            hist_str = "TB: 30.5/24.5°C (từ 19 năm)"
 
-    rain_str = f"{w['rain']:.1f}mm" if w["rain"] > 0 else "0mm"
-    gio_mua_txt = ", ".join(w["rain_hours"]) if w["rain_hours"] else "Không mưa"
-    goi_y = lay_goi_y_mua_sam(w["max"], w["rain"])
+        rain_str = f"{w['rain']:.1f}mm" if w["rain"] > 0 else "0mm"
+        gio_mua_txt = ", ".join(w["rain_hours"]) if w["rain_hours"] else "Không mưa"
+        goi_y = lay_goi_y_mua_sam(w["max"], w["rain"])
 
-    noi_dung_bao_cao += f"{date} | {w['max']:.1f}/{w['min']:.1f}°C | {rain_str}\n"
+        noi_dung_bao_cao += (
+            f"{date} | {w['max']:.1f}/{w['min']:.1f}°C | {rain_str}\n"
+        )
 
-    html_rows += f"""
+        html_rows += f"""
         <tr>
             <td><b>{date}</b></td>
             <td>{w['max']:.1f}/{w['min']:.1f}°C</td>
@@ -223,9 +313,9 @@ def main():
         </tr>
         """
 
-  nav_html = build_nav_links(BASE_DIR)
+    nav_html = build_nav_links(BASE_DIR)
 
-  html_content = f"""<!DOCTYPE html>
+    html_content = f"""<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -287,16 +377,16 @@ def main():
 </html>
 """
 
-  html_path = os.path.join(BASE_DIR, "index.html")
-  try:
-    with open(html_path, "w", encoding="utf-8") as f:
-      f.write(html_content)
-    print(f"Đã tạo trang web thành công tại: {html_path}")
-  except Exception as e:
-    print(f"Lỗi khi tạo file HTML: {e}")
+    html_path = os.path.join(BASE_DIR, "index.html")
+    try:
+        with open(html_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        print(f"Đã tạo trang web thành công tại: {html_path}")
+    except Exception as e:
+        print(f"Lỗi khi tạo file HTML: {e}")
 
-  gui_thong_bao_slack(noi_dung_bao_cao)
+    gui_thong_bao_slack(noi_dung_bao_cao)
 
 
 if __name__ == "__main__":
-  main()
+    main()
